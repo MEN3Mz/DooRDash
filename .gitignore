@@ -1,0 +1,14 @@
+# Compiled classes
+*.class
+
+# Output folders
+/out/
+/bin/
+
+# IDE settings
+.idea/
+.vscode/
+.project
+.classpath
+.settings/
+*.iml
