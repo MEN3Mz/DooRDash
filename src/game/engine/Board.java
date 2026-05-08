@@ -47,7 +47,7 @@ public class Board {
 		Board.cards = cards;
 	}
 
-	private int[] indexToRowCol(int index) {
+	public int[] indexToRowCol(int index) {
 	    int cols = Constants.BOARD_COLS;
 
 	    int row = index / cols;

@@ -1,4 +1,4 @@
-package game.gui;
+package game.view;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,30 +20,26 @@ public class GameView {
     private static final double BUTTON_FONT_RATIO = 0.03;
     private static final String SOUND_ON_TEXT = "Sound: ON";
     private static final String SOUND_OFF_TEXT = "Sound: OFF";
-    private static final String SOUND_ON_STYLE =
-            "-fx-background-color: darkgray; -fx-text-fill: white; -fx-font-weight: bold;";
-    private static final String SOUND_OFF_STYLE =
-            "-fx-background-color: #555555; -fx-text-fill: lightgray; -fx-font-weight: bold;";
-    private static final String MENU_BUTTON_BASE_STYLE =
-            "-fx-background-color: "
-                    + "linear-gradient(#70b1ff 0%, #1a5cad 50%, #0a3b75 51%, #114b91 100%), "
-                    + "linear-gradient(#202020 0%, #111111 100%), "
-                    + "linear-gradient(#3e5e8e, #2e4a77); "
-                    + "-fx-background-insets: 0,1,2; "
-                    + "-fx-background-radius: 5,4,3; "
-                    + "-fx-text-fill: white; "
-                    + "-fx-font-weight: bold; "
-                    + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );";
-    private static final String MENU_BUTTON_PRESSED_STYLE =
-            "-fx-background-color: "
-                    + "linear-gradient(#1a5cad 0%, #0a3b75 50%, #051d3a 51%, #082a52 100%), "
-                    + "linear-gradient(#101010 0%, #000000 100%), "
-                    + "linear-gradient(#2e4a77, #1a2b47); "
-                    + "-fx-background-insets: 0,1,2; "
-                    + "-fx-background-radius: 5,4,3; "
-                    + "-fx-text-fill: #bbbbbb; "
-                    + "-fx-translate-y: 2px; "
-                    + "-fx-effect: null;";
+    private static final String SOUND_ON_STYLE = "-fx-background-color: darkgray; -fx-text-fill: white; -fx-font-weight: bold;";
+    private static final String SOUND_OFF_STYLE = "-fx-background-color: #555555; -fx-text-fill: lightgray; -fx-font-weight: bold;";
+    private static final String MENU_BUTTON_BASE_STYLE = "-fx-background-color: "
+            + "linear-gradient(#70b1ff 0%, #1a5cad 50%, #0a3b75 51%, #114b91 100%), "
+            + "linear-gradient(#202020 0%, #111111 100%), "
+            + "linear-gradient(#3e5e8e, #2e4a77); "
+            + "-fx-background-insets: 0,1,2; "
+            + "-fx-background-radius: 5,4,3; "
+            + "-fx-text-fill: white; "
+            + "-fx-font-weight: bold; "
+            + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );";
+    private static final String MENU_BUTTON_PRESSED_STYLE = "-fx-background-color: "
+            + "linear-gradient(#1a5cad 0%, #0a3b75 50%, #051d3a 51%, #082a52 100%), "
+            + "linear-gradient(#101010 0%, #000000 100%), "
+            + "linear-gradient(#2e4a77, #1a2b47); "
+            + "-fx-background-insets: 0,1,2; "
+            + "-fx-background-radius: 5,4,3; "
+            + "-fx-text-fill: #bbbbbb; "
+            + "-fx-translate-y: 2px; "
+            + "-fx-effect: null;";
 
     private double currentFontSize = DEFAULT_SCENE_HEIGHT * BUTTON_FONT_RATIO;
 
@@ -107,7 +103,8 @@ public class GameView {
         BorderPane.setAlignment(soundButton, Pos.BOTTOM_LEFT);
         BorderPane.setMargin(soundButton, new Insets(20));
 
-        primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> currentFontSize = newVal.doubleValue() * BUTTON_FONT_RATIO);
+        primaryStage.heightProperty()
+                .addListener((obs, oldVal, newVal) -> currentFontSize = newVal.doubleValue() * BUTTON_FONT_RATIO);
         return overlay;
     }
 
