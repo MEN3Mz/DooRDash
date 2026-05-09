@@ -4,19 +4,16 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import game.engine.Game;
 import game.engine.Role;
-import game.engine.cells.DoorCell;
 import javafx.scene.Scene;
 
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Game game = new Game(Role.LAUGHER);
-        GameBoardView boardView = new GameBoardView(game);
-        game.getPlayer().setPosition(10);
-        boardView.refreshBoard();
-        Scene scene = new Scene(boardView.getBoardRoot(), 900, 900);
+        GameView gameView = new GameView(game);
+        Scene scene = new Scene(gameView.getRoot(), 1280, 900);
 
-        primaryStage.setTitle("Board Test");
+        primaryStage.setTitle("DoorDash Game");
         primaryStage.setScene(scene);
 
         primaryStage.show();

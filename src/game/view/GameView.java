@@ -1,163 +1,135 @@
 package game.view;
 
+import game.engine.Game;
+import game.engine.monsters.Monster;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class GameView {
-    private static final double DEFAULT_SCENE_WIDTH = 1280;
-    private static final double DEFAULT_SCENE_HEIGHT = 720;
-    private static final double LOGO_WIDTH_RATIO = 0.4;
-    private static final double BUTTON_WIDTH_RATIO = 0.25;
-    private static final double BUTTON_HEIGHT_RATIO = 0.08;
-    private static final double BUTTON_FONT_RATIO = 0.03;
-    private static final String SOUND_ON_TEXT = "Sound: ON";
-    private static final String SOUND_OFF_TEXT = "Sound: OFF";
-    private static final String SOUND_ON_STYLE = "-fx-background-color: darkgray; -fx-text-fill: white; -fx-font-weight: bold;";
-    private static final String SOUND_OFF_STYLE = "-fx-background-color: #555555; -fx-text-fill: lightgray; -fx-font-weight: bold;";
-    private static final String MENU_BUTTON_BASE_STYLE = "-fx-background-color: "
-            + "linear-gradient(#70b1ff 0%, #1a5cad 50%, #0a3b75 51%, #114b91 100%), "
-            + "linear-gradient(#202020 0%, #111111 100%), "
-            + "linear-gradient(#3e5e8e, #2e4a77); "
-            + "-fx-background-insets: 0,1,2; "
-            + "-fx-background-radius: 5,4,3; "
-            + "-fx-text-fill: white; "
-            + "-fx-font-weight: bold; "
-            + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );";
-    private static final String MENU_BUTTON_PRESSED_STYLE = "-fx-background-color: "
-            + "linear-gradient(#1a5cad 0%, #0a3b75 50%, #051d3a 51%, #082a52 100%), "
-            + "linear-gradient(#101010 0%, #000000 100%), "
-            + "linear-gradient(#2e4a77, #1a2b47); "
-            + "-fx-background-insets: 0,1,2; "
-            + "-fx-background-radius: 5,4,3; "
-            + "-fx-text-fill: #bbbbbb; "
-            + "-fx-translate-y: 2px; "
-            + "-fx-effect: null;";
+    private final Game game;
+    private final GameBoardView boardView;
+    private final BorderPane root;
 
-    private double currentFontSize = DEFAULT_SCENE_HEIGHT * BUTTON_FONT_RATIO;
+    private final Label currentPlayerLabel;
+    private final Label playerNameLabel;
+    private final Label playerRoleLabel;
+    private final Label playerEnergyLabel;
+    private final Label opponentNameLabel;
+    private final Label opponentRoleLabel;
+    private final Label opponentEnergyLabel;
+    private final Label cellInfoLabel;
+    private final Label diceInfoLabel;
 
-    public void start(Stage primaryStage) {
-        Button startButton = createMenuButton("Start Game", primaryStage);
-        Button settingsButton = createMenuButton("Settings", primaryStage);
-        Button howToPlayButton = createMenuButton("How To Play", primaryStage);
-        Button soundButton = createSoundButton();
+    public GameView(Game game) {
+        this.game = game;
+        this.boardView = new GameBoardView(game);
+        this.root = new BorderPane();
 
-        ImageView backgroundView = createBackgroundView(primaryStage);
-        BorderPane overlay = createOverlay(
-                primaryStage,
-                createLogoView(primaryStage),
-                startButton,
-                howToPlayButton,
-                settingsButton,
-                soundButton);
+        this.currentPlayerLabel = new Label();
+        this.playerNameLabel = new Label();
+        this.playerRoleLabel = new Label();
+        this.playerEnergyLabel = new Label();
+        this.opponentNameLabel = new Label();
+        this.opponentRoleLabel = new Label();
+        this.opponentEnergyLabel = new Label();
+        this.cellInfoLabel = new Label("Cell: none selected");
+        this.diceInfoLabel = new Label("Dice: not rolled");
 
-        configureResponsiveStyling(primaryStage, startButton, settingsButton, howToPlayButton);
-
-        StackPane root = new StackPane(backgroundView, overlay);
-        Scene scene = new Scene(root, DEFAULT_SCENE_WIDTH, DEFAULT_SCENE_HEIGHT);
-
-        primaryStage.setTitle("DoorDash Game - Menu");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        buildLayout();
+        refresh();
     }
 
-    private ImageView createBackgroundView(Stage primaryStage) {
-        ImageView backgroundView = new ImageView(loadImage("/game/assets/Background.png"));
-        backgroundView.fitWidthProperty().bind(primaryStage.widthProperty());
-        backgroundView.fitHeightProperty().bind(primaryStage.heightProperty());
-        backgroundView.setPreserveRatio(false);
-        return backgroundView;
+    private void buildLayout() {
+        root.setPadding(new Insets(16));
+
+        VBox leftPanel = createSidePanel("Player", playerNameLabel, playerRoleLabel, playerEnergyLabel);
+        VBox rightPanel = createSidePanel("Opponent", opponentNameLabel, opponentRoleLabel, opponentEnergyLabel);
+        HBox topPanel = createTopPanel();
+        HBox bottomPanel = createBottomPanel();
+        StackPane centerPanel = new StackPane(boardView.getBoardRoot());
+
+        centerPanel.setPadding(new Insets(10));
+        StackPane.setAlignment(boardView.getBoardRoot(), Pos.CENTER);
+
+        root.setTop(topPanel);
+        root.setLeft(leftPanel);
+        root.setCenter(centerPanel);
+        root.setRight(rightPanel);
+        root.setBottom(bottomPanel);
+
+        BorderPane.setMargin(topPanel, new Insets(0, 0, 16, 0));
+        BorderPane.setMargin(bottomPanel, new Insets(16, 0, 0, 0));
+        BorderPane.setMargin(leftPanel, new Insets(0, 16, 0, 0));
+        BorderPane.setMargin(rightPanel, new Insets(0, 0, 0, 16));
+
+        applyPanelStyle(leftPanel);
+        applyPanelStyle(rightPanel);
+        applyPanelStyle(topPanel);
+        applyPanelStyle(bottomPanel);
     }
 
-    private ImageView createLogoView(Stage primaryStage) {
-        ImageView logoView = new ImageView(loadImage("/game/assets/LOGO.png"));
-        logoView.setPreserveRatio(true);
-        logoView.fitWidthProperty().bind(primaryStage.widthProperty().multiply(LOGO_WIDTH_RATIO));
-        return logoView;
+    private VBox createSidePanel(String title, Label nameLabel, Label roleLabel, Label energyLabel) {
+        Label titleLabel = new Label(title);
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+        VBox panel = new VBox(12, titleLabel, nameLabel, roleLabel, energyLabel);
+        panel.setPrefWidth(220);
+        panel.setAlignment(Pos.TOP_LEFT);
+        panel.setPadding(new Insets(16));
+        return panel;
     }
 
-    private BorderPane createOverlay(
-            Stage primaryStage,
-            ImageView logoView,
-            Button startButton,
-            Button howToPlayButton,
-            Button settingsButton,
-            Button soundButton) {
-        VBox menuContainer = createMenuContainer(startButton, howToPlayButton, settingsButton);
-
-        BorderPane overlay = new BorderPane();
-        overlay.setStyle("-fx-background-color: transparent;");
-        overlay.setTop(logoView);
-        overlay.setCenter(menuContainer);
-        overlay.setBottom(soundButton);
-
-        BorderPane.setAlignment(logoView, Pos.CENTER);
-        BorderPane.setMargin(logoView, new Insets(50, 0, 0, 0));
-        BorderPane.setAlignment(soundButton, Pos.BOTTOM_LEFT);
-        BorderPane.setMargin(soundButton, new Insets(20));
-
-        primaryStage.heightProperty()
-                .addListener((obs, oldVal, newVal) -> currentFontSize = newVal.doubleValue() * BUTTON_FONT_RATIO);
-        return overlay;
+    private HBox createTopPanel() {
+        HBox panel = new HBox(currentPlayerLabel);
+        panel.setAlignment(Pos.CENTER);
+        panel.setPadding(new Insets(12));
+        currentPlayerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        return panel;
     }
 
-    private VBox createMenuContainer(Button... buttons) {
-        VBox menuContainer = new VBox(20);
-        menuContainer.setAlignment(Pos.CENTER);
-        menuContainer.setStyle("-fx-background-color: transparent;");
-        menuContainer.getChildren().addAll(buttons);
-        return menuContainer;
+    private HBox createBottomPanel() {
+        HBox panel = new HBox(30, cellInfoLabel, diceInfoLabel);
+        panel.setAlignment(Pos.CENTER_LEFT);
+        panel.setPadding(new Insets(12));
+        return panel;
     }
 
-    private Button createMenuButton(String text, Stage primaryStage) {
-        Button button = new Button(text);
-        button.prefWidthProperty().bind(primaryStage.widthProperty().multiply(BUTTON_WIDTH_RATIO));
-        button.prefHeightProperty().bind(primaryStage.heightProperty().multiply(BUTTON_HEIGHT_RATIO));
-        applyButtonStyle(button, false);
-        button.setOnMousePressed(event -> applyButtonStyle(button, true));
-        button.setOnMouseReleased(event -> applyButtonStyle(button, false));
-        return button;
+    private void applyPanelStyle(javafx.scene.layout.Region panel) {
+        panel.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, #1f2933, #3e4c59);"
+                        + "-fx-background-radius: 14;"
+                        + "-fx-border-color: #bcccdc;"
+                        + "-fx-border-width: 2;"
+                        + "-fx-border-radius: 14;");
     }
 
-    private Button createSoundButton() {
-        Button soundButton = new Button(SOUND_ON_TEXT);
-        soundButton.setStyle(SOUND_ON_STYLE);
-        soundButton.setOnAction(event -> toggleSoundButton(soundButton));
-        return soundButton;
+    public void refresh() {
+        boardView.refreshBoard();
+        updateMonsterInfo(game.getPlayer(), playerNameLabel, playerRoleLabel, playerEnergyLabel);
+        updateMonsterInfo(game.getOpponent(), opponentNameLabel, opponentRoleLabel, opponentEnergyLabel);
+        currentPlayerLabel.setText("Current Turn: " + game.getCurrent().getName());
     }
 
-    private void configureResponsiveStyling(Stage primaryStage, Button... buttons) {
-        primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> {
-            currentFontSize = newVal.doubleValue() * BUTTON_FONT_RATIO;
-            for (Button button : buttons) {
-                applyButtonStyle(button, false);
-            }
-        });
-
-        for (Button button : buttons) {
-            applyButtonStyle(button, false);
-        }
+    private void updateMonsterInfo(Monster monster, Label nameLabel, Label roleLabel, Label energyLabel) {
+        nameLabel.setText("Name: " + monster.getName());
+        roleLabel.setText("Role: " + monster.getRole());
+        energyLabel.setText("Energy: " + monster.getEnergy());
     }
 
-    private void applyButtonStyle(Button button, boolean pressed) {
-        String baseStyle = pressed ? MENU_BUTTON_PRESSED_STYLE : MENU_BUTTON_BASE_STYLE;
-        button.setStyle(baseStyle + "-fx-font-size: " + currentFontSize + "px;");
+    public void setCellInfo(String text) {
+        cellInfoLabel.setText(text);
     }
 
-    private void toggleSoundButton(Button soundButton) {
-        boolean soundIsOn = SOUND_ON_TEXT.equals(soundButton.getText());
-        soundButton.setText(soundIsOn ? SOUND_OFF_TEXT : SOUND_ON_TEXT);
-        soundButton.setStyle(soundIsOn ? SOUND_OFF_STYLE : SOUND_ON_STYLE);
+    public void setDiceInfo(String text) {
+        diceInfoLabel.setText(text);
     }
 
-    private Image loadImage(String resourcePath) {
-        return new Image(getClass().getResourceAsStream(resourcePath));
+    public BorderPane getRoot() {
+        return root;
     }
 }
