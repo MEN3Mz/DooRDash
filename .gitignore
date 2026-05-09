@@ -7,8 +7,5 @@
 
 # IDE settings
 .idea/
-.vscode/
-.project
-.classpath
 .settings/
 *.iml
