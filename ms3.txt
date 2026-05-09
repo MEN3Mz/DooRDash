@@ -1,0 +1,92 @@
+German University in Cairo
+Media Engineering and T echnology
+Prof. Dr. Slim Abdennadher
+Dr. Nourhan Ehab
+Dr. Ahmed Abdelfattah
+CSEN 401 - Computer Programming Lab,Spring 2024
+DoorDasH: Scare vs Laugh Touchdown
+Milestone 3
+Deadline: 18.5.2026 @ 11:59 PM
+In this milestone, you are required to implement the GUI to be able to play the game.
+1 General Guidelines
+•The effects of any action performed in the GUI should be reflected in the engine
+and vice versa.
+•The player should be able to view all content at all times without the need to
+resize/minimize/maximize the window during runtime.
+•The action that is currently happening in the game should always be clearly
+indicated in the GUI.
+•Make sure to handle all exceptions and validations for any input or action
+performed. In case any exception implemented in the second milestone arises the
+player should be notified and the action should be prohibited and another action
+should be chosen by the player.
+•The game should not be stopped/ terminated for any exception thrown. However,
+clicking the ’X’ button on the window must be able to terminate the game at any
+instant.
+•Try to adhere to the MVC architectural pattern to organize the codebase,
+enhancing maintainability and scalability:
+– Model: Manages the data, logic, and rules of the application independently
+of the user interface.
+– View: Represents the GUI which displays game information to the player.
+The view should be dynamic and reflect changes made in the model.
+1– Controller: Accepts input, converting it into commands for the model or
+view. This ensures that the UI is separated from the data processing.
+•You arenot allowedto use Swing for the GUI, only JavaFX is allowed.
+•You’re free to use SceneBuilder when building the GUI.
+2 GUI Requirements
+The requirements that should be covered in the GUI are explained below. You will be
+graded based on the requirements detailed in the following checklist:
+Must be displayed whenever the player starts the game
+A way to select a side (either SCARER or LAUGHER)
+A way to start and play the game according to the chosen side
+Game instructions
+Game board with all 100 cells in their correct positions and types
+Cell index number visible on each cell
+Visible difference in cell types (SCARER doors, LAUGHER doors, Monster Cells,
+Card Cells, Conveyor Belts, Contamination Socks, Normal Cells)
+Doors energy value must be visible
+Both monsters initialized at cell 0 with their correct starting energy
+25 shuffled cards for card cells
+Player must be able to perform the following actions
+Choose whether to activate their powerup before rolling
+Roll the dice to move their monster
+Distinguish between monster types
+Player should keep track of the following throughout the game
+Current turn
+Current player and opponent
+Result of each dice roll
+Card drawn whenever a Card Cell is landed on, including its name and effect
+Player skipping their turn (Freeze effect) must be clearly indicated
+Must be displayed for each monster
+Name
+Original Role (SCARER / LAUGHER)
+Current Role to indicate confusion
+Type (Dasher / Dynamo / Multitasker / Schemer)
+Current energy
+Current position on the board
+Active status effects (shield, confusion turns remaining, etc)
+2Must be shown and updated on the board
+Cell effects must be indicated (changed position, energy, etc)
+Activated / exhausted door cells must be distinguishable from non-activated door cells
+Monster Cells must display the stationed monster’s identity
+Any energy change to any monster must be indicated
+Shield blocking an energy loss must be indicated
+Must be shown and updated for each card
+Card name and effect must be displayed when drawn
+Card effect must be indicated (Swap, start over, etc)
+Must be shown and updated whenever a player ends a turn
+Both monsters’ positions updated on the board
+Energy values updated for all affected monsters
+Status effect durations (Confusion, Momentum Rush, Focus Mode, Freeze, etc)
+Role confusion must be visually indicated when a monster’s role is temporarily swapped
+Must be shown for any invalid action
+Indicator to the player and reasons why the action could not be performed
+The game should not be stopped / terminated for any invalid action
+Closing the popup should NOT terminate the game
+Must be shown whenever a player wins
+Game Won / Game Over Screen
+The winning monster’s name and role must be announced
+Final energy of both monsters must be displayed
+Player must be able to return to the start window
+Any specific one of the following can be done additionally
+Fantastic GUI + Animations
+3
