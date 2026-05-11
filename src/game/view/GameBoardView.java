@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -29,6 +30,9 @@ public class GameBoardView {
         this.overlayPane = new Pane();
 
         overlayPane.setMouseTransparent(true);
+        overlayPane.setManaged(false);
+        boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        boardRoot.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         boardRoot.getChildren().addAll(boardGrid, overlayPane);
 
         buildBoard();

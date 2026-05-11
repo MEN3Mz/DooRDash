@@ -1,23 +1,19 @@
 package game.view;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class MainMenuView {
-    private static final double DEFAULT_SCENE_WIDTH = 1280;
-    private static final double DEFAULT_SCENE_HEIGHT = 720;
     private static final double LOGO_WIDTH_RATIO = 0.4;
-    private static final double BUTTON_WIDTH_RATIO = 0.25;
-    private static final double BUTTON_HEIGHT_RATIO = 0.08;
-    private static final double BUTTON_FONT_RATIO = 0.03;
     private static final String SOUND_ON_TEXT = "Sound: ON";
     private static final String SOUND_OFF_TEXT = "Sound: OFF";
     private static final String SOUND_ON_STYLE = "-fx-background-color: darkgray; -fx-text-fill: white; -fx-font-weight: bold;";
@@ -41,50 +37,81 @@ public class MainMenuView {
             + "-fx-translate-y: 2px; "
             + "-fx-effect: null;";
 
-    private double currentFontSize = DEFAULT_SCENE_HEIGHT * BUTTON_FONT_RATIO;
+    private final StackPane root;
+    private final Button startButton;
+    private final Button settingsButton;
+    private final Button howToPlayButton;
+    private final Button soundButton;
 
-    public void start(Stage primaryStage) {
-        Button startButton = createMenuButton("Start Game", primaryStage);
-        Button settingsButton = createMenuButton("Settings", primaryStage);
-        Button howToPlayButton = createMenuButton("How To Play", primaryStage);
-        Button soundButton = createSoundButton();
+    public MainMenuView() {
 
-        ImageView backgroundView = createBackgroundView(primaryStage);
+        root = new StackPane();
+
+        startButton = createMenuButton("Start Game");
+        settingsButton = createMenuButton("Settings");
+        howToPlayButton = createMenuButton("How To Play");
+        soundButton = createSoundButton();
+
+        ImageView backgroundView = createBackgroundView();
+
         BorderPane overlay = createOverlay(
-                primaryStage,
-                createLogoView(primaryStage),
+                createLogoView(),
                 startButton,
                 howToPlayButton,
                 settingsButton,
                 soundButton);
 
-        configureResponsiveStyling(primaryStage, startButton, settingsButton, howToPlayButton);
-
-        StackPane root = new StackPane(backgroundView, overlay);
-        Scene scene = new Scene(root, DEFAULT_SCENE_WIDTH, DEFAULT_SCENE_HEIGHT);
-
-        primaryStage.setTitle("DoorDash Game - Menu");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        root.getChildren().addAll(backgroundView, overlay);
     }
 
-    private ImageView createBackgroundView(Stage primaryStage) {
+    public Parent getRoot() {
+        return root;
+    }
+
+    public Button getStartButton() {
+        return startButton;
+    }
+
+    public Button getSettingsButton() {
+        return settingsButton;
+    }
+
+    public Button getHowToPlayButton() {
+        return howToPlayButton;
+    }
+
+    public void setOnStartGame(EventHandler<ActionEvent> handler) {
+        startButton.setOnAction(handler);
+    }
+
+    public void setOnSettings(EventHandler<ActionEvent> handler) {
+        settingsButton.setOnAction(handler);
+    }
+
+    public void setOnHowToPlay(EventHandler<ActionEvent> handler) {
+        howToPlayButton.setOnAction(handler);
+    }
+
+    private ImageView createBackgroundView() {
         ImageView backgroundView = new ImageView(loadImage("/game/assets/Background.png"));
-        backgroundView.fitWidthProperty().bind(primaryStage.widthProperty());
-        backgroundView.fitHeightProperty().bind(primaryStage.heightProperty());
+
         backgroundView.setPreserveRatio(false);
+
+        // Make it fill the entire window
+        backgroundView.fitWidthProperty().bind(root.widthProperty());
+        backgroundView.fitHeightProperty().bind(root.heightProperty());
+
         return backgroundView;
     }
 
-    private ImageView createLogoView(Stage primaryStage) {
+    private ImageView createLogoView() {
         ImageView logoView = new ImageView(loadImage("/game/assets/LOGO.png"));
         logoView.setPreserveRatio(true);
-        logoView.fitWidthProperty().bind(primaryStage.widthProperty().multiply(LOGO_WIDTH_RATIO));
+        logoView.setFitWidth(420 * LOGO_WIDTH_RATIO / 0.4);
         return logoView;
     }
 
     private BorderPane createOverlay(
-            Stage primaryStage,
             ImageView logoView,
             Button startButton,
             Button howToPlayButton,
@@ -102,9 +129,6 @@ public class MainMenuView {
         BorderPane.setMargin(logoView, new Insets(50, 0, 0, 0));
         BorderPane.setAlignment(soundButton, Pos.BOTTOM_LEFT);
         BorderPane.setMargin(soundButton, new Insets(20));
-
-        primaryStage.heightProperty()
-                .addListener((obs, oldVal, newVal) -> currentFontSize = newVal.doubleValue() * BUTTON_FONT_RATIO);
         return overlay;
     }
 
@@ -116,10 +140,10 @@ public class MainMenuView {
         return menuContainer;
     }
 
-    private Button createMenuButton(String text, Stage primaryStage) {
+    private Button createMenuButton(String text) {
         Button button = new Button(text);
-        button.prefWidthProperty().bind(primaryStage.widthProperty().multiply(BUTTON_WIDTH_RATIO));
-        button.prefHeightProperty().bind(primaryStage.heightProperty().multiply(BUTTON_HEIGHT_RATIO));
+        button.setPrefWidth(320);
+        button.setPrefHeight(58);
         applyButtonStyle(button, false);
         button.setOnMousePressed(event -> applyButtonStyle(button, true));
         button.setOnMouseReleased(event -> applyButtonStyle(button, false));
@@ -133,22 +157,9 @@ public class MainMenuView {
         return soundButton;
     }
 
-    private void configureResponsiveStyling(Stage primaryStage, Button... buttons) {
-        primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> {
-            currentFontSize = newVal.doubleValue() * BUTTON_FONT_RATIO;
-            for (Button button : buttons) {
-                applyButtonStyle(button, false);
-            }
-        });
-
-        for (Button button : buttons) {
-            applyButtonStyle(button, false);
-        }
-    }
-
     private void applyButtonStyle(Button button, boolean pressed) {
         String baseStyle = pressed ? MENU_BUTTON_PRESSED_STYLE : MENU_BUTTON_BASE_STYLE;
-        button.setStyle(baseStyle + "-fx-font-size: " + currentFontSize + "px;");
+        button.setStyle(baseStyle + "-fx-font-size: 22px;");
     }
 
     private void toggleSoundButton(Button soundButton) {

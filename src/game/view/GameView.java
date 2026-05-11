@@ -7,13 +7,17 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class GameView {
     private final Game game;
     private final GameBoardView boardView;
     private final BorderPane root;
+    private final StackPane mainRoot;
 
     private final Label currentPlayerLabel;
     private final Label playerNameLabel;
@@ -25,10 +29,21 @@ public class GameView {
     private final Label cellInfoLabel;
     private final Label diceInfoLabel;
 
+    private final DiceRollView diceRollView;
+
     public GameView(Game game) {
+
         this.game = game;
         this.boardView = new GameBoardView(game);
-        this.root = new BorderPane();
+        diceRollView = new DiceRollView();
+
+        root = new BorderPane();
+        mainRoot = new StackPane();
+
+        ImageView backgroundView = createBackgroundView();
+
+        // Background first, UI second
+        mainRoot.getChildren().addAll(backgroundView, root);
 
         this.currentPlayerLabel = new Label();
         this.playerNameLabel = new Label();
@@ -45,6 +60,7 @@ public class GameView {
     }
 
     private void buildLayout() {
+
         root.setPadding(new Insets(16));
 
         VBox leftPanel = createSidePanel("Player", playerNameLabel, playerRoleLabel, playerEnergyLabel);
@@ -54,6 +70,9 @@ public class GameView {
         StackPane centerPanel = new StackPane(boardView.getBoardRoot());
 
         centerPanel.setPadding(new Insets(10));
+        centerPanel.setAlignment(Pos.CENTER);
+        centerPanel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        boardView.getBoardRoot().setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         StackPane.setAlignment(boardView.getBoardRoot(), Pos.CENTER);
 
         root.setTop(topPanel);
@@ -66,6 +85,7 @@ public class GameView {
         BorderPane.setMargin(bottomPanel, new Insets(16, 0, 0, 0));
         BorderPane.setMargin(leftPanel, new Insets(0, 16, 0, 0));
         BorderPane.setMargin(rightPanel, new Insets(0, 0, 0, 16));
+        BorderPane.setAlignment(centerPanel, Pos.CENTER);
 
         applyPanelStyle(leftPanel);
         applyPanelStyle(rightPanel);
@@ -93,9 +113,15 @@ public class GameView {
     }
 
     private HBox createBottomPanel() {
-        HBox panel = new HBox(30, cellInfoLabel, diceInfoLabel);
-        panel.setAlignment(Pos.CENTER_LEFT);
+
+        HBox panel = new HBox(
+                30,
+                cellInfoLabel,
+                diceRollView.getRoot());
+
+        panel.setAlignment(Pos.CENTER);
         panel.setPadding(new Insets(12));
+
         return panel;
     }
 
@@ -129,7 +155,24 @@ public class GameView {
         diceInfoLabel.setText(text);
     }
 
-    public BorderPane getRoot() {
-        return root;
+    public StackPane getRoot() {
+        return mainRoot;
     }
+
+    private ImageView createBackgroundView() {
+        ImageView backgroundView = new ImageView(loadImage("/game/assets/Background.png"));
+
+        backgroundView.setPreserveRatio(false);
+
+        // Bind to FULL container
+        backgroundView.fitWidthProperty().bind(mainRoot.widthProperty());
+        backgroundView.fitHeightProperty().bind(mainRoot.heightProperty());
+
+        return backgroundView;
+    }
+
+    private Image loadImage(String resourcePath) {
+        return new Image(getClass().getResourceAsStream(resourcePath));
+    }
+
 }
