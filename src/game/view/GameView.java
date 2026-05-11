@@ -4,9 +4,11 @@ import game.engine.Game;
 import game.engine.monsters.Monster;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -29,13 +31,13 @@ public class GameView {
     private final Label cellInfoLabel;
     private final Label diceInfoLabel;
 
-    private final DiceRollView diceRollView;
+    private final BottomView buttomView;
 
     public GameView(Game game) {
 
         this.game = game;
         this.boardView = new GameBoardView(game);
-        diceRollView = new DiceRollView();
+        buttomView = new BottomView();
 
         root = new BorderPane();
         mainRoot = new StackPane();
@@ -65,7 +67,7 @@ public class GameView {
 
         VBox leftPanel = createSidePanel("Player", playerNameLabel, playerRoleLabel, playerEnergyLabel);
         VBox rightPanel = createSidePanel("Opponent", opponentNameLabel, opponentRoleLabel, opponentEnergyLabel);
-        HBox topPanel = createTopPanel();
+        BorderPane topPanel = createTopPanel();
         HBox bottomPanel = createBottomPanel();
         StackPane centerPanel = new StackPane(boardView.getBoardRoot());
 
@@ -87,6 +89,8 @@ public class GameView {
         BorderPane.setMargin(rightPanel, new Insets(0, 0, 0, 16));
         BorderPane.setAlignment(centerPanel, Pos.CENTER);
 
+        BorderPane.setAlignment(bottomPanel, Pos.CENTER);
+
         applyPanelStyle(leftPanel);
         applyPanelStyle(rightPanel);
         applyPanelStyle(topPanel);
@@ -104,23 +108,40 @@ public class GameView {
         return panel;
     }
 
-    private HBox createTopPanel() {
-        HBox panel = new HBox(currentPlayerLabel);
-        panel.setAlignment(Pos.CENTER);
+    private BorderPane createTopPanel() {
+
+        Button menuButton = new Button("Menu");
+
+        HBox left = new HBox(menuButton);
+        left.setAlignment(Pos.CENTER_LEFT);
+
+        HBox center = new HBox(currentPlayerLabel);
+        center.setAlignment(Pos.CENTER);
+
+        BorderPane panel = new BorderPane();
+        panel.setLeft(left);
+        panel.setCenter(center);
+
         panel.setPadding(new Insets(12));
+
         currentPlayerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        panel.getStylesheets().add(
+                getClass().getResource("/game/assets/css/buttons.css").toExternalForm());
+        menuButton.getStyleClass().add("menu-button");
+
         return panel;
     }
 
     private HBox createBottomPanel() {
 
         HBox panel = new HBox(
-                30,
-                cellInfoLabel,
-                diceRollView.getRoot());
+                15,
+                buttomView.getRoot());
 
-        panel.setAlignment(Pos.CENTER);
-        panel.setPadding(new Insets(12));
+        panel.setAlignment(Pos.TOP_CENTER);
+        panel.setPadding(javafx.geometry.Insets.EMPTY);
+        panel.setMinSize(HBox.USE_PREF_SIZE, HBox.USE_PREF_SIZE);
+        panel.setMaxSize(HBox.USE_PREF_SIZE, HBox.USE_PREF_SIZE);
 
         return panel;
     }
@@ -173,6 +194,14 @@ public class GameView {
 
     private Image loadImage(String resourcePath) {
         return new Image(getClass().getResourceAsStream(resourcePath));
+    }
+
+    public BottomView getBottomView() {
+        return buttomView;
+    }
+
+    public GameBoardView getBoardView() {
+        return boardView;
     }
 
 }

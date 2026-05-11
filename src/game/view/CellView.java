@@ -103,7 +103,13 @@ public class CellView extends StackPane {
 
     }
 
-    public void updateCell(Cell cell, int index, Monster player, Monster opponent) {
+    public void updateCell(
+            Cell cell,
+            int index,
+            Monster player,
+            Monster opponent,
+            int playerPosition,
+            int opponentPosition) {
 
         numberLabel.setText("" + index);
         monsterImageView.setImage(null);
@@ -128,11 +134,11 @@ public class CellView extends StackPane {
 
         }
 
-        if (player.getPosition() == index) {
+        if (playerPosition == index) {
             playerLabel.setVisible(true);
         }
 
-        if (opponent.getPosition() == index) {
+        if (opponentPosition == index) {
             opponentLabel.setVisible(true);
         }
 
@@ -186,13 +192,13 @@ public class CellView extends StackPane {
         } else {
             setStyle(
                     "-fx-border-color: #3C4148; -fx-border-width: 2; -fx-background-color: linear-gradient(to bottom, #F4F7FA, #AEB7C1);");
-            if (index == player.getPosition() && index != opponent.getPosition()) {
+            if (index == playerPosition && index != opponentPosition) {
                 monsterImageView.setImage(loadImage(getMonsterImagePath(player)));
 
                 playerLabel.setVisible(true);
 
             }
-            if (index == opponent.getPosition() && index != player.getPosition()) {
+            if (index == opponentPosition && index != playerPosition) {
                 monsterImageView.setImage(loadImage(getMonsterImagePath(opponent)));
 
                 opponentLabel.setVisible(true);
