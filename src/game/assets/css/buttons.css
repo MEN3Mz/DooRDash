@@ -1,0 +1,68 @@
+.roll-button {
+  -fx-background-image: url("/game/assets/dice/rollDice2.png");
+  -fx-background-repeat: no-repeat;
+  -fx-background-position: center;
+  -fx-background-size: contain;
+  -fx-background-color: transparent;
+  -fx-min-width: 140px;
+  -fx-min-height: 50px;
+  -fx-pref-width: 140px;
+  -fx-pref-height: 50px;
+  -fx-padding: 0;
+  -fx-border-color: transparent;
+  -fx-text-fill: transparent;
+}
+
+.roll-button:hover {
+  -fx-background-image: url("/game/assets/dice/rollDice2-Clicked.png");
+}
+
+.roll-button:pressed {
+  -fx-background-image: url("/game/assets/dice/rollDice2-Hover.png");
+}
+
+.power-up-button {
+  -fx-background-image: url("/game/assets/powerup/powerUpButton.png");
+  -fx-background-repeat: no-repeat;
+  -fx-background-position: center;
+  -fx-background-size: contain;
+  -fx-background-color: transparent;
+  -fx-min-width: 140px;
+  -fx-min-height: 50px;
+  -fx-pref-width: 140px;
+  -fx-pref-height: 50px;
+  -fx-padding: 0;
+  -fx-border-color: transparent;
+  -fx-text-fill: transparent;
+}
+
+.power-up-button:hover {
+  -fx-background-image: url("/game/assets/powerup/powerUpButton-Hover.png");
+}
+
+.power-up-button:pressed {
+  -fx-background-image: url("/game/assets/powerup/powerUpButton-Clicked.png");
+}
+
+.menu-button {
+  -fx-background-image: url("/game/assets/menu/menuButton.png");
+  -fx-background-repeat: no-repeat;
+  -fx-background-position: center;
+  -fx-background-size: contain;
+  -fx-background-color: transparent;
+  -fx-min-width: 200px;
+  -fx-min-height: 60px;
+  -fx-pref-width: 200px;
+  -fx-pref-height: 60px;
+  -fx-padding: 0;
+  -fx-border-color: transparent;
+  -fx-text-fill: transparent;
+}
+
+.menu-button:hover {
+  -fx-background-image: url("/game/assets/menu/menuButton-Hover.png");
+}
+
+.menu-button:pressed {
+  -fx-background-image: url("/game/assets/menu/menuButton-pressed.png");
+}

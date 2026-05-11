@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -15,6 +16,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineCap;
 
 public class GameBoardView {
+
     private final GridPane boardGrid;
     private final CellView[][] cellViews;
     private final StackPane boardRoot;
@@ -29,6 +31,11 @@ public class GameBoardView {
         this.overlayPane = new Pane();
 
         overlayPane.setMouseTransparent(true);
+        overlayPane.setManaged(false);
+
+        boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        boardRoot.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
         boardRoot.getChildren().addAll(boardGrid, overlayPane);
 
         buildBoard();
@@ -55,11 +62,21 @@ public class GameBoardView {
     public void refreshBoard() {
         Cell[][] cells = game.getBoard().getBoardCells();
 
+        int playerPosition = game.getPlayer().getPosition();
+        int opponentPosition = game.getOpponent().getPosition();
+
         for (int index = 0; index < 100; index++) {
             int[] pos = game.getBoard().indexToRowCol(index);
             int row = pos[0];
             int col = pos[1];
-            cellViews[row][col].updateCell(cells[row][col], index, game.getPlayer(), game.getOpponent());
+
+            cellViews[row][col].updateCell(
+                    cells[row][col],
+                    index,
+                    game.getPlayer(),
+                    game.getOpponent(),
+                    playerPosition,
+                    opponentPosition);
         }
 
         redrawOverlayLater();
@@ -104,94 +121,36 @@ public class GameBoardView {
         Bounds toScene = toCell.localToScene(toCell.getBoundsInLocal());
         Bounds overlayScene = overlayPane.localToScene(overlayPane.getBoundsInLocal());
 
-        double fromMinX = fromScene.getMinX();
-        double fromMaxX = fromScene.getMaxX();
-        double fromMinY = fromScene.getMinY();
-        double fromMaxY = fromScene.getMaxY();
+        double fromCenterX = (fromScene.getMinX() + fromScene.getMaxX()) / 2;
+        double fromCenterY = (fromScene.getMinY() + fromScene.getMaxY()) / 2;
+        double toCenterX = (toScene.getMinX() + toScene.getMaxX()) / 2;
+        double toCenterY = (toScene.getMinY() + toScene.getMaxY()) / 2;
 
-        double toMinX = toScene.getMinX();
-        double toMaxX = toScene.getMaxX();
-        double toMinY = toScene.getMinY();
-        double toMaxY = toScene.getMaxY();
+        fromCenterX -= overlayScene.getMinX();
+        fromCenterY -= overlayScene.getMinY();
+        toCenterX -= overlayScene.getMinX();
+        toCenterY -= overlayScene.getMinY();
 
-        double fromCenterX = (fromMinX + fromMaxX) / 2;
-        double fromCenterY = (fromMinY + fromMaxY) / 2;
-        double toCenterX = (toMinX + toMaxX) / 2;
-        double toCenterY = (toMinY + toMaxY) / 2;
-
-        double dx = toCenterX - fromCenterX;
-        double dy = toCenterY - fromCenterY;
-
-        double offsetRatio = 0.28;
-
-        double fromOffsetX = (fromMaxX - fromMinX) * offsetRatio;
-        double fromOffsetY = (fromMaxY - fromMinY) * offsetRatio;
-        double toOffsetX = (toMaxX - toMinX) * offsetRatio;
-        double toOffsetY = (toMaxY - toMinY) * offsetRatio;
-
-        double startX = fromCenterX;
-        double startY = fromCenterY;
-        double endX = toCenterX;
-        double endY = toCenterY;
-
-        if (Math.abs(dx) > Math.abs(dy)) {
-            if (dx > 0) {
-                startX = fromCenterX + fromOffsetX;
-                endX = toCenterX - toOffsetX;
-            } else {
-                startX = fromCenterX - fromOffsetX;
-                endX = toCenterX + toOffsetX;
-            }
-        } else if (Math.abs(dy) > Math.abs(dx)) {
-            if (dy > 0) {
-                startY = fromCenterY + fromOffsetY;
-                endY = toCenterY - toOffsetY;
-            } else {
-                startY = fromCenterY - fromOffsetY;
-                endY = toCenterY + toOffsetY;
-            }
-        } else {
-            if (dx > 0) {
-                startX = fromCenterX + fromOffsetX;
-                endX = toCenterX - toOffsetX;
-            } else {
-                startX = fromCenterX - fromOffsetX;
-                endX = toCenterX + toOffsetX;
-            }
-
-            if (dy > 0) {
-                startY = fromCenterY + fromOffsetY;
-                endY = toCenterY - toOffsetY;
-            } else {
-                startY = fromCenterY - fromOffsetY;
-                endY = toCenterY + toOffsetY;
-            }
-        }
-
-        startX -= overlayScene.getMinX();
-        startY -= overlayScene.getMinY();
-        endX -= overlayScene.getMinX();
-        endY -= overlayScene.getMinY();
-
-        Line line = new Line(startX, startY, endX, endY);
+        Line line = new Line(fromCenterX, fromCenterY, toCenterX, toCenterY);
         line.setStroke(color);
         line.setStrokeWidth(8);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
 
-        double angle = Math.atan2(endY - startY, endX - startX);
+        double angle = Math.atan2(toCenterY - fromCenterY, toCenterX - fromCenterX);
         double arrowLength = 18;
         double arrowWidth = 10;
 
-        double x1 = endX - arrowLength * Math.cos(angle) + arrowWidth * Math.sin(angle);
-        double y1 = endY - arrowLength * Math.sin(angle) - arrowWidth * Math.cos(angle);
+        double x1 = toCenterX - arrowLength * Math.cos(angle) + arrowWidth * Math.sin(angle);
+        double y1 = toCenterY - arrowLength * Math.sin(angle) - arrowWidth * Math.cos(angle);
 
-        double x2 = endX - arrowLength * Math.cos(angle) - arrowWidth * Math.sin(angle);
-        double y2 = endY - arrowLength * Math.sin(angle) + arrowWidth * Math.cos(angle);
+        double x2 = toCenterX - arrowLength * Math.cos(angle) - arrowWidth * Math.sin(angle);
+        double y2 = toCenterY - arrowLength * Math.sin(angle) + arrowWidth * Math.cos(angle);
 
         Polygon arrowHead = new Polygon(
-                endX, endY,
+                toCenterX, toCenterY,
                 x1, y1,
                 x2, y2);
+
         arrowHead.setFill(color);
 
         overlayPane.getChildren().addAll(line, arrowHead);
