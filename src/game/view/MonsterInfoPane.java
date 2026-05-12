@@ -1,0 +1,148 @@
+package game.view;
+
+import game.view.StatusEffectPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
+public class MonsterInfoPane extends Pane { 
+    private Label posLabel;
+    private Label energyLabel;
+    private ProgressBar energyBar;
+    private StatusEffectPane effectsPane;
+    private ImageView capsuleFrame; // Renamed to capsuleFrame
+
+    public MonsterInfoPane() {
+        this.setMinWidth(220);
+        this.setMaxWidth(220);
+        this.setPrefWidth(220);
+        this.setMinHeight(350);
+        this.setMaxHeight(350);
+        this.setPrefHeight(350);
+
+        capsuleFrame = new ImageView();
+        capsuleFrame.setFitWidth(300);
+        capsuleFrame.setFitHeight(80);
+        capsuleFrame.setPreserveRatio(false);
+        capsuleFrame.setSmooth(true);
+        capsuleFrame.setLayoutX(-20);
+        capsuleFrame.setLayoutY(340);
+
+        posLabel = new Label("0");
+        posLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+        posLabel.setLayoutX(12); 
+        posLabel.setLayoutY(227);
+        posLabel.setStyle("-fx-text-fill: white;");
+
+        energyBar = new ProgressBar(1.0); 
+        energyBar.setPrefWidth(90);
+        energyBar.setLayoutX(71);
+        energyBar.setLayoutY(360);
+        
+        energyLabel = new Label("0");
+        energyLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+        energyLabel.setLayoutX(79); 
+        energyLabel.setLayoutY(410);
+        energyLabel.setStyle("-fx-text-fill: white;");
+
+        effectsPane = new StatusEffectPane();
+        effectsPane.setLayoutX(18);
+        effectsPane.setLayoutY(273);
+
+        this.getChildren().addAll(capsuleFrame, energyBar, effectsPane, posLabel, energyLabel);
+    }
+
+    public void updateUI(String name, String type, String originalRole, String currentRole, 
+            int energy, int pos, boolean shield, boolean frozen, 
+            boolean momentum, boolean focus) {
+
+        posLabel.setText(String.valueOf(pos));
+        energyLabel.setText(String.valueOf(energy));
+        
+        double progress = energy / 1000.0;
+        energyBar.setProgress(progress);
+        
+        String liquidColor;
+        if (progress <= 0.3) liquidColor = "#ff4d4d";      
+        else if (progress <= 0.5) liquidColor = "#ffcc00"; 
+        else liquidColor = "#2ecc71";      
+
+        energyBar.setStyle(
+            "-fx-background-radius: 10; " +
+            "-fx-border-radius: 10; " +
+            "-fx-padding: 2px; " +
+            "-fx-background-color: linear-gradient(to bottom, #444, #888, #444); " + // Metallic Track
+            "-fx-accent: " + liquidColor + "; " +
+            "-fx-control-inner-background: linear-gradient(to bottom, derive(" + liquidColor + ", 40%) 0%, " + liquidColor + " 50%, derive(" + liquidColor + ", -20%) 100%);"
+        );
+        
+        effectsPane.updateEffects(shield, frozen, momentum, focus);
+        
+        try {
+            String framePath = "/game/assets/MonstersInfo/capsule_frame.png";
+            java.net.URL frameRes = getClass().getResource(framePath);
+            if (frameRes != null) {
+                capsuleFrame.setImage(new Image(frameRes.toExternalForm()));
+            }
+        } catch (Exception e) {
+
+        }
+
+        String bgImg = "";
+        String folderPath = "/game/assets/MonstersInfo/";
+        String lowName = name.toLowerCase();
+
+        boolean isConfused = (originalRole != null && !originalRole.equalsIgnoreCase(currentRole));
+
+        if (isConfused) {
+            switch (lowName) {
+                case "mike":    bgImg = folderPath + "confused_mike.png"; break;
+                case "celia":   bgImg = folderPath + "confused_celia.png"; break;
+                case "george":  bgImg = folderPath + "confused_george.png"; break;
+                case "fungus":  bgImg = folderPath + "confused_fungus.png"; break;
+                case "yeti":    bgImg = folderPath + "confused_yeti.png"; break;
+                case "james":   bgImg = folderPath + "confused_james.png"; break;
+                case "randall": bgImg = folderPath + "confused_randall.png"; break;
+                case "roz":     bgImg = folderPath + "confused_roz.png"; break;
+                case "henry":   bgImg = folderPath + "confused_henry.png"; break;
+                default:        bgImg = folderPath + "confused_default.png";
+            }
+        } 
+        else if (currentRole.equalsIgnoreCase("LAUGHER")) {
+            switch (lowName) {
+                case "mike":    bgImg = folderPath + "laugher_mike.png"; break;
+                case "celia":   bgImg = folderPath + "laugher_celia.png"; break;
+                case "george":  bgImg = folderPath + "laugher_george.png"; break;
+                case "fungus":  bgImg = folderPath + "laugher_fungus.png"; break;
+                case "yeti":    bgImg = folderPath + "laugher_yeti.png"; break;
+                default:        bgImg = folderPath + "laugher_default.png";
+            }
+        } 
+        else if (currentRole.equalsIgnoreCase("SCARER")) {
+            switch (lowName) {
+                case "james":   bgImg = folderPath + "scarer_james.png"; break;
+                case "randall": bgImg = folderPath + "scarer_randall.png"; break;
+                case "roz":     bgImg = folderPath + "scarer_roz.png"; break;
+                case "henry":   bgImg = folderPath + "scarer_henry.png"; break;
+                default:        bgImg = folderPath + "scarer_default.png";
+            }
+        }
+
+        try {
+            java.net.URL res = getClass().getResource(bgImg);
+            if (res != null) {
+                this.setStyle(
+                    "-fx-background-image: url('" + res.toExternalForm() + "');" +
+                    "-fx-background-size: 100% 100%;" +
+                    "-fx-background-repeat: no-repeat;"
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
