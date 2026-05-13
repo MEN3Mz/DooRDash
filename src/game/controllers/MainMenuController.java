@@ -12,8 +12,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
 public class MainMenuController {
@@ -51,9 +49,11 @@ public class MainMenuController {
         });
     }
 
-    private void showHowToPlayOverlay() {
+    public void showHowToPlayOverlay() {
+        showOverlay(createHowToPlayContent());
+    }
 
-        // Background overlay
+    public VBox createHowToPlayContent() {
         Rectangle overlayBackground = new Rectangle();
         overlayBackground.setFill(Color.color(0, 0, 0, 0.82));
         overlayBackground.widthProperty().bind(stage.widthProperty());
@@ -273,10 +273,7 @@ public class MainMenuController {
         overlayPane = new StackPane();
         overlayPane.getChildren().addAll(overlayBackground, content);
 
-        StackPane.setAlignment(content, Pos.CENTER);
-
-        // Add to scene
-        ((StackPane) stage.getScene().getRoot()).getChildren().add(overlayPane);
+        return content;
     }
 
     private VBox createSection(String title, String body) {
@@ -314,7 +311,28 @@ public class MainMenuController {
         return section;
     }
 
+    public void showOverlay(VBox content) {
+        // Create overlay background
+        Rectangle overlayBackground = new Rectangle();
+        overlayBackground.setFill(Color.color(0, 0, 0, 0.82));
+        overlayBackground.widthProperty().bind(stage.widthProperty());
+        overlayBackground.heightProperty().bind(stage.heightProperty());
+
+        // Overlay root
+        overlayPane = new StackPane();
+        overlayPane.getChildren().addAll(overlayBackground, content);
+
+        StackPane.setAlignment(content, Pos.CENTER);
+
+        // Add to scene
+        ((StackPane) stage.getScene().getRoot()).getChildren().add(overlayPane);
+    }
+
     private void hideHowToPlayOverlay() {
+        hideOverlay();
+    }
+
+    public void hideOverlay() {
         if (overlayPane != null) {
             ((StackPane) stage.getScene().getRoot()).getChildren().remove(overlayPane);
             overlayPane = null;
