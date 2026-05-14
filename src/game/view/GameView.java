@@ -24,9 +24,16 @@ public class GameView {
     private final StackPane mainRoot;
 
     private final Label currentPlayerLabel;
+<<<<<<< HEAD
+=======
+
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
     private final Label cellInfoLabel;
     private final Label diceInfoLabel;
+    private final MonsterInfoPane playerInfoPane;
+    private final MonsterInfoPane opponentInfoPane;
 
+<<<<<<< HEAD
     private final MonsterInfoPane playerPane;
     private final MonsterInfoPane opponentPane;
 
@@ -35,13 +42,23 @@ public class GameView {
 
     private final BottomView bottomView;
     private final Button menuButton;
+=======
+    private final ImageView playerDoorView;
+    private final ImageView opponentDoorView;
+
+    private final BottomView buttomView;
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
 
     public GameView(Game game) {
 
         this.game = game;
         this.boardView = new GameBoardView(game);
+<<<<<<< HEAD
 
         this.bottomView = new BottomView();
+=======
+        buttomView = new BottomView();
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
 
         root = new BorderPane();
         mainRoot = new StackPane();
@@ -55,6 +72,7 @@ public class GameView {
 
         this.cellInfoLabel = new Label("Cell: none selected");
         this.diceInfoLabel = new Label("Dice: not rolled");
+<<<<<<< HEAD
 
         this.playerPane = new MonsterInfoPane();
         this.opponentPane = new MonsterInfoPane();
@@ -67,6 +85,15 @@ public class GameView {
 
         this.menuButton = new Button();
         menuButton.getStyleClass().add("menu-button");
+=======
+        playerInfoPane = new MonsterInfoPane();
+        opponentInfoPane = new MonsterInfoPane();
+        playerDoorView = new ImageView();
+        opponentDoorView = new ImageView();
+
+        setupDoor(playerDoorView);
+        setupDoor(opponentDoorView);
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
 
         buildLayout();
 
@@ -79,15 +106,12 @@ public class GameView {
         refresh();
     }
 
-    public void setOnMenu(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
-        menuButton.setOnAction(handler);
-    }
-
     private void buildLayout() {
 
         root.setPadding(new Insets(16));
 
         VBox leftPanel = createSideContainer(
+<<<<<<< HEAD
                 playerPane,
                 playerDoorView);
 
@@ -95,6 +119,14 @@ public class GameView {
                 opponentPane,
                 opponentDoorView);
 
+=======
+                playerInfoPane,
+                playerDoorView);
+
+        VBox rightPanel = createSideContainer(
+                opponentInfoPane,
+                opponentDoorView);
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
         BorderPane topPanel = createTopPanel();
         HBox bottomPanel = createBottomPanel();
 
@@ -120,7 +152,10 @@ public class GameView {
         BorderPane.setMargin(bottomPanel, new Insets(16, 0, 0, 0));
         BorderPane.setMargin(leftPanel, new Insets(0, 16, 0, 0));
         BorderPane.setMargin(rightPanel, new Insets(0, 0, 0, 16));
+<<<<<<< HEAD
 
+=======
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
         BorderPane.setAlignment(centerPanel, Pos.CENTER);
         BorderPane.setAlignment(leftPanel, Pos.CENTER_RIGHT);
         BorderPane.setAlignment(rightPanel, Pos.CENTER_LEFT);
@@ -134,40 +169,33 @@ public class GameView {
 
     private BorderPane createTopPanel() {
 
-        currentPlayerLabel.setStyle("""
-                -fx-font-size: 22px;
-                -fx-font-weight: bold;
-                -fx-text-fill: white;
-                """);
+        Button menuButton = new Button("Menu");
 
+<<<<<<< HEAD
         HBox leftBox = new HBox(menuButton);
         leftBox.setAlignment(Pos.CENTER_LEFT);
         leftBox.setMinWidth(220);
 
         HBox centerBox = new HBox(currentPlayerLabel);
         centerBox.setAlignment(Pos.CENTER);
+=======
+        HBox left = new HBox(menuButton);
+        left.setAlignment(Pos.CENTER_LEFT);
+
+        HBox center = new HBox(currentPlayerLabel);
+        center.setAlignment(Pos.CENTER);
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
 
         BorderPane panel = new BorderPane();
+        panel.setLeft(left);
+        panel.setCenter(center);
 
-        panel.setLeft(leftBox);
-        panel.setCenter(centerBox);
+        panel.setPadding(new Insets(12));
 
-        panel.setPadding(new Insets(14));
-
-        panel.setPrefHeight(80);
-
-        panel.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom,
-                    rgba(31,41,51,0.92),
-                    rgba(62,76,89,0.92));
-
-                -fx-background-radius: 18;
-
-                -fx-border-color: rgba(255,255,255,0.18);
-                -fx-border-width: 2;
-                -fx-border-radius: 18;
-                """);
+        currentPlayerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        panel.getStylesheets().add(
+                getClass().getResource("/game/assets/css/buttons.css").toExternalForm());
+        menuButton.getStyleClass().add("menu-button");
 
         return panel;
     }
@@ -176,7 +204,7 @@ public class GameView {
 
         HBox panel = new HBox(
                 15,
-                bottomView.getRoot());
+                buttomView.getRoot());
 
         panel.setAlignment(Pos.TOP_CENTER);
         panel.setPadding(Insets.EMPTY);
@@ -213,7 +241,11 @@ public class GameView {
         Monster player = game.getPlayer();
         Monster opponent = game.getOpponent();
 
+<<<<<<< HEAD
         playerPane.updateUI(
+=======
+        playerInfoPane.updateUI(
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
                 player.getName(),
                 player.getClass().getSimpleName(),
                 player.getOriginalRole().toString(),
@@ -221,11 +253,17 @@ public class GameView {
                 player.getEnergy(),
                 player.getPosition(),
                 player.isShielded(),
+<<<<<<< HEAD
                 player.isFrozen(),
                 player.isPoweredUpActivated(),
                 player.isConfused());
 
         opponentPane.updateUI(
+=======
+                player.isFrozen(), player.isPoweredUpActivated(), player.isConfused());
+
+        opponentInfoPane.updateUI(
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
                 opponent.getName(),
                 opponent.getClass().getSimpleName(),
                 opponent.getOriginalRole().toString(),
@@ -233,6 +271,7 @@ public class GameView {
                 opponent.getEnergy(),
                 opponent.getPosition(),
                 opponent.isShielded(),
+<<<<<<< HEAD
                 opponent.isFrozen(),
                 opponent.isPoweredUpActivated(),
                 opponent.isConfused());
@@ -240,6 +279,12 @@ public class GameView {
         currentPlayerLabel.setText(
                 "Current Turn: " + game.getCurrent().getName());
 
+=======
+                opponent.isFrozen(), opponent.isPoweredUpActivated(), opponent.isConfused());
+
+        currentPlayerLabel.setText(
+                "Current Turn: " + game.getCurrent().getName());
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
         updateDoorImage(playerDoorView, player);
         updateDoorImage(opponentDoorView, opponent);
     }
@@ -275,16 +320,20 @@ public class GameView {
     }
 
     public BottomView getBottomView() {
-        return bottomView;
+        return buttomView;
     }
 
     public GameBoardView getBoardView() {
         return boardView;
     }
 
+<<<<<<< HEAD
     private VBox createSideContainer(
             MonsterInfoPane infoPane,
             ImageView doorView) {
+=======
+    private VBox createSideContainer(MonsterInfoPane infoPane, ImageView doorView) {
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -305,15 +354,22 @@ public class GameView {
     }
 
     private void setupDoor(ImageView doorView) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
         doorView.setFitWidth(120);
         doorView.setFitHeight(120);
         doorView.setPreserveRatio(true);
     }
 
+<<<<<<< HEAD
     private void updateDoorImage(
             ImageView doorView,
             Monster monster) {
+=======
+    private void updateDoorImage(ImageView doorView, Monster monster) {
+>>>>>>> f4dda8910cb188ca2a3aae6bc267fedefa5bc047
 
         String path;
 
