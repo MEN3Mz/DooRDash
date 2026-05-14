@@ -18,11 +18,11 @@ public class StatusEffectPane extends HBox {
 
     public StatusEffectPane() {
         this.setAlignment(Pos.BOTTOM_CENTER);
-        this.setSpacing(15); 
+        this.setSpacing(15);
         this.setMaxWidth(Double.MAX_VALUE);
         this.setPrefHeight(50);
 
-        desaturated.setSaturation(-4.0); 
+        desaturated.setSaturation(-4.0);
         desaturated.setBrightness(-0.7);
 
         shieldIcon = createIcon("/game/assets/MonstersInfo/shield.png");
@@ -31,7 +31,7 @@ public class StatusEffectPane extends HBox {
         confusionIcon = createIcon("/game/assets/MonstersInfo/confusion.png");
 
         this.getChildren().addAll(shieldIcon, freezeIcon, momentumIcon, confusionIcon);
-        
+
         updateEffects(false, false, false, false);
     }
 
@@ -40,32 +40,32 @@ public class StatusEffectPane extends HBox {
 
         if (resource == null) {
             System.err.println("Error: Could not find image at " + path);
-            return new ImageView(); 
+            return new ImageView();
         }
 
         String urlString = resource.toExternalForm();
         Image img = new Image(urlString);
         ImageView iv = new ImageView(img);
-        
+
         iv.setFitWidth(35);
         iv.setPreserveRatio(true);
-        
+
         return iv;
     }
 
-    public void updateEffects(boolean hasShield, boolean isFrozen, boolean hasMomentum, boolean hasFocus) {
+    public void updateEffects(boolean hasShield, boolean isFrozen, boolean hasMomentum, boolean isConfused) {
         applyStyle(shieldIcon, hasShield);
         applyStyle(freezeIcon, isFrozen);
         applyStyle(momentumIcon, hasMomentum);
-        applyStyle(confusionIcon, hasFocus);
+        applyStyle(confusionIcon, isConfused);
     }
 
     private void applyStyle(ImageView iv, boolean isActive) {
         if (isActive) {
-            iv.setEffect(null); 
+            iv.setEffect(null);
             iv.setOpacity(ACTIVE_OPACITY);
         } else {
-            iv.setEffect(desaturated); 
+            iv.setEffect(desaturated);
             iv.setOpacity(INACTIVE_OPACITY);
         }
     }

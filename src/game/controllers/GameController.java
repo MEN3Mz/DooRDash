@@ -41,6 +41,7 @@ public class GameController {
 
             try {
                 game.usePowerup();
+
                 view.refresh();
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -49,7 +50,11 @@ public class GameController {
     }
 
     private void show() {
-        stage.setScene(new Scene(view.getRoot()));
-        stage.show();
+
+        if (stage.getScene() == null) {
+            stage.setScene(new Scene(view.getRoot()));
+        } else {
+            stage.getScene().setRoot(view.getRoot());
+        }
     }
 }
