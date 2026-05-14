@@ -14,9 +14,17 @@ public class ChooseSideController {
 
     private final Stage stage;
     private final ChooseSideView view;
+    private final String playerOneName;
+    private final String playerTwoName;
 
     public ChooseSideController(Stage stage) {
+        this(stage, "You", "Opponent");
+    }
+
+    public ChooseSideController(Stage stage, String playerOneName, String playerTwoName) {
         this.stage = stage;
+        this.playerOneName = playerOneName;
+        this.playerTwoName = playerTwoName;
         this.view = new ChooseSideView();
 
         bindEvents();
@@ -48,7 +56,7 @@ public class ChooseSideController {
 
             // 3. Move to GameController
             try {
-                new GameController(stage, selectedRole);
+                new GameController(stage, selectedRole, playerOneName, playerTwoName);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }

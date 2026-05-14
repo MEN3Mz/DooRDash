@@ -6,6 +6,13 @@ import java.util.Collections;
 import java.util.Random;
 
 import game.engine.dataloader.DataLoader;
+import game.engine.cards.Card;
+import game.engine.cells.CardCell;
+import game.engine.cells.Cell;
+import game.engine.cells.ContaminationSock;
+import game.engine.cells.ConveyorBelt;
+import game.engine.cells.DoorCell;
+import game.engine.cells.MonsterCell;
 import game.engine.exceptions.InvalidMoveException;
 import game.engine.exceptions.OutOfEnergyException;
 import game.engine.monsters.*;
@@ -16,6 +23,15 @@ public class Game {
 	private Monster player;
 	private Monster opponent;
 	private Monster current;
+	private boolean gameOver;
+	private Monster winner;
+	private Card lastDrawnCard;
+	private String lastCardDrawer;
+	private ArrayList<String> eventLog;
+	private ArrayList<String> playerEventLog;
+	private ArrayList<String> opponentEventLog;
+	private int playerPreviousPosition;
+	private int opponentPreviousPosition;
 
 	public Game(Role playerRole) throws IOException {
 		this.board = new Board(DataLoader.readCards());
@@ -25,6 +41,15 @@ public class Game {
 		this.player = selectRandomMonsterByRole(playerRole);
 		this.opponent = selectRandomMonsterByRole(playerRole == Role.SCARER ? Role.LAUGHER : Role.SCARER);
 		this.current = player;
+		this.gameOver = false;
+		this.winner = null;
+		this.lastDrawnCard = null;
+		this.lastCardDrawer = null;
+		this.eventLog = new ArrayList<>();
+		this.playerEventLog = new ArrayList<>();
+		this.opponentEventLog = new ArrayList<>();
+		this.playerPreviousPosition = player.getPosition();
+		this.opponentPreviousPosition = opponent.getPosition();
 
 		allMonsters.remove(player);
 		allMonsters.remove(opponent);
@@ -75,6 +100,9 @@ public class Game {
 	}
 
 	public void usePowerup() throws OutOfEnergyException {
+		if (gameOver)
+			return;
+
 		if (current.getEnergy() < Constants.POWERUP_COST)
 			throw new OutOfEnergyException("Not enough energy to use powerup");
 
@@ -83,19 +111,58 @@ public class Game {
 	}
 
 	public int playTurn() throws InvalidMoveException {
+		if (gameOver)
+			return 0;
+
+		lastDrawnCard = null;
+		lastCardDrawer = null;
+		Board.clearLastDrawnCard();
+
 		if (current.isFrozen()) {
 			System.out.println(current.getName() + " is frozen! Turn skipped.");
+			addEvent(current, current.getName() + " was frozen and skipped the turn.");
 			current.setFrozen(false);
 			switchTurn();
 			return 1;
 		}
 
 		int roll = rollDice();
+		int startPosition = current.getPosition();
+		int startEnergy = current.getEnergy();
+		Monster actingMonster = current;
+		Monster actingOpponent = getCurrentOpponent();
+		boolean actingWasShielded = actingMonster.isShielded();
+		boolean opponentWasShielded = actingOpponent.isShielded();
+		int opponentStartEnergy = actingOpponent.getEnergy();
+		setPreviousPosition(actingMonster, startPosition);
 
-		board.moveMonster(current, roll, getCurrentOpponent());
+		board.moveMonster(actingMonster, roll, actingOpponent);
+		lastDrawnCard = Board.getLastDrawnCard();
+		if (lastDrawnCard != null) {
+			lastCardDrawer = describePlayer(actingMonster);
+		}
+		addTurnEvents(actingMonster, roll, startPosition, startEnergy);
+		addShieldBlockEventIfNeeded(actingMonster, actingWasShielded, startEnergy);
+		addShieldBlockEventIfNeeded(actingOpponent, opponentWasShielded, opponentStartEnergy);
+
+		if (updateWinState()) {
+			addEvent(actingMonster, actingMonster.getName() + " reached Boo's Door and won!");
+			return roll;
+		}
 
 		switchTurn();
 		return roll;
+	}
+
+	public void forceCurrentWinForTesting() {
+		if (gameOver)
+			return;
+
+		current.setEnergy(Constants.WINNING_ENERGY + 1);
+		current.setPosition(Constants.WINNING_POSITION);
+		board.syncMonsterPositions(player, opponent);
+		updateWinState();
+		addEvent(current, current.getName() + " was moved to Cell 99 with 1001 energy for testing.");
 	}
 
 	public void switchTurn() {
@@ -107,7 +174,14 @@ public class Game {
 				monster.getEnergy() >= Constants.WINNING_ENERGY;
 	}
 
-	public Monster getWinner() {
+	private boolean updateWinState() {
+		winner = findWinner();
+		gameOver = winner != null;
+
+		return gameOver;
+	}
+
+	private Monster findWinner() {
 		if (checkWinCondition(player))
 			return player;
 
@@ -115,6 +189,108 @@ public class Game {
 			return opponent;
 
 		return null;
+	}
+
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	public Monster getWinner() {
+		return winner;
+	}
+
+	public int getPlayerPreviousPosition() {
+		return playerPreviousPosition;
+	}
+
+	public int getOpponentPreviousPosition() {
+		return opponentPreviousPosition;
+	}
+
+	public Card getLastDrawnCard() {
+		return lastDrawnCard;
+	}
+
+	public String getLastCardDrawer() {
+		return lastCardDrawer;
+	}
+
+	private String describePlayer(Monster monster) {
+		return (monster == player ? "You" : "Opponent") + " - " + monster.getName();
+	}
+
+	public ArrayList<String> getEventLog() {
+		return new ArrayList<>(eventLog);
+	}
+
+	public ArrayList<String> getPlayerEventLog() {
+		return new ArrayList<>(playerEventLog);
+	}
+
+	public ArrayList<String> getOpponentEventLog() {
+		return new ArrayList<>(opponentEventLog);
+	}
+
+	private void addTurnEvents(Monster monster, int roll, int startPosition, int startEnergy) {
+		int landedPosition = board.getLastLandedPosition();
+		int finalPosition = monster.getPosition();
+		int finalEnergy = monster.getEnergy();
+		Cell landedCell = board.getLastLandedCell();
+
+		addEvent(monster, monster.getName() + " rolled " + roll + ".");
+		addEvent(monster, monster.getName() + " moved from Cell " + startPosition + " to Cell " + landedPosition + ".");
+
+		if (landedCell instanceof ConveyorBelt) {
+			addEvent(monster,
+					monster.getName() + " used a conveyor belt: Cell " + landedPosition + " -> Cell " + finalPosition + ".");
+		} else if (landedCell instanceof ContaminationSock) {
+			addEvent(monster, monster.getName() + " slipped on a contamination sock: Cell " + landedPosition + " -> Cell "
+					+ finalPosition + ".");
+		} else if (landedCell instanceof CardCell && lastDrawnCard != null) {
+			addEvent(monster, monster.getName() + " drew " + lastDrawnCard.getName() + ".");
+		} else if (landedCell instanceof DoorCell) {
+			DoorCell doorCell = (DoorCell) landedCell;
+			addEvent(monster, monster.getName() + " landed on a " + doorCell.getRole() + " door.");
+		} else if (landedCell instanceof MonsterCell) {
+			addEvent(monster, monster.getName() + " encountered a monster cell.");
+		}
+
+		if (finalEnergy != startEnergy) {
+			String change = finalEnergy > startEnergy ? "+" + (finalEnergy - startEnergy)
+					: String.valueOf(finalEnergy - startEnergy);
+			addEvent(monster, monster.getName() + " energy: " + startEnergy + " -> " + finalEnergy + " (" + change + ").");
+		}
+	}
+
+	private void addEvent(Monster monster, String message) {
+		eventLog.add(message);
+		getMonsterLog(monster).add(message);
+
+		while (eventLog.size() > 12) {
+			eventLog.remove(0);
+		}
+
+		while (getMonsterLog(monster).size() > 8) {
+			getMonsterLog(monster).remove(0);
+		}
+	}
+
+	private ArrayList<String> getMonsterLog(Monster monster) {
+		return monster == player ? playerEventLog : opponentEventLog;
+	}
+
+	private void addShieldBlockEventIfNeeded(Monster monster, boolean wasShielded, int energyBefore) {
+		if (wasShielded && !monster.isShielded() && monster.getEnergy() == energyBefore) {
+			addEvent(monster, monster.getName() + " did not take damage because the shield blocked it.");
+		}
+	}
+
+	private void setPreviousPosition(Monster monster, int position) {
+		if (monster == player) {
+			playerPreviousPosition = position;
+		} else {
+			opponentPreviousPosition = position;
+		}
 	}
 
 }

@@ -6,6 +6,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -33,10 +35,11 @@ public class MonsterInfoPane extends Pane {
         capsuleFrame.setLayoutY(340);
 
         posLabel = new Label("0");
-        posLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+        posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 32));
         posLabel.setLayoutX(12);
         posLabel.setLayoutY(227);
-        posLabel.setStyle("-fx-text-fill: white;");
+        posLabel.setStyle("-fx-text-fill: #102033;");
+        posLabel.setEffect(new DropShadow(3, Color.WHITE));
 
         energyBar = new ProgressBar(1.0);
         energyBar.setPrefWidth(90);
@@ -44,10 +47,11 @@ public class MonsterInfoPane extends Pane {
         energyBar.setLayoutY(360);
 
         energyLabel = new Label("0");
-        energyLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+        energyLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 32));
         energyLabel.setLayoutX(79);
         energyLabel.setLayoutY(410);
-        energyLabel.setStyle("-fx-text-fill: white;");
+        energyLabel.setStyle("-fx-text-fill: #102033;");
+        energyLabel.setEffect(new DropShadow(3, Color.WHITE));
 
         effectsPane = new StatusEffectPane();
         effectsPane.setLayoutX(18);
@@ -59,6 +63,17 @@ public class MonsterInfoPane extends Pane {
     public void updateUI(String name, String type, String originalRole, String currentRole,
             int energy, int pos, boolean shield, boolean frozen,
             boolean powerUp, boolean confused) {
+        updateUI(name, type, originalRole, currentRole, energy, pos, shield, frozen, powerUp, confused,
+                shield ? 1 : 0,
+                frozen ? 1 : 0,
+                powerUp ? 1 : 0,
+                confused ? 1 : 0);
+    }
+
+    public void updateUI(String name, String type, String originalRole, String currentRole,
+            int energy, int pos, boolean shield, boolean frozen,
+            boolean powerUp, boolean confused,
+            int shieldTurns, int frozenTurns, int powerUpTurns, int confusionTurns) {
 
         posLabel.setText(String.valueOf(pos));
         energyLabel.setText(String.valueOf(energy));
@@ -83,7 +98,15 @@ public class MonsterInfoPane extends Pane {
                         "-fx-control-inner-background: linear-gradient(to bottom, derive(" + liquidColor + ", 40%) 0%, "
                         + liquidColor + " 50%, derive(" + liquidColor + ", -20%) 100%);");
 
-        effectsPane.updateEffects(shield, frozen, powerUp, confused);
+        effectsPane.updateEffects(
+                shield,
+                frozen,
+                powerUp,
+                confused,
+                shieldTurns,
+                frozenTurns,
+                powerUpTurns,
+                confusionTurns);
 
         try {
             String framePath = "/game/assets/MonstersInfo/capsule_frame.png";

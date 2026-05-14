@@ -18,6 +18,8 @@ public class BottomView {
     private final ImageView diceView;
     private final Button rollButton;
     private final Button powerUpButton;
+    private final Timeline powerUpGlimpse;
+    private boolean powerUpAvailable;
 
     public BottomView() {
 
@@ -33,6 +35,7 @@ public class BottomView {
 
         rollButton.getStyleClass().add("roll-button");
         powerUpButton.getStyleClass().add("power-up-button");
+        powerUpGlimpse = createPowerUpGlimpse();
 
         root = new HBox(15, powerUpButton, diceView, rollButton);
         root.setAlignment(Pos.CENTER_LEFT);
@@ -53,6 +56,22 @@ public class BottomView {
         diceView.setImage(image);
     }
 
+    public void setPowerUpAvailable(boolean available) {
+        if (powerUpAvailable == available) {
+            return;
+        }
+
+        powerUpAvailable = available;
+        powerUpButton.getStyleClass().remove("power-up-button-ready");
+
+        if (available) {
+            powerUpGlimpse.playFromStart();
+        } else {
+            powerUpGlimpse.stop();
+            powerUpButton.getStyleClass().remove("power-up-button-ready");
+        }
+    }
+
     // ------------------------
     // CONTROLLER HOOKS
     // ------------------------
@@ -63,6 +82,15 @@ public class BottomView {
 
     public void setOnPowerUp(EventHandler<ActionEvent> handler) {
         powerUpButton.setOnAction(handler);
+    }
+
+    public void setControlsDisabled(boolean disabled) {
+        rollButton.setDisable(disabled);
+        powerUpButton.setDisable(disabled);
+
+        if (disabled) {
+            setPowerUpAvailable(false);
+        }
     }
 
     // ------------------------
@@ -93,6 +121,16 @@ public class BottomView {
                 }));
 
         timeline.play();
+    }
+
+    private Timeline createPowerUpGlimpse() {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, e -> powerUpButton.getStyleClass().add("power-up-button-ready")),
+                new KeyFrame(Duration.millis(450), e -> powerUpButton.getStyleClass().remove("power-up-button-ready")),
+                new KeyFrame(Duration.millis(900)));
+
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        return timeline;
     }
 
 }

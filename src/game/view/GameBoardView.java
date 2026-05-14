@@ -22,9 +22,17 @@ public class GameBoardView {
     private final StackPane boardRoot;
     private final Pane overlayPane;
     private final Game game;
+    private final String playerOneName;
+    private final String playerTwoName;
 
     public GameBoardView(Game game) {
+        this(game, "You", "Opponent");
+    }
+
+    public GameBoardView(Game game, String playerOneName, String playerTwoName) {
         this.game = game;
+        this.playerOneName = playerOneName;
+        this.playerTwoName = playerTwoName;
         this.cellViews = new CellView[10][10];
         this.boardGrid = new GridPane();
         this.boardRoot = new StackPane();
@@ -64,6 +72,8 @@ public class GameBoardView {
 
         int playerPosition = game.getPlayer().getPosition();
         int opponentPosition = game.getOpponent().getPosition();
+        int playerPreviousPosition = game.getPlayerPreviousPosition();
+        int opponentPreviousPosition = game.getOpponentPreviousPosition();
 
         for (int index = 0; index < 100; index++) {
             int[] pos = game.getBoard().indexToRowCol(index);
@@ -76,7 +86,11 @@ public class GameBoardView {
                     game.getPlayer(),
                     game.getOpponent(),
                     playerPosition,
-                    opponentPosition);
+                    opponentPosition,
+                    playerPreviousPosition,
+                    opponentPreviousPosition,
+                    playerOneName,
+                    playerTwoName);
         }
 
         redrawOverlayLater();

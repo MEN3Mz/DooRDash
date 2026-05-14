@@ -1,5 +1,6 @@
 package game.view;
 
+import game.audio.SoundManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -21,6 +22,7 @@ public class MainMenuView {
     private final Button startButton;
     private final Button settingsButton;
     private final Button howToPlayButton;
+    private final Button exitButton;
     private final Button soundButton;
 
     public MainMenuView() {
@@ -32,6 +34,7 @@ public class MainMenuView {
         startButton = createMenuButton("Start Game");
         settingsButton = createMenuButton("Settings");
         howToPlayButton = createMenuButton("How To Play");
+        exitButton = createMenuButton("Exit Game");
         soundButton = createSoundButton();
 
         ImageView backgroundView = createBackgroundView();
@@ -41,6 +44,7 @@ public class MainMenuView {
                 startButton,
                 howToPlayButton,
                 settingsButton,
+                exitButton,
                 soundButton);
 
         root.getChildren().addAll(backgroundView, overlay);
@@ -60,6 +64,10 @@ public class MainMenuView {
 
     public void setOnHowToPlay(EventHandler<ActionEvent> handler) {
         howToPlayButton.setOnAction(handler);
+    }
+
+    public void setOnExitGame(EventHandler<ActionEvent> handler) {
+        exitButton.setOnAction(handler);
     }
 
     private ImageView createBackgroundView() {
@@ -86,9 +94,10 @@ public class MainMenuView {
             Button startButton,
             Button howToPlayButton,
             Button settingsButton,
+            Button exitButton,
             Button soundButton) {
 
-        VBox menuContainer = new VBox(20, startButton, howToPlayButton, settingsButton);
+        VBox menuContainer = new VBox(20, startButton, howToPlayButton, settingsButton, exitButton);
         menuContainer.setAlignment(Pos.CENTER);
 
         BorderPane overlay = new BorderPane();
@@ -114,6 +123,7 @@ public class MainMenuView {
 
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
+        button.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         return button;
     }
@@ -122,11 +132,13 @@ public class MainMenuView {
         Button soundButton = new Button(SOUND_ON_TEXT);
 
         soundButton.getStyleClass().add("sound-on");
+        soundButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         soundButton.setOnAction(e -> {
             boolean isOn = SOUND_ON_TEXT.equals(soundButton.getText());
 
             soundButton.setText(isOn ? SOUND_OFF_TEXT : SOUND_ON_TEXT);
+            SoundManager.setSoundOn(!isOn);
 
             soundButton.getStyleClass().removeAll("sound-on", "sound-off");
             soundButton.getStyleClass().add(isOn ? "sound-off" : "sound-on");

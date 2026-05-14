@@ -1,6 +1,10 @@
 package game.view;
 
 import game.engine.Game;
+import game.engine.Constants;
+import game.audio.SoundManager;
+import game.engine.monsters.Dasher;
+import game.engine.monsters.MultiTasker;
 import game.engine.monsters.Monster;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,6 +23,8 @@ public class GameView {
 
     private final Game game;
     private final GameBoardView boardView;
+    private final String playerOneName;
+    private final String playerTwoName;
 
     private final BorderPane root;
     private final StackPane mainRoot;
@@ -29,17 +35,26 @@ public class GameView {
 
     private final MonsterInfoPane playerPane;
     private final MonsterInfoPane opponentPane;
+    private final TurnLogView playerTurnLogView;
+    private final TurnLogView opponentTurnLogView;
 
     private final ImageView playerDoorView;
     private final ImageView opponentDoorView;
 
     private final BottomView bottomView;
     private final Button menuButton;
+    private final Button testWinButton;
 
     public GameView(Game game) {
+        this(game, "You", "Opponent");
+    }
+
+    public GameView(Game game, String playerOneName, String playerTwoName) {
 
         this.game = game;
-        this.boardView = new GameBoardView(game);
+        this.playerOneName = playerOneName;
+        this.playerTwoName = playerTwoName;
+        this.boardView = new GameBoardView(game, playerOneName, playerTwoName);
 
         this.bottomView = new BottomView();
 
@@ -58,6 +73,8 @@ public class GameView {
 
         this.playerPane = new MonsterInfoPane();
         this.opponentPane = new MonsterInfoPane();
+        this.playerTurnLogView = new TurnLogView(playerOneName + " Latest Moves");
+        this.opponentTurnLogView = new TurnLogView(playerTwoName + " Latest Moves");
 
         this.playerDoorView = new ImageView();
         this.opponentDoorView = new ImageView();
@@ -66,7 +83,21 @@ public class GameView {
         setupDoor(opponentDoorView);
 
         this.menuButton = new Button();
-        menuButton.getStyleClass().add("menu-button");
+        menuButton.getStyleClass().add("game-menu-button");
+        menuButton.setOnMousePressed(e -> SoundManager.playButtonSound());
+
+        this.testWinButton = new Button("Win Test");
+        testWinButton.setStyle("""
+                -fx-background-color: #b91c1c;
+                -fx-background-radius: 10;
+                -fx-text-fill: white;
+                -fx-font-size: 14px;
+                -fx-font-weight: bold;
+                -fx-padding: 10 18;
+                -fx-border-color: rgba(255,255,255,0.28);
+                -fx-border-radius: 10;
+                """);
+        testWinButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         buildLayout();
 
@@ -83,17 +114,22 @@ public class GameView {
         menuButton.setOnAction(handler);
     }
 
+    public void setOnWinTest(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
+        testWinButton.setOnAction(handler);
+    }
+
+    public void setGameControlsDisabled(boolean disabled) {
+        bottomView.setControlsDisabled(disabled);
+        testWinButton.setDisable(disabled);
+    }
+
     private void buildLayout() {
 
         root.setPadding(new Insets(16));
 
-        VBox leftPanel = createSideContainer(
-                playerPane,
-                playerDoorView);
+        HBox leftPanel = createLeftSideContainer();
 
-        VBox rightPanel = createSideContainer(
-                opponentPane,
-                opponentDoorView);
+        HBox rightPanel = createRightSideContainer();
 
         BorderPane topPanel = createTopPanel();
         HBox bottomPanel = createBottomPanel();
@@ -126,8 +162,6 @@ public class GameView {
         BorderPane.setAlignment(rightPanel, Pos.CENTER_LEFT);
         BorderPane.setAlignment(bottomPanel, Pos.CENTER);
 
-        applyPanelStyle(leftPanel);
-        applyPanelStyle(rightPanel);
         applyPanelStyle(topPanel);
         applyPanelStyle(bottomPanel);
     }
@@ -147,10 +181,15 @@ public class GameView {
         HBox centerBox = new HBox(currentPlayerLabel);
         centerBox.setAlignment(Pos.CENTER);
 
+        HBox rightBox = new HBox(testWinButton);
+        rightBox.setAlignment(Pos.CENTER_RIGHT);
+        rightBox.setMinWidth(220);
+
         BorderPane panel = new BorderPane();
 
         panel.setLeft(leftBox);
         panel.setCenter(centerBox);
+        panel.setRight(rightBox);
 
         panel.setPadding(new Insets(14));
 
@@ -223,7 +262,11 @@ public class GameView {
                 player.isShielded(),
                 player.isFrozen(),
                 player.isPoweredUpActivated(),
-                player.isConfused());
+                player.isConfused(),
+                player.isShielded() ? 1 : 0,
+                player.isFrozen() ? 1 : 0,
+                getPowerUpTurns(player),
+                player.getConfusionTurns());
 
         opponentPane.updateUI(
                 opponent.getName(),
@@ -235,10 +278,20 @@ public class GameView {
                 opponent.isShielded(),
                 opponent.isFrozen(),
                 opponent.isPoweredUpActivated(),
-                opponent.isConfused());
+                opponent.isConfused(),
+                opponent.isShielded() ? 1 : 0,
+                opponent.isFrozen() ? 1 : 0,
+                getPowerUpTurns(opponent),
+                opponent.getConfusionTurns());
+
+        playerTurnLogView.updateEvents(game.getPlayerEventLog());
+        opponentTurnLogView.updateEvents(game.getOpponentEventLog());
 
         currentPlayerLabel.setText(
-                "Current Turn: " + game.getCurrent().getName());
+                "Current Turn: " + getCurrentPlayerName() + " - " + game.getCurrent().getName());
+
+        bottomView.setPowerUpAvailable(
+                game.getCurrent().getEnergy() >= Constants.POWERUP_COST);
 
         updateDoorImage(playerDoorView, player);
         updateDoorImage(opponentDoorView, opponent);
@@ -282,24 +335,46 @@ public class GameView {
         return boardView;
     }
 
-    private VBox createSideContainer(
+    private VBox createPlayerInfoColumn(
             MonsterInfoPane infoPane,
             ImageView doorView) {
 
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-
-        VBox container = new VBox(20);
+        VBox container = new VBox(54);
 
         container.getChildren().addAll(
                 infoPane,
-                spacer,
                 doorView);
 
         container.setAlignment(Pos.TOP_CENTER);
 
         container.setPrefWidth(240);
         container.setFillWidth(false);
+        applyPanelStyle(container);
+        VBox.setMargin(doorView, new Insets(18, 0, 0, 0));
+
+        return container;
+    }
+
+    private HBox createLeftSideContainer() {
+        VBox playerInfoColumn = createPlayerInfoColumn(playerPane, playerDoorView);
+
+        HBox container = new HBox(12, playerInfoColumn, playerTurnLogView);
+        container.setAlignment(Pos.TOP_CENTER);
+        container.setPrefWidth(442);
+        container.setFillHeight(false);
+        container.setStyle("-fx-background-color: transparent;");
+
+        return container;
+    }
+
+    private HBox createRightSideContainer() {
+        VBox opponentInfoColumn = createPlayerInfoColumn(opponentPane, opponentDoorView);
+
+        HBox container = new HBox(12, opponentTurnLogView, opponentInfoColumn);
+        container.setAlignment(Pos.TOP_CENTER);
+        container.setPrefWidth(442);
+        container.setFillHeight(false);
+        container.setStyle("-fx-background-color: transparent;");
 
         return container;
     }
@@ -324,5 +399,21 @@ public class GameView {
         }
 
         doorView.setImage(loadImage(path));
+    }
+
+    private String getCurrentPlayerName() {
+        return game.getCurrent() == game.getPlayer() ? playerOneName : playerTwoName;
+    }
+
+    private int getPowerUpTurns(Monster monster) {
+        if (monster instanceof Dasher) {
+            return ((Dasher) monster).getMomentumTurns();
+        }
+
+        if (monster instanceof MultiTasker) {
+            return ((MultiTasker) monster).getNormalSpeedTurns();
+        }
+
+        return monster.isPoweredUpActivated() ? 1 : 0;
     }
 }
