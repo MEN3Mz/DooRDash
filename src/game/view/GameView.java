@@ -21,14 +21,14 @@ public class GameView {
     private final StackPane mainRoot;
 
     private final Label currentPlayerLabel;
-    private final Label playerNameLabel;
-    private final Label playerRoleLabel;
-    private final Label playerEnergyLabel;
-    private final Label opponentNameLabel;
-    private final Label opponentRoleLabel;
-    private final Label opponentEnergyLabel;
+
     private final Label cellInfoLabel;
     private final Label diceInfoLabel;
+    private final MonsterInfoPane playerInfoPane;
+    private final MonsterInfoPane opponentInfoPane;
+
+    private final ImageView playerDoorView;
+    private final ImageView opponentDoorView;
 
     private final BottomView bottomView;
     private final Button menuButton;
@@ -48,15 +48,17 @@ public class GameView {
         mainRoot.getChildren().addAll(backgroundView, root);
 
         this.currentPlayerLabel = new Label();
-        this.playerNameLabel = new Label();
-        this.playerRoleLabel = new Label();
-        this.playerEnergyLabel = new Label();
-        this.opponentNameLabel = new Label();
-        this.opponentRoleLabel = new Label();
-        this.opponentEnergyLabel = new Label();
+
         this.cellInfoLabel = new Label("Cell: none selected");
         this.diceInfoLabel = new Label("Dice: not rolled");
         this.menuButton = new Button("Menu");
+        playerInfoPane = new MonsterInfoPane();
+        opponentInfoPane = new MonsterInfoPane();
+        playerDoorView = new ImageView();
+        opponentDoorView = new ImageView();
+
+        setupDoor(playerDoorView);
+        setupDoor(opponentDoorView);
 
         buildLayout();
         refresh();
@@ -70,8 +72,13 @@ public class GameView {
 
         root.setPadding(new Insets(16));
 
-        VBox leftPanel = createSidePanel("Player", playerNameLabel, playerRoleLabel, playerEnergyLabel);
-        VBox rightPanel = createSidePanel("Opponent", opponentNameLabel, opponentRoleLabel, opponentEnergyLabel);
+        VBox leftPanel = createSideContainer(
+                playerInfoPane,
+                playerDoorView);
+
+        VBox rightPanel = createSideContainer(
+                opponentInfoPane,
+                opponentDoorView);
         BorderPane topPanel = createTopPanel();
         HBox bottomPanel = createBottomPanel();
         StackPane centerPanel = new StackPane(boardView.getBoardRoot());
@@ -93,24 +100,14 @@ public class GameView {
         BorderPane.setMargin(leftPanel, new Insets(0, 16, 0, 0));
         BorderPane.setMargin(rightPanel, new Insets(0, 0, 0, 16));
         BorderPane.setAlignment(centerPanel, Pos.CENTER);
-
+        BorderPane.setAlignment(leftPanel, Pos.CENTER_RIGHT);
+        BorderPane.setAlignment(rightPanel, Pos.CENTER_LEFT);
         BorderPane.setAlignment(bottomPanel, Pos.CENTER);
 
         applyPanelStyle(leftPanel);
         applyPanelStyle(rightPanel);
         applyPanelStyle(topPanel);
         applyPanelStyle(bottomPanel);
-    }
-
-    private VBox createSidePanel(String title, Label nameLabel, Label roleLabel, Label energyLabel) {
-        Label titleLabel = new Label(title);
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-
-        VBox panel = new VBox(12, titleLabel, nameLabel, roleLabel, energyLabel);
-        panel.setPrefWidth(220);
-        panel.setAlignment(Pos.TOP_LEFT);
-        panel.setPadding(new Insets(16));
-        return panel;
     }
 
     private BorderPane createTopPanel() {
@@ -198,16 +195,36 @@ public class GameView {
     }
 
     public void refresh() {
-        boardView.refreshBoard();
-        updateMonsterInfo(game.getPlayer(), playerNameLabel, playerRoleLabel, playerEnergyLabel);
-        updateMonsterInfo(game.getOpponent(), opponentNameLabel, opponentRoleLabel, opponentEnergyLabel);
-        currentPlayerLabel.setText("Current Turn: " + game.getCurrent().getName());
-    }
 
-    private void updateMonsterInfo(Monster monster, Label nameLabel, Label roleLabel, Label energyLabel) {
-        nameLabel.setText("Name: " + monster.getName());
-        roleLabel.setText("Role: " + monster.getRole());
-        energyLabel.setText("Energy: " + monster.getEnergy());
+        boardView.refreshBoard();
+
+        Monster player = game.getPlayer();
+        Monster opponent = game.getOpponent();
+
+        playerInfoPane.updateUI(
+                player.getName(),
+                player.getClass().getSimpleName(),
+                player.getOriginalRole().toString(),
+                player.getRole().toString(),
+                player.getEnergy(),
+                player.getPosition(),
+                player.isShielded(),
+                player.isFrozen(), player.isPoweredUpActivated(), player.isConfused());
+
+        opponentInfoPane.updateUI(
+                opponent.getName(),
+                opponent.getClass().getSimpleName(),
+                opponent.getOriginalRole().toString(),
+                opponent.getRole().toString(),
+                opponent.getEnergy(),
+                opponent.getPosition(),
+                opponent.isShielded(),
+                opponent.isFrozen(), opponent.isPoweredUpActivated(), opponent.isConfused());
+
+        currentPlayerLabel.setText(
+                "Current Turn: " + game.getCurrent().getName());
+        updateDoorImage(playerDoorView, player);
+        updateDoorImage(opponentDoorView, opponent);
     }
 
     public void setCellInfo(String text) {
@@ -246,4 +263,42 @@ public class GameView {
         return boardView;
     }
 
+    private VBox createSideContainer(MonsterInfoPane infoPane, ImageView doorView) {
+
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        VBox container = new VBox(20);
+
+        container.getChildren().addAll(
+                infoPane,
+                spacer,
+                doorView);
+
+        container.setAlignment(Pos.TOP_CENTER);
+
+        container.setPrefWidth(240);
+        container.setFillWidth(false);
+
+        return container;
+    }
+
+    private void setupDoor(ImageView doorView) {
+        doorView.setFitWidth(120);
+        doorView.setFitHeight(120);
+        doorView.setPreserveRatio(true);
+    }
+
+    private void updateDoorImage(ImageView doorView, Monster monster) {
+
+        String path;
+
+        if (monster.getRole().toString().equals("LAUGHER")) {
+            path = "/game/assets/Doors/blueDoor.png";
+        } else {
+            path = "/game/assets/Doors/redDoor.png";
+        }
+
+        doorView.setImage(loadImage(path));
+    }
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane
+    prefHeight="1080.0"
+    prefWidth="1920.0"
+    style="-fx-background-color: rgba(0,0,0,0.92);"
+    xmlns="http://javafx.com/javafx/23.0.1"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="game.controllers.FullscreenWarningController">
+
+    <children>
+
+        <VBox alignment="CENTER" spacing="40">
+
+            <ImageView fx:id="fullscreenIcon"
+                       fitWidth="180"
+                       fitHeight="180"
+                       preserveRatio="true" />
+
+            <Label fx:id="alertLabel"
+                   text="PLEASE RETURN TO FULLSCREEN"
+                   textFill="#E5E7EB">
+
+                <font>
+                    <Font name="Orbitron Bold" size="52.0" />
+                </font>
+
+            </Label>
+
+        </VBox>
+
+    </children>
+
+</StackPane>

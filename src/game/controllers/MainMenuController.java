@@ -340,8 +340,11 @@ public class MainMenuController {
     }
 
     private void show() {
-        Scene scene = new Scene(view.getRoot());
-        stage.setScene(scene);
-        stage.show();
+
+        if (stage.getScene() == null) {
+            stage.setScene(new Scene(view.getRoot()));
+        } else {
+            stage.getScene().setRoot(view.getRoot());
+        }
     }
 }
