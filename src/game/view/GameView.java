@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -30,14 +31,13 @@ public class GameView {
     private final ImageView playerDoorView;
     private final ImageView opponentDoorView;
 
-    private final BottomView bottomView;
-    private final Button menuButton;
+    private final BottomView buttomView;
 
     public GameView(Game game) {
 
         this.game = game;
         this.boardView = new GameBoardView(game);
-        bottomView = new BottomView();
+        buttomView = new BottomView();
 
         root = new BorderPane();
         mainRoot = new StackPane();
@@ -51,7 +51,6 @@ public class GameView {
 
         this.cellInfoLabel = new Label("Cell: none selected");
         this.diceInfoLabel = new Label("Dice: not rolled");
-        this.menuButton = new Button("Menu");
         playerInfoPane = new MonsterInfoPane();
         opponentInfoPane = new MonsterInfoPane();
         playerDoorView = new ImageView();
@@ -62,10 +61,6 @@ public class GameView {
 
         buildLayout();
         refresh();
-    }
-
-    public void setOnMenu(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
-        menuButton.setOnAction(handler);
     }
 
     private void buildLayout() {
@@ -112,70 +107,33 @@ public class GameView {
 
     private BorderPane createTopPanel() {
 
-        currentPlayerLabel.setStyle("""
-                -fx-font-size: 22px;
-                -fx-font-weight: bold;
-                -fx-text-fill: white;
-                """);
+        Button menuButton = new Button("Menu");
 
-        panelStyles(menuButton);
+        HBox left = new HBox(menuButton);
+        left.setAlignment(Pos.CENTER_LEFT);
 
-        HBox leftBox = new HBox(menuButton);
-        leftBox.setAlignment(Pos.CENTER_LEFT);
-        leftBox.setMinWidth(160);
-
-        HBox centerBox = new HBox(currentPlayerLabel);
-        centerBox.setAlignment(Pos.CENTER);
+        HBox center = new HBox(currentPlayerLabel);
+        center.setAlignment(Pos.CENTER);
 
         BorderPane panel = new BorderPane();
+        panel.setLeft(left);
+        panel.setCenter(center);
 
-        panel.setLeft(leftBox);
-        panel.setCenter(centerBox);
+        panel.setPadding(new Insets(12));
 
-        panel.setPadding(new Insets(14));
-
-        panel.setPrefHeight(80);
-
-        panel.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom,
-                    rgba(31,41,51,0.92),
-                    rgba(62,76,89,0.92));
-
-                -fx-background-radius: 18;
-
-                -fx-border-color: rgba(255,255,255,0.18);
-                -fx-border-width: 2;
-                -fx-border-radius: 18;
-                """);
+        currentPlayerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        panel.getStylesheets().add(
+                getClass().getResource("/game/assets/css/buttons.css").toExternalForm());
+        menuButton.getStyleClass().add("menu-button");
 
         return panel;
-    }
-
-    private void panelStyles(Button button) {
-
-        button.setStyle("""
-                -fx-background-color:
-                    linear-gradient(#70b1ff 0%, #1a5cad 50%, #0a3b75 51%, #114b91 100%);
-
-                -fx-text-fill: white;
-                -fx-font-size: 15px;
-                -fx-font-weight: bold;
-
-                -fx-padding: 10 22 10 22;
-
-                -fx-background-radius: 12;
-                -fx-border-radius: 12;
-
-                -fx-border-color: rgba(255,255,255,0.18);
-                """);
     }
 
     private HBox createBottomPanel() {
 
         HBox panel = new HBox(
                 15,
-                bottomView.getRoot());
+                buttomView.getRoot());
 
         panel.setAlignment(Pos.TOP_CENTER);
         panel.setPadding(javafx.geometry.Insets.EMPTY);
@@ -256,7 +214,7 @@ public class GameView {
     }
 
     public BottomView getBottomView() {
-        return bottomView;
+        return buttomView;
     }
 
     public GameBoardView getBoardView() {
