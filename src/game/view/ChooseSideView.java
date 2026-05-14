@@ -2,6 +2,7 @@ package game.view;
 
 import java.util.ArrayList;
 
+import game.audio.SoundManager;
 import game.engine.Role;
 import game.engine.dataloader.DataLoader;
 import game.engine.monsters.Monster;
@@ -231,6 +232,7 @@ public class ChooseSideView {
     private Button createSelectButton(String text, Role role) {
         Button button = new Button(text);
         button.setStyle(SELECT_BUTTON_STYLE);
+        button.setOnMousePressed(event -> SoundManager.playButtonSound());
         button.setOnAction(event -> updateSelection(role));
         return button;
     }
@@ -260,6 +262,7 @@ public class ChooseSideView {
     private Button createInfoButton() {
         Button button = new Button("!");
         button.setStyle(INFO_BUTTON_STYLE);
+        button.setOnMousePressed(event -> SoundManager.playButtonSound());
         return button;
     }
 
@@ -267,6 +270,7 @@ public class ChooseSideView {
         Button button = new Button("Start Game");
         button.setDisable(true);
         button.setStyle(DISABLED_START_BUTTON_STYLE);
+        button.setOnMousePressed(event -> SoundManager.playButtonSound());
         return button;
     }
 

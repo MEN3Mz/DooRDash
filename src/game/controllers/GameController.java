@@ -1,16 +1,27 @@
 package game.controllers;
 
+import game.audio.SoundManager;
 import game.engine.Game;
+import game.engine.Constants;
 import game.engine.Role;
+import game.engine.cards.Card;
+import game.engine.cells.ContaminationSock;
+import game.engine.cells.ConveyorBelt;
+import game.engine.monsters.Monster;
+import game.view.CardView;
+import game.view.GameOverView;
 import game.view.GameView;
+import game.view.HowToPlayView;
+import game.view.SettingsView;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class GameController {
@@ -18,12 +29,21 @@ public class GameController {
     private final Stage stage;
     private final Game game;
     private final GameView view;
-    private StackPane overlayPane;
+    private final String playerOneName;
+    private final String playerTwoName;
+    private Parent overlayPane;
+    private String lastTurnPlayerName;
 
     public GameController(Stage stage, Role role) throws Exception {
+        this(stage, role, "You", "Opponent");
+    }
+
+    public GameController(Stage stage, Role role, String playerOneName, String playerTwoName) throws Exception {
         this.stage = stage;
+        this.playerOneName = playerOneName;
+        this.playerTwoName = playerTwoName;
         this.game = new Game(role);
-        this.view = new GameView(game);
+        this.view = new GameView(game, playerOneName, playerTwoName);
 
         bindEvents();
         show();
@@ -33,10 +53,14 @@ public class GameController {
 
         view.getBottomView().setOnRollDice(e -> {
             try {
+                SoundManager.playDiceRollSound();
+                lastTurnPlayerName = getCurrentPlayerName();
                 int rolledValue = game.playTurn();
+                playLandedCellSound();
 
                 view.getBottomView().setDiceValue(rolledValue);
                 view.refresh();
+                handleCardDrawnOrGameOver();
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -45,8 +69,14 @@ public class GameController {
 
         view.getBottomView().setOnPowerUp(e -> {
             try {
+                if (game.getCurrent().getEnergy() >= Constants.POWERUP_COST) {
+                    SoundManager.playPowerUpSound();
+                } else {
+                    SoundManager.playInvalidSound();
+                }
                 game.usePowerup();
                 view.refresh();
+                handleGameOver();
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -54,83 +84,181 @@ public class GameController {
         });
 
         view.setOnMenu(e -> showPauseMenuOverlay());
+        view.setOnWinTest(e -> triggerWinTest());
+    }
+
+    private void triggerWinTest() {
+        game.forceCurrentWinForTesting();
+        view.refresh();
+        handleGameOver();
+    }
+
+    private void handleCardDrawnOrGameOver() {
+        Card drawnCard = game.getLastDrawnCard();
+
+        if (drawnCard != null) {
+            showCardOverlay(drawnCard, lastTurnPlayerName);
+            return;
+        }
+
+        handleGameOver();
+    }
+
+    private void playLandedCellSound() {
+        if (game.getBoard().getLastLandedCell() instanceof ConveyorBelt) {
+            SoundManager.playBeltSound();
+        } else if (game.getBoard().getLastLandedCell() instanceof ContaminationSock) {
+            SoundManager.playSockSound();
+        }
+    }
+
+    private void showCardOverlay(Card card, String pulledBy) {
+        hideOverlay();
+
+        CardView cardView = new CardView(card, pulledBy);
+        overlayPane = cardView.getRoot();
+
+        cardView.setOnClose(e -> {
+            hideOverlay();
+            handleGameOver();
+        });
+
+        view.getRoot().getChildren().add(overlayPane);
+    }
+
+    private String getCurrentPlayerName() {
+        return game.getCurrent() == game.getPlayer() ? playerOneName : playerTwoName;
+    }
+
+    private void handleGameOver() {
+        if (!game.isGameOver()) {
+            return;
+        }
+
+        view.setGameControlsDisabled(true);
+
+        if (game.getWinner() != null) {
+            System.out.println(game.getWinner().getName() + " wins!");
+            showGameOverView(game.getWinner());
+        }
     }
 
     private void showPauseMenuOverlay() {
+        hideOverlay();
 
         Rectangle overlayBackground = new Rectangle();
-        overlayBackground.setFill(Color.color(0, 0, 0, 0.7));
+        overlayBackground.setFill(Color.color(0, 0, 0, 0.72));
         overlayBackground.widthProperty().bind(stage.widthProperty());
         overlayBackground.heightProperty().bind(stage.heightProperty());
 
         VBox content = new VBox(20);
-        content.setMaxWidth(400);
-        content.setMaxHeight(300);
-        content.setStyle(
-                "-fx-background-color: white;" +
-                        "-fx-background-radius: 15;" +
-                        "-fx-padding: 30;" +
-                        "-fx-border-color: #333;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-border-radius: 15;");
+        content.setMaxWidth(520);
+        content.setMaxHeight(420);
+        content.setStyle("""
+                -fx-background-color:
+                    linear-gradient(to bottom right,
+                    rgba(8,16,26,0.96),
+                    rgba(15,25,40,0.96));
+
+                -fx-background-radius: 24;
+                -fx-border-radius: 24;
+                -fx-border-width: 2;
+                -fx-border-color: rgba(255,255,255,0.12);
+                -fx-padding: 36;
+                -fx-effect:
+                    dropshadow(three-pass-box,
+                    rgba(0,0,0,0.55),
+                    24, 0, 0, 8);
+                """);
         content.setAlignment(Pos.CENTER);
 
-        Text title = new Text("Game Paused");
-        title.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-fill: #333;");
+        Label title = new Label("Game Paused");
+        title.setStyle("""
+                -fx-font-size: 30px;
+                -fx-font-weight: 900;
+                -fx-text-fill: white;
+                """);
 
-        Button resumeButton = new Button("Resume Game");
-        resumeButton.setStyle(
-                "-fx-background-color: #4CAF50;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 16px;" +
-                        "-fx-padding: 12 24;" +
-                        "-fx-pref-width: 200;");
+        Button resumeButton = createPauseButton("Resume Game");
         resumeButton.setOnAction(e -> hideOverlay());
 
-        Button howToPlayButton = new Button("How to Play");
-        howToPlayButton.setStyle(
-                "-fx-background-color: #2196F3;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 16px;" +
-                        "-fx-padding: 12 24;" +
-                        "-fx-pref-width: 200;");
+        Button howToPlayButton = createPauseButton("How To Play");
         howToPlayButton.setOnAction(e -> showHowToPlayOverlay());
 
-        Button backToMenuButton = new Button("Back to Main Menu");
-        backToMenuButton.setStyle(
-                "-fx-background-color: #f44336;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 16px;" +
-                        "-fx-padding: 12 24;" +
-                        "-fx-pref-width: 200;");
+        Button settingsButton = createPauseButton("Settings");
+        settingsButton.setOnAction(e -> showSettingsOverlay());
+
+        Button backToMenuButton = createPauseButton("Back To Main Menu");
         backToMenuButton.setOnAction(e -> {
             hideOverlay();
             new MainMenuController(stage);
         });
 
+        Button exitButton = createPauseButton("Exit Game");
+        exitButton.setOnAction(e -> stage.close());
+
         content.getChildren().addAll(
                 title,
                 resumeButton,
                 howToPlayButton,
-                backToMenuButton);
+                settingsButton,
+                backToMenuButton,
+                exitButton);
 
         overlayPane = new StackPane();
-        overlayPane.getChildren().addAll(overlayBackground, content);
+        overlayPane.getStylesheets().add(
+                getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        ((StackPane) overlayPane).getChildren().addAll(overlayBackground, content);
         StackPane.setAlignment(content, Pos.CENTER);
 
-        ((StackPane) stage.getScene().getRoot()).getChildren().add(overlayPane);
+        view.getRoot().getChildren().add(overlayPane);
+    }
+
+    private Button createPauseButton(String text) {
+        Button button = new Button(text);
+        button.setPrefWidth(320);
+        button.setPrefHeight(58);
+        button.getStyleClass().add("menu-button");
+        button.getStyleClass().add("menu-font");
+        button.setOnMousePressed(e -> SoundManager.playButtonSound());
+
+        return button;
+    }
+
+    private void showGameOverView(Monster winner) {
+        GameOverView gameOverView = new GameOverView(winner);
+        gameOverView.setOnMainMenu(e -> new MainMenuController(stage));
+
+        if (stage.getScene() == null) {
+            stage.setScene(new Scene(gameOverView.getRoot()));
+        } else {
+            stage.getScene().setRoot(gameOverView.getRoot());
+        }
     }
 
     private void showHowToPlayOverlay() {
         hideOverlay();
 
-        MainMenuController menuController = new MainMenuController(stage);
-        menuController.showHowToPlayOverlay();
+        HowToPlayView howToPlayView = new HowToPlayView();
+        overlayPane = howToPlayView.getRoot();
+
+        howToPlayView.setOnBack(e -> showPauseMenuOverlay());
+        view.getRoot().getChildren().add(overlayPane);
+    }
+
+    private void showSettingsOverlay() {
+        hideOverlay();
+
+        SettingsView settingsView = new SettingsView();
+        overlayPane = settingsView.getRoot();
+
+        settingsView.setOnBack(e -> showPauseMenuOverlay());
+        view.getRoot().getChildren().add(overlayPane);
     }
 
     private void hideOverlay() {
         if (overlayPane != null) {
-            ((StackPane) stage.getScene().getRoot()).getChildren().remove(overlayPane);
+            view.getRoot().getChildren().remove(overlayPane);
             overlayPane = null;
         }
     }

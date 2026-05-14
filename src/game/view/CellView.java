@@ -8,6 +8,10 @@ import game.engine.monsters.*;
 import javafx.geometry.*;
 import game.engine.Role;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.OverrunStyle;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
 
 public class CellView extends StackPane {
     private final Label numberLabel;
@@ -30,12 +34,23 @@ public class CellView extends StackPane {
     private final ImageView beltImageView;
     private final ImageView cardImageView;
     private final ImageView monsterImageView;
+    private final ImageView previousPlayerImageView;
+    private final ImageView previousOpponentImageView;
 
     public CellView() {
         numberLabel = new Label();
         playerLabel = new Label("YOU");
         opponentLabel = new Label("OPP");
         doorLabel = new Label();
+        doorLabel.setEffect(new DropShadow(3, Color.BLACK));
+        playerLabel.setContentDisplay(ContentDisplay.LEFT);
+        opponentLabel.setContentDisplay(ContentDisplay.LEFT);
+        playerLabel.setGraphicTextGap(3);
+        opponentLabel.setGraphicTextGap(3);
+        playerLabel.setMaxWidth(62);
+        opponentLabel.setMaxWidth(62);
+        playerLabel.setTextOverrun(OverrunStyle.ELLIPSIS);
+        opponentLabel.setTextOverrun(OverrunStyle.ELLIPSIS);
 
         this.getChildren().add(numberLabel);
 
@@ -80,6 +95,9 @@ public class CellView extends StackPane {
         monsterImageView.setFitHeight(52);
         monsterImageView.setPreserveRatio(true);
 
+        previousPlayerImageView = createPreviousPositionView();
+        previousOpponentImageView = createPreviousPositionView();
+
         monsterImageView.setSmooth(true);
         doorImageView.setSmooth(true);
         sockImageView.setSmooth(true);
@@ -90,13 +108,18 @@ public class CellView extends StackPane {
         this.getChildren().add(sockImageView);
         this.getChildren().add(beltImageView);
         this.getChildren().add(cardImageView);
+        this.getChildren().add(previousPlayerImageView);
+        this.getChildren().add(previousOpponentImageView);
         this.getChildren().add(monsterImageView);
 
+        StackPane.setAlignment(previousPlayerImageView, Pos.CENTER);
+        StackPane.setAlignment(previousOpponentImageView, Pos.CENTER);
         StackPane.setAlignment(monsterImageView, Pos.CENTER);
         StackPane.setAlignment(doorImageView, Pos.CENTER);
         StackPane.setAlignment(sockImageView, Pos.CENTER);
         StackPane.setAlignment(beltImageView, Pos.CENTER);
         StackPane.setAlignment(cardImageView, Pos.CENTER);
+
         this.getChildren().add(playerLabel);
         this.getChildren().add(opponentLabel);
         this.getChildren().add(doorLabel);
@@ -109,30 +132,40 @@ public class CellView extends StackPane {
             Monster player,
             Monster opponent,
             int playerPosition,
-            int opponentPosition) {
+            int opponentPosition,
+            int playerPreviousPosition,
+            int opponentPreviousPosition,
+            String playerOneName,
+            String playerTwoName) {
 
         numberLabel.setText("" + index);
+        playerLabel.setText(playerOneName);
+        opponentLabel.setText(playerTwoName);
         monsterImageView.setImage(null);
         doorImageView.setImage(null);
         beltImageView.setImage(null);
         cardImageView.setImage(null);
         sockImageView.setImage(null);
+        previousPlayerImageView.setImage(null);
+        previousOpponentImageView.setImage(null);
 
         playerLabel.setVisible(false);
         opponentLabel.setVisible(false);
         doorLabel.setVisible(false);
         if (player.getRole() == Role.LAUGHER) {
             playerLabel.setStyle(
-                    "-fx-background-color: #2F80ED; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 6 2 6;");
+                    "-fx-background-color: #2F80ED; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
             opponentLabel.setStyle(
-                    "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 6 2 6;");
+                    "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
         } else {
             opponentLabel.setStyle(
-                    "-fx-background-color: #2F80ED; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 6 2 6;");
+                    "-fx-background-color: #2F80ED; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
             playerLabel.setStyle(
-                    "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 6 2 6;");
+                    "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
 
         }
+        playerLabel.setGraphic(createMonsterIcon(player));
+        opponentLabel.setGraphic(createMonsterIcon(opponent));
 
         if (playerPosition == index) {
             playerLabel.setVisible(true);
@@ -142,17 +175,25 @@ public class CellView extends StackPane {
             opponentLabel.setVisible(true);
         }
 
+        if (index == playerPreviousPosition && index != playerPosition) {
+            previousPlayerImageView.setImage(ImageCache.get(getMonsterImagePath(player)));
+        }
+
+        if (index == opponentPreviousPosition && index != opponentPosition) {
+            previousOpponentImageView.setImage(ImageCache.get(getMonsterImagePath(opponent)));
+        }
+
         if (cell instanceof CardCell) {
-            cardImageView.setImage(loadImage(CARDS_PATH));
+            cardImageView.setImage(ImageCache.get(CARDS_PATH));
         }
 
         else if (cell instanceof ContaminationSock) {
-            sockImageView.setImage(loadImage(SOCK_PATH));
+            sockImageView.setImage(ImageCache.get(SOCK_PATH));
 
         }
 
         else if (cell instanceof ConveyorBelt) {
-            beltImageView.setImage(loadImage(BELT_PATH));
+            beltImageView.setImage(ImageCache.get(BELT_PATH));
         }
 
         else if (cell instanceof DoorCell) {
@@ -161,16 +202,18 @@ public class CellView extends StackPane {
                     "-fx-border-color: #1E4F73; -fx-border-width: 2; -fx-background-color: linear-gradient(to bottom, #8FD3FF, #3D79A6);");
 
             if (doorCell.isActivated()) {
-                doorImageView.setImage(loadImage(OPEN_DOOR_PATH));
+                doorImageView.setImage(ImageCache.get(OPEN_DOOR_PATH));
             } else {
                 doorLabel.setText("" + doorCell.getEnergy());
                 doorLabel.setVisible(true);
                 if (doorCell.getRole() == Role.LAUGHER) {
-                    doorImageView.setImage(loadImage(DOOR_IMAGE_PATHS[0]));
-                    doorLabel.setStyle("-fx-text-fill: #4FC3F7; -fx-font-weight: bold;");
+                    doorImageView.setImage(ImageCache.get(DOOR_IMAGE_PATHS[0]));
+                    doorLabel.setStyle(
+                            "-fx-text-fill: #4FC3F7; -fx-font-weight: bold; -fx-font-stroke: 2px solid #000507; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
                 } else {
-                    doorImageView.setImage(loadImage(DOOR_IMAGE_PATHS[1]));
-                    doorLabel.setStyle("-fx-text-fill: #E53935; -fx-font-weight: bold;");
+                    doorImageView.setImage(ImageCache.get(DOOR_IMAGE_PATHS[1]));
+                    doorLabel.setStyle(
+                            "-fx-text-fill: #E53935; -fx-font-weight: bold; -fx-font-stroke: 2px solid #020000; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
                 }
             }
 
@@ -179,36 +222,87 @@ public class CellView extends StackPane {
         else if (cell instanceof MonsterCell) {
 
             MonsterCell mc = (MonsterCell) cell;
+            doorLabel.setText(String.valueOf(mc.getCellMonster().getEnergy()));
+            doorLabel.setVisible(true);
             if (mc.getCellMonster().getRole() == Role.LAUGHER) {
 
-                monsterImageView.setImage(loadImage(getMonsterImagePath(mc.getCellMonster())));
+                monsterImageView.setImage(ImageCache.get(getMonsterImagePath(mc.getCellMonster())));
+                doorLabel.setStyle(
+                        "-fx-text-fill: #2F80ED; -fx-font-weight: bold; -fx-font-stroke: 2px solid #01060c; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
 
                 setStyle("-fx-border-color: Green ; -fx-border-width: 2");
             } else {
 
-                monsterImageView.setImage(loadImage(getMonsterImagePath(mc.getCellMonster())));
+                monsterImageView.setImage(ImageCache.get(getMonsterImagePath(mc.getCellMonster())));
+                doorLabel.setStyle(
+                        "-fx-text-fill: #D64545; -fx-font-weight: bold; -fx-font-stroke: 2px solid #020000; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
                 setStyle("-fx-border-color: red ; -fx-border-width: 2");
             }
         } else {
             setStyle(
                     "-fx-border-color: #3C4148; -fx-border-width: 2; -fx-background-color: linear-gradient(to bottom, #F4F7FA, #AEB7C1);");
             if (index == playerPosition && index != opponentPosition) {
-                monsterImageView.setImage(loadImage(getMonsterImagePath(player)));
+                monsterImageView.setImage(ImageCache.get(getMonsterImagePath(player)));
 
                 playerLabel.setVisible(true);
 
             }
             if (index == opponentPosition && index != playerPosition) {
-                monsterImageView.setImage(loadImage(getMonsterImagePath(opponent)));
+                monsterImageView.setImage(ImageCache.get(getMonsterImagePath(opponent)));
 
                 opponentLabel.setVisible(true);
 
             }
         }
+
+        applyStatusBorder(index, player, opponent, playerPosition, opponentPosition);
     }
 
-    private Image loadImage(String path) {
-        return new Image(getClass().getResourceAsStream(path));
+    private ImageView createMonsterIcon(Monster monster) {
+        ImageView icon = new ImageView(ImageCache.get(getMonsterImagePath(monster)));
+        icon.setFitWidth(14);
+        icon.setFitHeight(14);
+        icon.setPreserveRatio(true);
+        icon.setSmooth(true);
+
+        return icon;
+    }
+
+    private ImageView createPreviousPositionView() {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(42);
+        imageView.setFitHeight(38);
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setOpacity(0.28);
+
+        return imageView;
+    }
+
+    private void applyStatusBorder(
+            int index,
+            Monster player,
+            Monster opponent,
+            int playerPosition,
+            int opponentPosition) {
+
+        Monster monsterOnCell = null;
+
+        if (index == playerPosition) {
+            monsterOnCell = player;
+        } else if (index == opponentPosition) {
+            monsterOnCell = opponent;
+        }
+
+        if (monsterOnCell == null) {
+            return;
+        }
+
+        if (monsterOnCell.isFrozen()) {
+            setStyle(getStyle() + "; -fx-border-color: #0094ff; -fx-border-width: 6;");
+        } else if (monsterOnCell.isShielded()) {
+            setStyle(getStyle() + "; -fx-border-color: #00ff3b; -fx-border-width: 6;");
+        }
     }
 
     private String getMonsterImagePath(Monster monster) {

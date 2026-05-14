@@ -13,6 +13,9 @@ public class Board {
 	private static ArrayList<Monster> stationedMonsters;
 	private static ArrayList<Card> originalCards;
 	public static ArrayList<Card> cards;
+	private static Card lastDrawnCard;
+	private Cell lastLandedCell;
+	private int lastLandedPosition;
 
 	public Board(ArrayList<Card> readCards) {
 		this.boardCells = new Cell[Constants.BOARD_ROWS][Constants.BOARD_COLS];
@@ -120,7 +123,16 @@ public class Board {
 		if (cards.isEmpty())
 			reloadCards();
 
-		return cards.remove(0);
+		lastDrawnCard = cards.remove(0);
+		return lastDrawnCard;
+	}
+
+	public static Card getLastDrawnCard() {
+		return lastDrawnCard;
+	}
+
+	public static void clearLastDrawnCard() {
+		lastDrawnCard = null;
 	}
 
 	public void moveMonster(Monster currentMonster, int roll, Monster opponentMonster) throws InvalidMoveException {
@@ -129,7 +141,9 @@ public class Board {
 
 		currentMonster.move(roll);
 
-		getCell(currentMonster.getPosition()).onLand(currentMonster, opponentMonster);
+		lastLandedPosition = currentMonster.getPosition();
+		lastLandedCell = getCell(lastLandedPosition);
+		lastLandedCell.onLand(currentMonster, opponentMonster);
 
 		if (currentMonster.getPosition() == opponentMonster.getPosition()) {
 			currentMonster.setPosition(oldPosition);
@@ -144,10 +158,18 @@ public class Board {
 			opponentMonster.decrementConfusion();
 		}
 
-		updateMonsterPositions(currentMonster, opponentMonster);
+		syncMonsterPositions(currentMonster, opponentMonster);
 	}
 
-	private void updateMonsterPositions(Monster player, Monster opponent) {
+	public Cell getLastLandedCell() {
+		return lastLandedCell;
+	}
+
+	public int getLastLandedPosition() {
+		return lastLandedPosition;
+	}
+
+	public void syncMonsterPositions(Monster player, Monster opponent) {
 		for (int i = 0; i < Constants.BOARD_SIZE; i++)
 			getCell(i).setMonster(null);
 
