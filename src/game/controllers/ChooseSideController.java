@@ -65,7 +65,11 @@ public class ChooseSideController {
     }
 
     private void show() {
-        stage.setScene(new Scene(view.getRoot()));
-        stage.show();
+
+        if (stage.getScene() == null) {
+            stage.setScene(new Scene(view.getRoot()));
+        } else {
+            stage.getScene().setRoot(view.getRoot());
+        }
     }
 }
