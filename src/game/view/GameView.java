@@ -2,14 +2,15 @@ package game.view;
 
 import game.engine.Game;
 import game.engine.Constants;
+import game.engine.Board;
+import game.engine.Role;
 import game.audio.SoundManager;
-import game.engine.monsters.Dasher;
-import game.engine.monsters.MultiTasker;
-import game.engine.monsters.Monster;
+import game.engine.monsters.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -18,6 +19,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 
 public class GameView {
 
@@ -35,11 +38,27 @@ public class GameView {
 
     private final MonsterInfoPane playerPane;
     private final MonsterInfoPane opponentPane;
+    private final Label playerHeaderLabel;
+    private final Label opponentHeaderLabel;
     private final TurnLogView playerTurnLogView;
     private final TurnLogView opponentTurnLogView;
 
     private final ImageView playerDoorView;
     private final ImageView opponentDoorView;
+    private final Label playerTeamLabel;
+    private final Label opponentTeamLabel;
+    private final HBox playerStationedMonsterBox;
+    private final HBox opponentStationedMonsterBox;
+    private HBox playerSideContainer;
+    private HBox opponentSideContainer;
+
+    private Label playerMonsterTypeLabel;
+    private Label playerPowerUpInfoLabel;
+    private Label playerPassiveTraitLabel;
+
+    private Label opponentMonsterTypeLabel;
+    private Label opponentPowerUpInfoLabel;
+    private Label opponentPassiveTraitLabel;
 
     private final BottomView bottomView;
     private final Button menuButton;
@@ -73,11 +92,29 @@ public class GameView {
 
         this.playerPane = new MonsterInfoPane();
         this.opponentPane = new MonsterInfoPane();
+        this.playerHeaderLabel = createMonsterHeader();
+        this.opponentHeaderLabel = createMonsterHeader();
         this.playerTurnLogView = new TurnLogView(playerOneName + " Latest Moves");
         this.opponentTurnLogView = new TurnLogView(playerTwoName + " Latest Moves");
 
         this.playerDoorView = new ImageView();
         this.opponentDoorView = new ImageView();
+        this.playerTeamLabel = createTeamLabel();
+        this.opponentTeamLabel = createTeamLabel();
+        this.playerStationedMonsterBox = createStationedMonsterBox();
+        this.opponentStationedMonsterBox = createStationedMonsterBox();
+
+        playerMonsterTypeLabel = createMonsterDetailLabel();
+        playerPowerUpInfoLabel = createMonsterDetailLabel();
+        playerPassiveTraitLabel = createMonsterDetailLabel();
+        opponentMonsterTypeLabel = createMonsterDetailLabel();
+        opponentPowerUpInfoLabel = createMonsterDetailLabel();
+        opponentPassiveTraitLabel = createMonsterDetailLabel();
+
+        Monster player = game.getPlayer();
+        Monster opponent = game.getOpponent();
+        updateMonsterDetails(player, playerMonsterTypeLabel, playerPassiveTraitLabel, playerPowerUpInfoLabel);
+        updateMonsterDetails(opponent, opponentMonsterTypeLabel, opponentPassiveTraitLabel, opponentPowerUpInfoLabel);
 
         setupDoor(playerDoorView);
         setupDoor(opponentDoorView);
@@ -86,17 +123,8 @@ public class GameView {
         menuButton.getStyleClass().add("game-menu-button");
         menuButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
-        this.testWinButton = new Button("Win Test");
-        testWinButton.setStyle("""
-                -fx-background-color: #b91c1c;
-                -fx-background-radius: 10;
-                -fx-text-fill: white;
-                -fx-font-size: 14px;
-                -fx-font-weight: bold;
-                -fx-padding: 10 18;
-                -fx-border-color: rgba(255,255,255,0.28);
-                -fx-border-radius: 10;
-                """);
+        this.testWinButton = new Button("Win Game");
+        applyDebugButtonStyle(testWinButton);
         testWinButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         buildLayout();
@@ -108,6 +136,19 @@ public class GameView {
                         .toExternalForm());
 
         refresh();
+    }
+
+    private void applyDebugButtonStyle(Button button) {
+        button.setStyle("""
+                -fx-background-color: #b91c1c;
+                -fx-background-radius: 10;
+                -fx-text-fill: white;
+                -fx-font-size: 14px;
+                -fx-font-weight: bold;
+                -fx-padding: 10 18;
+                -fx-border-color: rgba(255,255,255,0.28);
+                -fx-border-radius: 10;
+                """);
     }
 
     public void setOnMenu(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
@@ -125,13 +166,13 @@ public class GameView {
 
     private void buildLayout() {
 
-        root.setPadding(new Insets(16));
+        root.setPadding(new Insets(12));
 
         HBox leftPanel = createLeftSideContainer();
 
         HBox rightPanel = createRightSideContainer();
 
-        BorderPane topPanel = createTopPanel();
+        StackPane topPanel = createTopPanel();
         HBox bottomPanel = createBottomPanel();
 
         StackPane centerPanel = new StackPane(boardView.getBoardRoot());
@@ -152,61 +193,43 @@ public class GameView {
         root.setRight(rightPanel);
         root.setBottom(bottomPanel);
 
-        BorderPane.setMargin(topPanel, new Insets(0, 0, 16, 0));
+        BorderPane.setMargin(topPanel, new Insets(26, 0, 8, 0));
         BorderPane.setMargin(bottomPanel, new Insets(16, 0, 0, 0));
-        BorderPane.setMargin(leftPanel, new Insets(0, 16, 0, 0));
-        BorderPane.setMargin(rightPanel, new Insets(0, 0, 0, 16));
+        BorderPane.setMargin(leftPanel, new Insets(0, 6, 0, 0));
+        BorderPane.setMargin(rightPanel, new Insets(0, 0, 0, 6));
 
         BorderPane.setAlignment(centerPanel, Pos.CENTER);
         BorderPane.setAlignment(leftPanel, Pos.CENTER_RIGHT);
         BorderPane.setAlignment(rightPanel, Pos.CENTER_LEFT);
         BorderPane.setAlignment(bottomPanel, Pos.CENTER);
 
-        applyPanelStyle(topPanel);
         applyPanelStyle(bottomPanel);
     }
 
-    private BorderPane createTopPanel() {
+    private StackPane createTopPanel() {
 
         currentPlayerLabel.setStyle("""
                 -fx-font-size: 22px;
                 -fx-font-weight: bold;
                 -fx-text-fill: white;
                 """);
+        currentPlayerLabel.setEffect(new DropShadow(4, Color.BLACK));
 
-        HBox leftBox = new HBox(menuButton);
-        leftBox.setAlignment(Pos.CENTER_LEFT);
-        leftBox.setMinWidth(220);
+        HBox content = new HBox(24, menuButton, currentPlayerLabel, testWinButton);
+        content.setAlignment(Pos.CENTER_LEFT);
+        content.setPadding(new Insets(6, 22, 6, 44));
+        content.setPrefWidth(650);
+        content.setMaxWidth(650);
 
-        HBox centerBox = new HBox(currentPlayerLabel);
-        centerBox.setAlignment(Pos.CENTER);
+        ImageView panelImage = new ImageView(loadImage("/game/assets/panels/top panel.png"));
+        panelImage.setPreserveRatio(true);
+        panelImage.setFitWidth(650);
+        panelImage.setSmooth(true);
 
-        HBox rightBox = new HBox(testWinButton);
-        rightBox.setAlignment(Pos.CENTER_RIGHT);
-        rightBox.setMinWidth(220);
-
-        BorderPane panel = new BorderPane();
-
-        panel.setLeft(leftBox);
-        panel.setCenter(centerBox);
-        panel.setRight(rightBox);
-
-        panel.setPadding(new Insets(14));
-
-        panel.setPrefHeight(80);
-
-        panel.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom,
-                    rgba(31,41,51,0.92),
-                    rgba(62,76,89,0.92));
-
-                -fx-background-radius: 18;
-
-                -fx-border-color: rgba(255,255,255,0.18);
-                -fx-border-width: 2;
-                -fx-border-radius: 18;
-                """);
+        StackPane panel = new StackPane(panelImage, content);
+        panel.setPrefHeight(54);
+        panel.setMinHeight(54);
+        panel.setMaxHeight(54);
 
         return panel;
     }
@@ -251,6 +274,10 @@ public class GameView {
 
         Monster player = game.getPlayer();
         Monster opponent = game.getOpponent();
+        playerHeaderLabel.setText(player.getName() + "\nOriginal Role: " + player.getOriginalRole());
+        opponentHeaderLabel.setText(opponent.getName() + "\nOriginal Role: " + opponent.getOriginalRole());
+        updateMonsterDetails(player, playerMonsterTypeLabel, playerPassiveTraitLabel, playerPowerUpInfoLabel);
+        updateMonsterDetails(opponent, opponentMonsterTypeLabel, opponentPassiveTraitLabel, opponentPowerUpInfoLabel);
 
         playerPane.updateUI(
                 player.getName(),
@@ -295,6 +322,9 @@ public class GameView {
 
         updateDoorImage(playerDoorView, player);
         updateDoorImage(opponentDoorView, opponent);
+        updateTeamSection(playerTeamLabel, playerStationedMonsterBox, player.getRole());
+        updateTeamSection(opponentTeamLabel, opponentStationedMonsterBox, opponent.getRole());
+        updateSidePanelFocus();
     }
 
     public void setCellInfo(String text) {
@@ -335,48 +365,187 @@ public class GameView {
         return boardView;
     }
 
-    private VBox createPlayerInfoColumn(
+    private StackPane createPlayerInfoColumn(
+            Label headerLabel,
             MonsterInfoPane infoPane,
-            ImageView doorView) {
+            ImageView doorView,
+            Label teamLabel,
+            HBox stationedMonsterBox,
+            Label MonsterTypeLabel, Label PowerUpInfoLabel, Label PassiveTraitLabel) {
 
-        VBox container = new VBox(54);
+        VBox content = new VBox(4);
+        content.setPadding(new Insets(54, 0, 28, 0));
 
-        container.getChildren().addAll(
+        content.getChildren().addAll(
+                headerLabel,
                 infoPane,
-                doorView);
+                doorView,
+                teamLabel,
+                stationedMonsterBox,
+                MonsterTypeLabel, PassiveTraitLabel,
+                PowerUpInfoLabel);
 
+        content.setAlignment(Pos.TOP_CENTER);
+        content.setPrefWidth(430);
+        content.setMaxWidth(430);
+        content.setFillWidth(false);
+        VBox.setMargin(doorView, new Insets(-8, 0, 0, 0));
+
+        ImageView sidePanelImage = new ImageView(loadImage("/game/assets/panels/sidePanel.png"));
+        sidePanelImage.setPreserveRatio(true);
+        sidePanelImage.setFitWidth(430);
+        sidePanelImage.setSmooth(true);
+
+        StackPane container = new StackPane(sidePanelImage, content);
         container.setAlignment(Pos.TOP_CENTER);
-
-        container.setPrefWidth(240);
-        container.setFillWidth(false);
-        applyPanelStyle(container);
-        VBox.setMargin(doorView, new Insets(18, 0, 0, 0));
+        container.setPrefWidth(430);
+        container.setMinWidth(430);
+        container.setMaxWidth(430);
+        container.setPrefHeight(862);
+        container.setMinHeight(862);
+        container.setMaxHeight(862);
 
         return container;
     }
 
     private HBox createLeftSideContainer() {
-        VBox playerInfoColumn = createPlayerInfoColumn(playerPane, playerDoorView);
+        StackPane playerInfoColumn = createPlayerInfoColumn(
+                playerHeaderLabel,
+                playerPane,
+                playerDoorView,
+                playerTeamLabel,
+                playerStationedMonsterBox,
+                playerMonsterTypeLabel,
+                playerPowerUpInfoLabel,
+                playerPassiveTraitLabel);
 
-        HBox container = new HBox(12, playerInfoColumn, playerTurnLogView);
-        container.setAlignment(Pos.TOP_CENTER);
-        container.setPrefWidth(442);
-        container.setFillHeight(false);
-        container.setStyle("-fx-background-color: transparent;");
+        playerSideContainer = new HBox(8, playerInfoColumn, playerTurnLogView);
+        playerSideContainer.setAlignment(Pos.TOP_CENTER);
+        playerSideContainer.setPrefWidth(620);
+        playerSideContainer.setFillHeight(false);
+        playerSideContainer.setStyle("-fx-background-color: transparent;");
 
-        return container;
+        return playerSideContainer;
     }
 
     private HBox createRightSideContainer() {
-        VBox opponentInfoColumn = createPlayerInfoColumn(opponentPane, opponentDoorView);
+        StackPane opponentInfoColumn = createPlayerInfoColumn(
+                opponentHeaderLabel,
+                opponentPane,
+                opponentDoorView,
+                opponentTeamLabel,
+                opponentStationedMonsterBox,
+                opponentMonsterTypeLabel,
+                opponentPowerUpInfoLabel,
+                opponentPassiveTraitLabel);
 
-        HBox container = new HBox(12, opponentTurnLogView, opponentInfoColumn);
-        container.setAlignment(Pos.TOP_CENTER);
-        container.setPrefWidth(442);
-        container.setFillHeight(false);
-        container.setStyle("-fx-background-color: transparent;");
+        opponentSideContainer = new HBox(8, opponentTurnLogView, opponentInfoColumn);
+        opponentSideContainer.setAlignment(Pos.TOP_CENTER);
+        opponentSideContainer.setPrefWidth(620);
+        opponentSideContainer.setFillHeight(false);
+        opponentSideContainer.setStyle("-fx-background-color: transparent;");
 
-        return container;
+        return opponentSideContainer;
+    }
+
+    private void updateSidePanelFocus() {
+        boolean playerTurn = game.getCurrent() == game.getPlayer();
+
+        playerSideContainer.setOpacity(playerTurn ? 1.0 : 0.48);
+        opponentSideContainer.setOpacity(playerTurn ? 0.48 : 1.0);
+    }
+
+    private Label createTeamLabel() {
+        Label label = new Label();
+        label.setPrefWidth(372);
+        label.setAlignment(Pos.CENTER);
+        label.setWrapText(true);
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setStyle("""
+                -fx-font-size: 14px;
+                -fx-font-weight: 900;
+                -fx-text-fill: white;
+                -fx-padding: 0 4 0 4;
+                """);
+        label.setEffect(new DropShadow(4, Color.BLACK));
+
+        return label;
+    }
+
+    private Label createMonsterDetailLabel() {
+        Label label = new Label();
+        label.setPrefWidth(300);
+        label.setMinWidth(300);
+        label.setMaxWidth(300);
+        label.setMinHeight(Region.USE_PREF_SIZE);
+        label.setMaxHeight(Region.USE_PREF_SIZE);
+        label.setWrapText(true);
+        label.setAlignment(Pos.CENTER);
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setStyle("""
+                -fx-font-size: 9px;
+                -fx-font-weight: 800;
+                -fx-text-fill: white;
+                -fx-padding: 0 2 0 2;
+                -fx-line-spacing: -1px;
+                """);
+        label.setEffect(new DropShadow(4, Color.BLACK));
+
+        return label;
+    }
+
+    private void updateMonsterDetails(
+            Monster monster,
+            Label typeLabel,
+            Label passiveLabel,
+            Label powerUpLabel) {
+
+        typeLabel.setText("Type: " + getMonsterType(monster));
+        passiveLabel.setText("Traits: " + getMonsterPassiveTrait(monster));
+        powerUpLabel.setText("Power-Up: " + getPlayerPowerUpInfo(monster));
+    }
+
+    private HBox createStationedMonsterBox() {
+        HBox box = new HBox(8);
+        box.setAlignment(Pos.CENTER);
+        box.setPrefWidth(372);
+        box.setMinHeight(30);
+
+        return box;
+    }
+
+    private void updateTeamSection(Label teamLabel, HBox monsterBox, Role role) {
+        teamLabel.setText(role == Role.LAUGHER ? "Team Laughers" : "Team Scarers");
+        monsterBox.getChildren().clear();
+
+        for (Monster monster : Board.getStationedMonsters()) {
+            if (monster.getOriginalRole() == role) {
+                ImageView portrait = new ImageView(ImageCache.get(getMonsterImagePath(monster)));
+                portrait.setFitWidth(26);
+                portrait.setFitHeight(26);
+                portrait.setPreserveRatio(true);
+                portrait.setSmooth(true);
+                portrait.setEffect(new DropShadow(3, Color.BLACK));
+                monsterBox.getChildren().add(portrait);
+            }
+        }
+    }
+
+    private Label createMonsterHeader() {
+        Label label = new Label();
+        label.setPrefWidth(372);
+        label.setAlignment(Pos.CENTER);
+        label.setWrapText(true);
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setStyle("""
+                -fx-font-size: 13px;
+                -fx-font-weight: 900;
+                -fx-text-fill: white;
+                -fx-padding: 4 6 4 6;
+                """);
+        label.setEffect(new DropShadow(4, Color.BLACK));
+
+        return label;
     }
 
     private void setupDoor(ImageView doorView) {
@@ -405,6 +574,31 @@ public class GameView {
         return game.getCurrent() == game.getPlayer() ? playerOneName : playerTwoName;
     }
 
+    private String getMonsterImagePath(Monster monster) {
+        String name = monster.getName();
+
+        switch (name) {
+            case "James P. Sullivan":
+                return "/game/assets/Monsters/sulli.png";
+            case "Mike Wazowski":
+                return "/game/assets/Monsters/mike.png";
+            case "Celia Mae":
+                return "/game/assets/Monsters/celia.png";
+            case "Roz":
+                return "/game/assets/Monsters/roz.png";
+            case "Fungus":
+                return "/game/assets/Monsters/Fungus.png";
+            case "Henry J. Waternoose":
+                return "/game/assets/Monsters/henry.png";
+            case "Yeti":
+                return "/game/assets/Monsters/yeti.png";
+            case "Randall Boggs":
+                return "/game/assets/Monsters/andal.png";
+            default:
+                return null;
+        }
+    }
+
     private int getPowerUpTurns(Monster monster) {
         if (monster instanceof Dasher) {
             return ((Dasher) monster).getMomentumTurns();
@@ -415,5 +609,59 @@ public class GameView {
         }
 
         return monster.isPoweredUpActivated() ? 1 : 0;
+    }
+
+    private String getMonsterType(Monster monster) {
+
+        if (monster instanceof Dasher) {
+            return "Dasher";
+        } else if (monster instanceof MultiTasker) {
+            return "Multi-Tasker";
+        } else if (monster instanceof Dynamo) {
+            return "Dynamo";
+        } else if (monster instanceof Schemer) {
+            return "Schemer";
+        }
+        return null;
+
+    }
+
+    private String getPlayerPowerUpInfo(Monster monster) {
+        if (monster instanceof Dasher) {
+            return "Gain 3x movement speed" + "\n" + " for the next 3 turns";
+        }
+
+        if (monster instanceof MultiTasker) {
+            return "Move at normal speed for" + "\n" + " the next 2 turns";
+        }
+
+        if (monster instanceof Dynamo) {
+            return "Freezes the opponent, making " + "\n" + " them skip their entire next turn";
+        }
+        if (monster instanceof Schemer) {
+            return "Steals energy from ALL " + "\n"
+                    + " other monsters present (teammates-opponents)" + "\n" + " Not affected by the shield.";
+        }
+        return null;
+    }
+
+    private String getMonsterPassiveTrait(Monster monster) {
+        if (monster instanceof Dasher) {
+            return "Base dice movement is" + "\n" + " doubled (2x speed)";
+        }
+
+        if (monster instanceof MultiTasker) {
+            return "Half speed (1/2 dice movement) & All" + "\n" +
+                    " energy changes receive +200 bonus";
+
+        }
+        if (monster instanceof Dynamo) {
+            return "All Energy Changes" + "\n" + " are doubled ";
+        }
+        if (monster instanceof Schemer) {
+            return "All Energy Changes" + "\n" + " get +10 bonus";
+        }
+        return null;
+
     }
 }

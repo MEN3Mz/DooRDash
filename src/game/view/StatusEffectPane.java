@@ -3,10 +3,12 @@ package game.view;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class StatusEffectPane extends HBox {
     private ImageView shieldIcon;
@@ -24,9 +26,9 @@ public class StatusEffectPane extends HBox {
 
     public StatusEffectPane() {
         this.setAlignment(Pos.BOTTOM_CENTER);
-        this.setSpacing(15);
+        this.setSpacing(4);
         this.setMaxWidth(Double.MAX_VALUE);
-        this.setPrefHeight(50);
+        this.setPrefHeight(42);
 
         desaturated.setSaturation(-4.0);
         desaturated.setBrightness(-0.7);
@@ -62,7 +64,7 @@ public class StatusEffectPane extends HBox {
         Image img = new Image(urlString);
         ImageView iv = new ImageView(img);
 
-        iv.setFitWidth(35);
+        iv.setFitWidth(28);
         iv.setPreserveRatio(true);
 
         return iv;
@@ -102,12 +104,12 @@ public class StatusEffectPane extends HBox {
             iv.setEffect(desaturated);
             iv.setOpacity(INACTIVE_OPACITY);
             counter.setText("0");
-            counter.setOpacity(0.35);
+            counter.setOpacity(0.95);
         }
     }
 
     private VBox createIconStack(ImageView icon, Label counter) {
-        VBox stack = new VBox(2, icon, counter);
+        VBox stack = new VBox(0, icon, counter);
         stack.setAlignment(Pos.CENTER);
 
         return stack;
@@ -116,10 +118,11 @@ public class StatusEffectPane extends HBox {
     private Label createCounter() {
         Label label = new Label("0");
         label.setStyle("""
-                -fx-font-size: 10px;
+                -fx-font-size: 9px;
                 -fx-font-weight: 900;
                 -fx-text-fill: white;
                 """);
+        label.setEffect(new DropShadow(2, Color.BLACK));
 
         return label;
     }

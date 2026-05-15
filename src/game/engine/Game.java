@@ -32,6 +32,7 @@ public class Game {
 	private ArrayList<String> opponentEventLog;
 	private int playerPreviousPosition;
 	private int opponentPreviousPosition;
+	private int lastRolledValue;
 
 	public Game(Role playerRole) throws IOException {
 		this.board = new Board(DataLoader.readCards());
@@ -50,6 +51,7 @@ public class Game {
 		this.opponentEventLog = new ArrayList<>();
 		this.playerPreviousPosition = player.getPosition();
 		this.opponentPreviousPosition = opponent.getPosition();
+		this.lastRolledValue = 0;
 
 		allMonsters.remove(player);
 		allMonsters.remove(opponent);
@@ -103,8 +105,11 @@ public class Game {
 		if (gameOver)
 			return;
 
-		if (current.getEnergy() < Constants.POWERUP_COST)
+		if (current.getEnergy() < Constants.POWERUP_COST) {
+			addEvent(current, current.getName() + " tried to use power-up but needs "
+					+ Constants.POWERUP_COST + " energy.");
 			throw new OutOfEnergyException("Not enough energy to use powerup");
+		}
 
 		current.executePowerupEffect(getCurrentOpponent());
 		current.setEnergy(current.getEnergy() - Constants.POWERUP_COST);
@@ -127,6 +132,7 @@ public class Game {
 		}
 
 		int roll = rollDice();
+		lastRolledValue = roll;
 		int startPosition = current.getPosition();
 		int startEnergy = current.getEnergy();
 		Monster actingMonster = current;
@@ -136,7 +142,13 @@ public class Game {
 		int opponentStartEnergy = actingOpponent.getEnergy();
 		setPreviousPosition(actingMonster, startPosition);
 
-		board.moveMonster(actingMonster, roll, actingOpponent);
+		try {
+			board.moveMonster(actingMonster, roll, actingOpponent);
+		} catch (InvalidMoveException exception) {
+			addEvent(actingMonster, actingMonster.getName() + " tried to land on "
+					+ actingOpponent.getName() + ". Roll again.");
+			throw exception;
+		}
 		lastDrawnCard = Board.getLastDrawnCard();
 		if (lastDrawnCard != null) {
 			lastCardDrawer = describePlayer(actingMonster);
@@ -205,6 +217,10 @@ public class Game {
 
 	public int getOpponentPreviousPosition() {
 		return opponentPreviousPosition;
+	}
+
+	public int getLastRolledValue() {
+		return lastRolledValue;
 	}
 
 	public Card getLastDrawnCard() {

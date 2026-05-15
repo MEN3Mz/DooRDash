@@ -46,7 +46,7 @@ public class TurnLogView extends VBox {
             return;
         }
 
-        int start = Math.max(0, events.size() - 2);
+        int start = Math.max(0, events.size() - 3);
         for (int i = events.size() - 1; i >= start; i--) {
             entriesBox.getChildren().add(createEntry(events.get(i)));
         }

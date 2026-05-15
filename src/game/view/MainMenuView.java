@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -123,7 +124,13 @@ public class MainMenuView {
 
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
-        button.setOnMousePressed(e -> SoundManager.playButtonSound());
+        button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            SoundManager.playButtonSound();
+            button.getStyleClass().remove("menu-button-active");
+            button.getStyleClass().add("menu-button-active");
+        });
+        button.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> button.getStyleClass().remove("menu-button-active"));
+        button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> button.getStyleClass().remove("menu-button-active"));
 
         return button;
     }

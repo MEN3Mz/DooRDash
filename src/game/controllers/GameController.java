@@ -5,8 +5,11 @@ import game.engine.Game;
 import game.engine.Constants;
 import game.engine.Role;
 import game.engine.cards.Card;
+import game.engine.cards.ConfusionCard;
 import game.engine.cells.ContaminationSock;
 import game.engine.cells.ConveyorBelt;
+import game.engine.exceptions.InvalidMoveException;
+import game.engine.exceptions.OutOfEnergyException;
 import game.engine.monsters.Monster;
 import game.view.CardView;
 import game.view.GameOverView;
@@ -44,6 +47,7 @@ public class GameController {
         this.playerTwoName = playerTwoName;
         this.game = new Game(role);
         this.view = new GameView(game, playerOneName, playerTwoName);
+        SoundManager.playGameMusic();
 
         bindEvents();
         show();
@@ -55,13 +59,23 @@ public class GameController {
             try {
                 SoundManager.playDiceRollSound();
                 lastTurnPlayerName = getCurrentPlayerName();
+                boolean playerWasShielded = game.getPlayer().isShielded();
+                boolean opponentWasShielded = game.getOpponent().isShielded();
+                boolean playerWasFrozen = game.getPlayer().isFrozen();
+                boolean opponentWasFrozen = game.getOpponent().isFrozen();
                 int rolledValue = game.playTurn();
                 playLandedCellSound();
+                playStatusChangeSounds(playerWasShielded, opponentWasShielded, playerWasFrozen, opponentWasFrozen);
 
                 view.getBottomView().setDiceValue(rolledValue);
                 view.refresh();
                 handleCardDrawnOrGameOver();
 
+            } catch (InvalidMoveException ex) {
+                SoundManager.playInvalidSound();
+                view.getBottomView().setDiceValue(game.getLastRolledValue());
+                view.refresh();
+                System.out.println("Invalid move: " + ex.getMessage() + " Roll again.");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -69,15 +83,22 @@ public class GameController {
 
         view.getBottomView().setOnPowerUp(e -> {
             try {
+                boolean playerWasShielded = game.getPlayer().isShielded();
+                boolean opponentWasShielded = game.getOpponent().isShielded();
+                boolean playerWasFrozen = game.getPlayer().isFrozen();
+                boolean opponentWasFrozen = game.getOpponent().isFrozen();
                 if (game.getCurrent().getEnergy() >= Constants.POWERUP_COST) {
                     SoundManager.playPowerUpSound();
                 } else {
                     SoundManager.playInvalidSound();
                 }
                 game.usePowerup();
+                playStatusChangeSounds(playerWasShielded, opponentWasShielded, playerWasFrozen, opponentWasFrozen);
                 view.refresh();
                 handleGameOver();
 
+            } catch (OutOfEnergyException ex) {
+                view.refresh();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -97,6 +118,9 @@ public class GameController {
         Card drawnCard = game.getLastDrawnCard();
 
         if (drawnCard != null) {
+            if (drawnCard instanceof ConfusionCard) {
+                SoundManager.playConfusionSound();
+            }
             showCardOverlay(drawnCard, lastTurnPlayerName);
             return;
         }
@@ -109,6 +133,34 @@ public class GameController {
             SoundManager.playBeltSound();
         } else if (game.getBoard().getLastLandedCell() instanceof ContaminationSock) {
             SoundManager.playSockSound();
+        }
+    }
+
+    private void playStatusChangeSounds(
+            boolean playerWasShielded,
+            boolean opponentWasShielded,
+            boolean playerWasFrozen,
+            boolean opponentWasFrozen) {
+
+        playShieldChangeSound(playerWasShielded, game.getPlayer().isShielded());
+        playShieldChangeSound(opponentWasShielded, game.getOpponent().isShielded());
+        playFreezeChangeSound(playerWasFrozen, game.getPlayer().isFrozen());
+        playFreezeChangeSound(opponentWasFrozen, game.getOpponent().isFrozen());
+    }
+
+    private void playShieldChangeSound(boolean wasShielded, boolean isShielded) {
+        if (!wasShielded && isShielded) {
+            SoundManager.playShieldAddSound();
+        } else if (wasShielded && !isShielded) {
+            SoundManager.playShieldRemoveSound();
+        }
+    }
+
+    private void playFreezeChangeSound(boolean wasFrozen, boolean isFrozen) {
+        if (!wasFrozen && isFrozen) {
+            SoundManager.playFreezeSound();
+        } else if (wasFrozen && !isFrozen) {
+            SoundManager.playUnfreezeSound();
         }
     }
 
@@ -139,7 +191,16 @@ public class GameController {
 
         if (game.getWinner() != null) {
             System.out.println(game.getWinner().getName() + " wins!");
+            playWinSound(game.getWinner());
             showGameOverView(game.getWinner());
+        }
+    }
+
+    private void playWinSound(Monster winner) {
+        if (winner.getRole() == Role.LAUGHER) {
+            SoundManager.playLaughWinSound();
+        } else {
+            SoundManager.playScareWinSound();
         }
     }
 
@@ -226,14 +287,29 @@ public class GameController {
     }
 
     private void showGameOverView(Monster winner) {
-        GameOverView gameOverView = new GameOverView(winner);
-        gameOverView.setOnMainMenu(e -> new MainMenuController(stage));
+        GameOverView gameOverView = new GameOverView(
+                winner,
+                game.getPlayer(),
+                game.getOpponent(),
+                getPlayerNameForMonster(winner));
+        gameOverView.setOnMainMenu(e -> {
+            SoundManager.stopAllEffects();
+            new MainMenuController(stage);
+        });
+        gameOverView.setOnExit(e -> {
+            SoundManager.stopAllEffects();
+            stage.close();
+        });
 
         if (stage.getScene() == null) {
             stage.setScene(new Scene(gameOverView.getRoot()));
         } else {
             stage.getScene().setRoot(gameOverView.getRoot());
         }
+    }
+
+    private String getPlayerNameForMonster(Monster monster) {
+        return monster == game.getPlayer() ? playerOneName : playerTwoName;
     }
 
     private void showHowToPlayOverlay() {
