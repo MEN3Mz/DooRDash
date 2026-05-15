@@ -25,12 +25,37 @@
   -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0, 0, 1);
 }
 
+.menu-button:hover {
+  -fx-background-color:
+    linear-gradient(#a8d2ff 0%, #2f80ed 50%, #0f56a8 51%, #1b65bf 100%),
+    linear-gradient(#303030 0%, #161616 100%),
+    linear-gradient(#5c7fb4, #3d6094);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(120, 190, 255, 0.75), 10, 0, 0, 1);
+  -fx-scale-x: 1.03;
+  -fx-scale-y: 1.03;
+}
+
 /* PRESSED STATE */
 
 .menu-button:pressed {
   -fx-background-color:
     linear-gradient(#1a5cad 0%, #0a3b75 50%, #051d3a 51%, #082a52 100%),
     linear-gradient(#101010 0%, #000000 100%), linear-gradient(#2e4a77, #1a2b47);
+  -fx-translate-y: 2px;
+  -fx-text-fill: #bbbbbb;
+  -fx-effect: none;
+}
+
+.menu-button-active {
+  -fx-background-color:
+    linear-gradient(#1a5cad 0%, #0a3b75 50%, #051d3a 51%, #082a52 100%),
+    linear-gradient(#101010 0%, #000000 100%),
+    linear-gradient(#2e4a77, #1a2b47);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
   -fx-translate-y: 2px;
   -fx-text-fill: #bbbbbb;
   -fx-effect: none;

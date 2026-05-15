@@ -1,5 +1,6 @@
 package game.controllers;
 
+import game.audio.SoundManager;
 import game.view.HowToPlayView;
 import game.view.MainMenuView;
 import game.view.PlayerNamesView;
@@ -20,6 +21,7 @@ public class MainMenuController {
     public MainMenuController(Stage stage) {
         this.stage = stage;
         this.view = new MainMenuView();
+        SoundManager.playMainMenuMusic();
 
         bindEvents();
         show();

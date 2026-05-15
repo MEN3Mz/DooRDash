@@ -42,6 +42,31 @@ public class ChooseSideView {
             + "-fx-font-size: 18px;"
             + "-fx-padding: 12 34 12 34;"
             + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );";
+    private static final String START_BUTTON_HOVER_STYLE = "-fx-background-color: "
+            + "linear-gradient(#a8d2ff 0%, #2f80ed 50%, #0f56a8 51%, #1b65bf 100%), "
+            + "linear-gradient(#303030 0%, #161616 100%), "
+            + "linear-gradient(#5c7fb4, #3d6094); "
+            + "-fx-background-insets: 0,1,2; "
+            + "-fx-background-radius: 5,4,3; "
+            + "-fx-text-fill: white;"
+            + "-fx-font-weight: bold;"
+            + "-fx-font-size: 18px;"
+            + "-fx-padding: 12 34 12 34;"
+            + "-fx-scale-x: 1.03;"
+            + "-fx-scale-y: 1.03;"
+            + "-fx-effect: dropshadow( three-pass-box , rgba(120,190,255,0.75) , 10, 0.0 , 0 , 1 );";
+    private static final String START_BUTTON_PRESSED_STYLE = "-fx-background-color: "
+            + "linear-gradient(#1a5cad 0%, #0a3b75 50%, #051d3a 51%, #082a52 100%), "
+            + "linear-gradient(#101010 0%, #000000 100%), "
+            + "linear-gradient(#2e4a77, #1a2b47); "
+            + "-fx-background-insets: 0,1,2; "
+            + "-fx-background-radius: 5,4,3; "
+            + "-fx-text-fill: #bbbbbb;"
+            + "-fx-font-weight: bold;"
+            + "-fx-font-size: 18px;"
+            + "-fx-padding: 12 34 12 34;"
+            + "-fx-translate-y: 2px;"
+            + "-fx-effect: none;";
     private static final String DISABLED_START_BUTTON_STYLE = "-fx-background-color: rgba(80, 88, 98, 0.88);"
             + "-fx-text-fill: #d7dde4;"
             + "-fx-font-weight: bold;"
@@ -270,7 +295,27 @@ public class ChooseSideView {
         Button button = new Button("Start Game");
         button.setDisable(true);
         button.setStyle(DISABLED_START_BUTTON_STYLE);
-        button.setOnMousePressed(event -> SoundManager.playButtonSound());
+        button.setOnMouseEntered(event -> {
+            if (!button.isDisabled()) {
+                button.setStyle(START_BUTTON_HOVER_STYLE);
+            }
+        });
+        button.setOnMouseExited(event -> {
+            if (!button.isDisabled()) {
+                button.setStyle(START_BUTTON_STYLE);
+            }
+        });
+        button.setOnMousePressed(event -> {
+            SoundManager.playButtonSound();
+            if (!button.isDisabled()) {
+                button.setStyle(START_BUTTON_PRESSED_STYLE);
+            }
+        });
+        button.setOnMouseReleased(event -> {
+            if (!button.isDisabled()) {
+                button.setStyle(button.isHover() ? START_BUTTON_HOVER_STYLE : START_BUTTON_STYLE);
+            }
+        });
         return button;
     }
 

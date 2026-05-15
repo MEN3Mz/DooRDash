@@ -1,6 +1,7 @@
 package game.view;
 
 import game.view.StatusEffectPane;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
@@ -12,6 +13,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class MonsterInfoPane extends Pane {
+    private static final double CARD_WIDTH = 180;
+    private static final double CARD_HEIGHT = 287;
+    private static final double PANEL_HEIGHT = 405;
+
     private Label posLabel;
     private Label energyLabel;
     private ProgressBar energyBar;
@@ -19,43 +24,47 @@ public class MonsterInfoPane extends Pane {
     private ImageView capsuleFrame; // Renamed to capsuleFrame
 
     public MonsterInfoPane() {
-        this.setMinWidth(220);
-        this.setMaxWidth(220);
-        this.setPrefWidth(220);
-        this.setMinHeight(350);
-        this.setMaxHeight(350);
-        this.setPrefHeight(350);
+        this.setMinWidth(CARD_WIDTH);
+        this.setMaxWidth(CARD_WIDTH);
+        this.setPrefWidth(CARD_WIDTH);
+        this.setMinHeight(PANEL_HEIGHT);
+        this.setMaxHeight(PANEL_HEIGHT);
+        this.setPrefHeight(PANEL_HEIGHT);
 
         capsuleFrame = new ImageView();
-        capsuleFrame.setFitWidth(300);
-        capsuleFrame.setFitHeight(80);
+        capsuleFrame.setFitWidth(240);
+        capsuleFrame.setFitHeight(64);
         capsuleFrame.setPreserveRatio(false);
         capsuleFrame.setSmooth(true);
-        capsuleFrame.setLayoutX(-20);
-        capsuleFrame.setLayoutY(340);
+        capsuleFrame.setLayoutX(-18);
+        capsuleFrame.setLayoutY(296);
 
         posLabel = new Label("0");
-        posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 32));
-        posLabel.setLayoutX(12);
-        posLabel.setLayoutY(227);
-        posLabel.setStyle("-fx-text-fill: #102033;");
-        posLabel.setEffect(new DropShadow(3, Color.WHITE));
+        posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 26));
+        posLabel.setPrefWidth(52);
+        posLabel.setAlignment(Pos.CENTER);
+        posLabel.setLayoutX(7);
+        posLabel.setLayoutY(180);
+        posLabel.setStyle("-fx-text-fill: white;");
+        posLabel.setEffect(new DropShadow(4, Color.BLACK));
 
         energyBar = new ProgressBar(1.0);
-        energyBar.setPrefWidth(90);
-        energyBar.setLayoutX(71);
-        energyBar.setLayoutY(360);
+        energyBar.setPrefWidth(74);
+        energyBar.setLayoutX(53);
+        energyBar.setLayoutY(311);
 
         energyLabel = new Label("0");
-        energyLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 32));
-        energyLabel.setLayoutX(79);
-        energyLabel.setLayoutY(410);
+        energyLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 28));
+        energyLabel.setPrefWidth(120);
+        energyLabel.setAlignment(Pos.CENTER);
+        energyLabel.setLayoutX(30);
+        energyLabel.setLayoutY(360);
         energyLabel.setStyle("-fx-text-fill: #102033;");
         energyLabel.setEffect(new DropShadow(3, Color.WHITE));
 
         effectsPane = new StatusEffectPane();
-        effectsPane.setLayoutX(18);
-        effectsPane.setLayoutY(273);
+        effectsPane.setLayoutX(23);
+        effectsPane.setLayoutY(228);
 
         this.getChildren().addAll(capsuleFrame, energyBar, effectsPane, posLabel, energyLabel);
     }
@@ -76,6 +85,7 @@ public class MonsterInfoPane extends Pane {
             int shieldTurns, int frozenTurns, int powerUpTurns, int confusionTurns) {
 
         posLabel.setText(String.valueOf(pos));
+        posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, pos >= 100 ? 21 : 26));
         energyLabel.setText(String.valueOf(energy));
 
         double progress = energy / 1000.0;
@@ -199,7 +209,8 @@ public class MonsterInfoPane extends Pane {
             if (res != null) {
                 this.setStyle(
                         "-fx-background-image: url('" + res.toExternalForm() + "');" +
-                                "-fx-background-size: 100% 100%;" +
+                                "-fx-background-size: " + CARD_WIDTH + "px " + CARD_HEIGHT + "px;" +
+                                "-fx-background-position: top center;" +
                                 "-fx-background-repeat: no-repeat;");
             }
         } catch (Exception e) {

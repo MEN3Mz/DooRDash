@@ -10,14 +10,23 @@ import javafx.scene.media.MediaPlayer;
 
 public final class SoundManager {
 
-    private static final String SOUNDTRACK_PATH = "/game/assets/soundTrack/monsters_inc_theme.mp3";
+    private static final String MAIN_MENU_MUSIC_PATH = "/game/assets/soundTrack/MainMenu.mp3";
+    private static final String GAME_MUSIC_PATH = "/game/assets/soundTrack/Game.mp3";
     private static final String BUTTON_SOUND_PATH = "/game/assets/soundTrack/Button.mp3";
     private static final String DICE_SOUND_PATH = "/game/assets/soundTrack/diceRoll.mp3";
     private static final String POWER_UP_SOUND_PATH = "/game/assets/soundTrack/PowerUp.mp3";
     private static final String INVALID_SOUND_PATH = "/game/assets/soundTrack/PowerUpInvalid.mp3";
     private static final String BELT_SOUND_PATH = "/game/assets/soundTrack/Belt.mp3";
     private static final String SOCK_SOUND_PATH = "/game/assets/soundTrack/Sock.mp3";
+    private static final String LAUGH_WIN_SOUND_PATH = "/game/assets/soundTrack/LaughWin.mp3";
+    private static final String SCARE_WIN_SOUND_PATH = "/game/assets/soundTrack/ScareWin.mp3";
+    private static final String SHIELD_ADD_SOUND_PATH = "/game/assets/soundTrack/ShieldAdd.mp3";
+    private static final String SHIELD_REMOVE_SOUND_PATH = "/game/assets/soundTrack/ShieldRemove.mp3";
+    private static final String FREEZE_SOUND_PATH = "/game/assets/soundTrack/freeze.mp3";
+    private static final String UNFREEZE_SOUND_PATH = "/game/assets/soundTrack/unfreeze.mp3";
+    private static final String CONFUSION_SOUND_PATH = "/game/assets/soundTrack/Confusion.mp3";
     private static MediaPlayer soundtrackPlayer;
+    private static String currentMusicPath;
     private static final List<MediaPlayer> activeEffects = new ArrayList<>();
     private static boolean soundOn = true;
     private static double musicVolume = 0.35;
@@ -27,36 +36,58 @@ public final class SoundManager {
     }
 
     public static void startSoundtrack() {
-        if (soundtrackPlayer != null) {
+        playMainMenuMusic();
+    }
+
+    public static void playMainMenuMusic() {
+        playMusic(MAIN_MENU_MUSIC_PATH);
+    }
+
+    public static void playGameMusic() {
+        playMusic(GAME_MUSIC_PATH);
+    }
+
+    private static void playMusic(String musicPath) {
+        if (musicPath.equals(currentMusicPath) && soundtrackPlayer != null) {
             if (soundOn) {
                 soundtrackPlayer.play();
             }
             return;
         }
 
-        try {
-            String soundtrackUrl = findSoundUrl(SOUNDTRACK_PATH);
+        stopCurrentMusic();
 
-            if (soundtrackUrl == null) {
-                System.err.println("Soundtrack not found: " + SOUNDTRACK_PATH);
+        try {
+            String musicUrl = findSoundUrl(musicPath);
+
+            if (musicUrl == null) {
+                System.err.println("Music not found: " + musicPath);
                 return;
             }
 
-            soundtrackPlayer = new MediaPlayer(new Media(soundtrackUrl));
+            soundtrackPlayer = new MediaPlayer(new Media(musicUrl));
             soundtrackPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             soundtrackPlayer.setVolume(musicVolume);
+            currentMusicPath = musicPath;
 
             if (soundOn) {
                 soundtrackPlayer.play();
             }
         } catch (Throwable error) {
             System.err.println("Could not load soundtrack. Make sure javafx.media is in the run configuration.");
-            System.err.println("Missing or failed audio support for: " + SOUNDTRACK_PATH);
+            System.err.println("Missing or failed audio support for: " + musicPath);
         }
     }
 
-    private static String findSoundtrackUrl() {
-        return findSoundUrl(SOUNDTRACK_PATH);
+    private static void stopCurrentMusic() {
+        if (soundtrackPlayer == null) {
+            return;
+        }
+
+        soundtrackPlayer.stop();
+        soundtrackPlayer.dispose();
+        soundtrackPlayer = null;
+        currentMusicPath = null;
     }
 
     private static String findSoundUrl(String resourcePath) {
@@ -135,6 +166,43 @@ public final class SoundManager {
 
     public static void playSockSound() {
         playEffect(SOCK_SOUND_PATH);
+    }
+
+    public static void playLaughWinSound() {
+        playEffect(LAUGH_WIN_SOUND_PATH);
+    }
+
+    public static void playScareWinSound() {
+        playEffect(SCARE_WIN_SOUND_PATH);
+    }
+
+    public static void playShieldAddSound() {
+        playEffect(SHIELD_ADD_SOUND_PATH);
+    }
+
+    public static void playShieldRemoveSound() {
+        playEffect(SHIELD_REMOVE_SOUND_PATH);
+    }
+
+    public static void playFreezeSound() {
+        playEffect(FREEZE_SOUND_PATH);
+    }
+
+    public static void playUnfreezeSound() {
+        playEffect(UNFREEZE_SOUND_PATH);
+    }
+
+    public static void playConfusionSound() {
+        playEffect(CONFUSION_SOUND_PATH);
+    }
+
+    public static void stopAllEffects() {
+        for (MediaPlayer effectPlayer : new ArrayList<>(activeEffects)) {
+            effectPlayer.stop();
+            effectPlayer.dispose();
+        }
+
+        activeEffects.clear();
     }
 
     private static void playEffect(String path) {

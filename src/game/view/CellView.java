@@ -14,6 +14,9 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 
 public class CellView extends StackPane {
+    private static final String DEFAULT_CELL_STYLE =
+            "-fx-border-color: #3C4148; -fx-border-width: 2; -fx-background-color: linear-gradient(to bottom, #F4F7FA, #AEB7C1);";
+
     private final Label numberLabel;
     private final Label playerLabel;
     private final Label opponentLabel;
@@ -152,6 +155,8 @@ public class CellView extends StackPane {
         playerLabel.setVisible(false);
         opponentLabel.setVisible(false);
         doorLabel.setVisible(false);
+        setStyle(DEFAULT_CELL_STYLE);
+
         if (player.getRole() == Role.LAUGHER) {
             playerLabel.setStyle(
                     "-fx-background-color: #2F80ED; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
@@ -239,8 +244,6 @@ public class CellView extends StackPane {
                 setStyle("-fx-border-color: red ; -fx-border-width: 2");
             }
         } else {
-            setStyle(
-                    "-fx-border-color: #3C4148; -fx-border-width: 2; -fx-background-color: linear-gradient(to bottom, #F4F7FA, #AEB7C1);");
             if (index == playerPosition && index != opponentPosition) {
                 monsterImageView.setImage(ImageCache.get(getMonsterImagePath(player)));
 
