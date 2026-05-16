@@ -4,6 +4,7 @@
 # Output folders
 /out/
 /bin/
+/lib/
 
 # IDE settings
 .idea/
