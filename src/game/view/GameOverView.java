@@ -166,6 +166,7 @@ public class GameOverView {
         button.setPrefHeight(58);
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
+        button.setOnMouseEntered(e -> SoundManager.playHoverSound());
         if (winnerRole == Role.SCARER) {
             button.setStyle("""
                     -fx-background-color:

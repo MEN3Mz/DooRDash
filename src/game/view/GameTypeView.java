@@ -1,5 +1,6 @@
 package game.view;
 
+import game.audio.SoundManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -175,6 +176,7 @@ public class GameTypeView {
     private Button createSelectButton(String text, GameType gameType) {
         Button button = new Button(text);
         button.setStyle(SELECT_BUTTON_STYLE);
+        button.setOnMouseEntered(event -> SoundManager.playHoverSound());
         button.setOnAction(event -> updateSelection(gameType));
 
         return button;
@@ -184,6 +186,11 @@ public class GameTypeView {
         Button button = new Button("Continue");
         button.setDisable(true);
         button.setStyle(DISABLED_START_BUTTON_STYLE);
+        button.setOnMouseEntered(event -> {
+            if (!button.isDisabled()) {
+                SoundManager.playHoverSound();
+            }
+        });
 
         return button;
     }

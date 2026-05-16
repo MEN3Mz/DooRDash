@@ -128,6 +128,7 @@ public class PlayerNamesView {
         button.setPrefHeight(52);
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
+        button.setOnMouseEntered(e -> SoundManager.playHoverSound());
         button.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         return button;

@@ -128,6 +128,7 @@ public class CardView {
         button.setPrefHeight(48);
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
+        button.setOnMouseEntered(e -> SoundManager.playHoverSound());
         button.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         return button;

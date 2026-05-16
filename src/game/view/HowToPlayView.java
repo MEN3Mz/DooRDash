@@ -202,6 +202,7 @@ public class HowToPlayView {
         backButton.setPrefHeight(48);
         backButton.getStyleClass().add("menu-button");
         backButton.getStyleClass().add("menu-font");
+        backButton.setOnMouseEntered(e -> SoundManager.playHoverSound());
         backButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         content.getChildren().addAll(

@@ -120,9 +120,11 @@ public class GameView {
 
         this.menuButton = new Button();
         menuButton.getStyleClass().add("game-menu-button");
+        menuButton.setOnMouseEntered(e -> SoundManager.playHoverSound());
         menuButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         buildLayout();
+        addMenuPanel();
 
         // Load CSS
         mainRoot.getStylesheets().add(
@@ -183,6 +185,24 @@ public class GameView {
         applyPanelStyle(bottomPanel);
     }
 
+    private void addMenuPanel() {
+        ImageView panelImage = new ImageView(loadImage("/game/assets/panels/menuPanel.png"));
+        panelImage.setFitWidth(80);
+        panelImage.setFitHeight(80);
+        panelImage.setPreserveRatio(true);
+        panelImage.setSmooth(true);
+
+        StackPane menuPanel = new StackPane(panelImage, menuButton);
+        menuPanel.setPrefSize(80, 80);
+        menuPanel.setMinSize(80, 80);
+        menuPanel.setMaxSize(80, 80);
+        menuPanel.setPickOnBounds(false);
+
+        mainRoot.getChildren().add(menuPanel);
+        StackPane.setAlignment(menuPanel, Pos.TOP_LEFT);
+        StackPane.setMargin(menuPanel, new Insets(12, 0, 0, 175));
+    }
+
     private StackPane createTopPanel() {
 
         currentPlayerLabel.setStyle("""
@@ -191,16 +211,19 @@ public class GameView {
                 -fx-text-fill: white;
                 """);
         currentPlayerLabel.setEffect(new DropShadow(4, Color.BLACK));
-
-        HBox content = new HBox(24, menuButton, currentPlayerLabel);
-        content.setAlignment(Pos.CENTER_LEFT);
-        content.setPadding(new Insets(6, 22, 6, 44));
+        HBox content = new HBox(currentPlayerLabel);
+        content.setAlignment(Pos.CENTER);
+        content.setPadding(new Insets(6, 22, 0, 22));
         content.setPrefWidth(650);
         content.setMaxWidth(650);
 
+        currentPlayerLabel.setMaxWidth(650 - 44);
+        currentPlayerLabel.setAlignment(Pos.CENTER);
+
         ImageView panelImage = new ImageView(loadImage("/game/assets/panels/top panel.png"));
-        panelImage.setPreserveRatio(true);
+        panelImage.setPreserveRatio(false);
         panelImage.setFitWidth(650);
+        panelImage.setFitHeight(150);
         panelImage.setSmooth(true);
 
         StackPane panel = new StackPane(panelImage, content);
@@ -399,6 +422,7 @@ public class GameView {
         playerSideContainer = new HBox(8, playerInfoColumn, playerTurnLogView);
         playerSideContainer.setAlignment(Pos.TOP_CENTER);
         playerSideContainer.setPrefWidth(620);
+        HBox.setMargin(playerTurnLogView, new Insets(75, 0, 0, 0));
         playerSideContainer.setFillHeight(false);
         playerSideContainer.setStyle("-fx-background-color: transparent;");
 
@@ -419,6 +443,7 @@ public class GameView {
         opponentSideContainer = new HBox(8, opponentTurnLogView, opponentInfoColumn);
         opponentSideContainer.setAlignment(Pos.TOP_CENTER);
         opponentSideContainer.setPrefWidth(620);
+        HBox.setMargin(opponentTurnLogView, new Insets(75, 0, 0, 0));
         opponentSideContainer.setFillHeight(false);
         opponentSideContainer.setStyle("-fx-background-color: transparent;");
 

@@ -19,9 +19,11 @@ public class MonsterInfoPane extends Pane {
 
     private Label posLabel;
     private Label energyLabel;
+    private Label energyChangeLabel;
     private ProgressBar energyBar;
     private StatusEffectPane effectsPane;
     private ImageView capsuleFrame; // Renamed to capsuleFrame
+    private Integer previousEnergy;
 
     public MonsterInfoPane() {
         this.setMinWidth(CARD_WIDTH);
@@ -62,11 +64,19 @@ public class MonsterInfoPane extends Pane {
         energyLabel.setStyle("-fx-text-fill: #102033;");
         energyLabel.setEffect(new DropShadow(3, Color.WHITE));
 
+        energyChangeLabel = new Label();
+        energyChangeLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 13));
+        energyChangeLabel.setPrefWidth(58);
+        energyChangeLabel.setAlignment(Pos.CENTER_LEFT);
+        energyChangeLabel.setLayoutX(128);
+        energyChangeLabel.setLayoutY(368);
+        energyChangeLabel.setEffect(new DropShadow(3, Color.BLACK));
+
         effectsPane = new StatusEffectPane();
         effectsPane.setLayoutX(23);
         effectsPane.setLayoutY(228);
 
-        this.getChildren().addAll(capsuleFrame, energyBar, effectsPane, posLabel, energyLabel);
+        this.getChildren().addAll(capsuleFrame, energyBar, effectsPane, posLabel, energyLabel, energyChangeLabel);
     }
 
     public void updateUI(String name, String type, String originalRole, String currentRole,
@@ -86,6 +96,7 @@ public class MonsterInfoPane extends Pane {
 
         posLabel.setText(String.valueOf(pos));
         posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, pos >= 100 ? 21 : 26));
+        updateEnergyChangeLabel(energy);
         energyLabel.setText(String.valueOf(energy));
 
         double progress = energy / 1000.0;
@@ -216,5 +227,26 @@ public class MonsterInfoPane extends Pane {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateEnergyChangeLabel(int energy) {
+        if (previousEnergy == null) {
+            energyChangeLabel.setText("");
+            previousEnergy = energy;
+            return;
+        }
+
+        int change = energy - previousEnergy;
+        previousEnergy = energy;
+
+        if (change == 0) {
+            energyChangeLabel.setText("");
+            return;
+        }
+
+        energyChangeLabel.setText(change > 0 ? "+" + change : String.valueOf(change));
+        energyChangeLabel.setStyle(change > 0
+                ? "-fx-text-fill: #35e66b;"
+                : "-fx-text-fill: #ff3b3b;");
     }
 }

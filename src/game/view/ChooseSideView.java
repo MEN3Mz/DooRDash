@@ -257,6 +257,7 @@ public class ChooseSideView {
     private Button createSelectButton(String text, Role role) {
         Button button = new Button(text);
         button.setStyle(SELECT_BUTTON_STYLE);
+        button.setOnMouseEntered(event -> SoundManager.playHoverSound());
         button.setOnMousePressed(event -> SoundManager.playButtonSound());
         button.setOnAction(event -> updateSelection(role));
         return button;
@@ -287,6 +288,7 @@ public class ChooseSideView {
     private Button createInfoButton() {
         Button button = new Button("!");
         button.setStyle(INFO_BUTTON_STYLE);
+        button.setOnMouseEntered(event -> SoundManager.playHoverSound());
         button.setOnMousePressed(event -> SoundManager.playButtonSound());
         return button;
     }
@@ -297,6 +299,7 @@ public class ChooseSideView {
         button.setStyle(DISABLED_START_BUTTON_STYLE);
         button.setOnMouseEntered(event -> {
             if (!button.isDisabled()) {
+                SoundManager.playHoverSound();
                 button.setStyle(START_BUTTON_HOVER_STYLE);
             }
         });

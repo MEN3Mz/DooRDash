@@ -122,6 +122,7 @@ public class MainMenuView {
 
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
+        button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> SoundManager.playHoverSound());
         button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             SoundManager.playButtonSound();
             button.getStyleClass().remove("menu-button-active");
@@ -137,6 +138,7 @@ public class MainMenuView {
         Button soundButton = new Button(SOUND_ON_TEXT);
 
         soundButton.getStyleClass().add("sound-on");
+        soundButton.setOnMouseEntered(e -> SoundManager.playHoverSound());
         soundButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         soundButton.setOnAction(e -> {

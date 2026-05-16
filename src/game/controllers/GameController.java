@@ -8,6 +8,7 @@ import game.engine.cards.Card;
 import game.engine.cards.ConfusionCard;
 import game.engine.cells.ContaminationSock;
 import game.engine.cells.ConveyorBelt;
+import game.engine.cells.DoorCell;
 import game.engine.exceptions.InvalidMoveException;
 import game.engine.exceptions.OutOfEnergyException;
 import game.engine.monsters.Monster;
@@ -64,8 +65,11 @@ public class GameController {
                 boolean opponentWasShielded = game.getOpponent().isShielded();
                 boolean playerWasFrozen = game.getPlayer().isFrozen();
                 boolean opponentWasFrozen = game.getOpponent().isFrozen();
+                Monster actingMonster = game.getCurrent();
+                int actingMonsterEnergyBefore = actingMonster.getEnergy();
                 int rolledValue = game.playTurn();
                 playLandedCellSound();
+                playEnergyChangeSound(actingMonster, actingMonsterEnergyBefore);
                 playStatusChangeSounds(playerWasShielded, opponentWasShielded, playerWasFrozen, opponentWasFrozen);
 
                 view.getBottomView().setDiceValue(rolledValue);
@@ -127,6 +131,11 @@ public class GameController {
             SoundManager.playBeltSound();
         } else if (game.getBoard().getLastLandedCell() instanceof ContaminationSock) {
             SoundManager.playSockSound();
+        } else if (game.getBoard().getLastLandedCell() instanceof DoorCell) {
+            DoorCell doorCell = (DoorCell) game.getBoard().getLastLandedCell();
+            if (doorCell.wasLastLandingEnergyChangeActivation()) {
+                SoundManager.playDoorSound();
+            }
         }
     }
 
@@ -140,6 +149,21 @@ public class GameController {
         playShieldChangeSound(opponentWasShielded, game.getOpponent().isShielded());
         playFreezeChangeSound(playerWasFrozen, game.getPlayer().isFrozen());
         playFreezeChangeSound(opponentWasFrozen, game.getOpponent().isFrozen());
+    }
+
+    private void playEnergyChangeSound(Monster monster, int energyBefore) {
+        if (game.getBoard().getLastLandedCell() instanceof ConveyorBelt
+                || game.getBoard().getLastLandedCell() instanceof ContaminationSock) {
+            return;
+        }
+
+        int energyAfter = monster.getEnergy();
+
+        if (energyAfter < energyBefore) {
+            SoundManager.playDamageSound();
+        } else if (energyAfter > energyBefore) {
+            SoundManager.playEnergyIncreaseSound();
+        }
     }
 
     private void playShieldChangeSound(boolean wasShielded, boolean isShielded) {
@@ -275,6 +299,7 @@ public class GameController {
         button.setPrefHeight(58);
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
+        button.setOnMouseEntered(e -> SoundManager.playHoverSound());
         button.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         return button;
