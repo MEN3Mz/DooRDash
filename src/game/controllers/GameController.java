@@ -209,6 +209,7 @@ public class GameController {
 
         if (game.getWinner() != null) {
             System.out.println(game.getWinner().getName() + " wins!");
+            SoundManager.stopMusic();
             playWinSound(game.getWinner());
             showGameOverView(game.getWinner());
         }
@@ -233,30 +234,11 @@ public class GameController {
         VBox content = new VBox(20);
         content.setMaxWidth(520);
         content.setMaxHeight(420);
-        content.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom right,
-                    rgba(8,16,26,0.96),
-                    rgba(15,25,40,0.96));
-
-                -fx-background-radius: 24;
-                -fx-border-radius: 24;
-                -fx-border-width: 2;
-                -fx-border-color: rgba(255,255,255,0.12);
-                -fx-padding: 36;
-                -fx-effect:
-                    dropshadow(three-pass-box,
-                    rgba(0,0,0,0.55),
-                    24, 0, 0, 8);
-                """);
+        content.getStyleClass().add("pause-popup");
         content.setAlignment(Pos.CENTER);
 
         Label title = new Label("Game Paused");
-        title.setStyle("""
-                -fx-font-size: 30px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        title.getStyleClass().add("pause-title");
 
         Button resumeButton = createPauseButton("Resume Game");
         resumeButton.setOnAction(e -> hideOverlay());
@@ -287,6 +269,8 @@ public class GameController {
         overlayPane = new StackPane();
         overlayPane.getStylesheets().add(
                 getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        overlayPane.getStylesheets().add(
+                getClass().getResource("/game/assets/css/pause-view.css").toExternalForm());
         ((StackPane) overlayPane).getChildren().addAll(overlayBackground, content);
         StackPane.setAlignment(content, Pos.CENTER);
 

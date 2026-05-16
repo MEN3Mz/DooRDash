@@ -1,0 +1,21 @@
+.monster-position-label {
+  -fx-text-fill: white;
+}
+
+.monster-energy-label {
+  -fx-text-fill: #102033;
+}
+
+.energy-change-gain {
+  -fx-text-fill: #35e66b;
+}
+
+.energy-change-loss {
+  -fx-text-fill: #ff3b3b;
+}
+
+.status-counter {
+  -fx-font-size: 9px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}

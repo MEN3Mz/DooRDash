@@ -30,6 +30,8 @@ public class MainMenuView {
         root = new StackPane();
         root.getStylesheets().add(
                 getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        root.getStylesheets().add(
+                getClass().getResource("/game/assets/css/main-menu-view.css").toExternalForm());
 
         startButton = createMenuButton("Start Game");
         settingsButton = createMenuButton("Settings");
@@ -101,7 +103,7 @@ public class MainMenuView {
         menuContainer.setAlignment(Pos.CENTER);
 
         BorderPane overlay = new BorderPane();
-        overlay.setStyle("-fx-background-color: transparent;");
+        overlay.getStyleClass().add("main-menu-overlay");
 
         overlay.setTop(logoView);
         overlay.setCenter(menuContainer);

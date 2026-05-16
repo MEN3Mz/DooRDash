@@ -32,6 +32,8 @@ public class GameOverView {
         root = new StackPane();
         root.getStylesheets().add(
                 getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        root.getStylesheets().add(
+                getClass().getResource("/game/assets/css/game-over-view.css").toExternalForm());
 
         mainMenuButton = createMenuButton("Main Menu", winner.getOriginalRole());
         exitButton = createMenuButton("Exit Game", winner.getOriginalRole());
@@ -61,11 +63,7 @@ public class GameOverView {
         content.setMaxWidth(900);
 
         Label winnerLabel = new Label("Winner: " + winnerPlayerName + " - " + winner.getName());
-        winnerLabel.setStyle("""
-                -fx-font-size: 26px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        winnerLabel.getStyleClass().add("winner-label");
         winnerLabel.setGraphic(createMonsterIcon(winner));
         winnerLabel.setGraphicTextGap(12);
         winnerLabel.setTextAlignment(TextAlignment.CENTER);
@@ -103,61 +101,21 @@ public class GameOverView {
         VBox box = new VBox(8);
         box.setAlignment(Pos.CENTER);
         box.setPrefWidth(260);
-        box.setStyle(isWinner ? getWinningEnergyBoxStyle(monster.getOriginalRole()) : """
-                -fx-background-color: rgba(0,0,0,0.55);
-                -fx-background-radius: 14;
-                -fx-border-color: rgba(255,255,255,0.25);
-                -fx-border-radius: 14;
-                -fx-padding: 16;
-                """);
+        box.getStyleClass().add(isWinner
+                ? (monster.getOriginalRole() == Role.LAUGHER ? "winning-energy-box-laugher" : "winning-energy-box-scarer")
+                : "energy-box");
 
         Label teamLabel = new Label(getTeamName(monster.getOriginalRole()));
-        teamLabel.setStyle("""
-                -fx-font-size: 18px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        teamLabel.getStyleClass().add("winner-team-label");
 
         Label monsterLabel = new Label(monster.getName());
-        monsterLabel.setStyle("""
-                -fx-font-size: 14px;
-                -fx-font-weight: bold;
-                -fx-text-fill: #dce8f5;
-                """);
+        monsterLabel.getStyleClass().add("winner-monster-label");
 
         Label energyLabel = new Label("Energy: " + monster.getEnergy());
-        energyLabel.setStyle("""
-                -fx-font-size: 24px;
-                -fx-font-weight: 900;
-                -fx-text-fill: #cfe4ff;
-                """);
+        energyLabel.getStyleClass().add("winner-energy-label");
 
         box.getChildren().addAll(teamLabel, monsterLabel, energyLabel);
         return box;
-    }
-
-    private String getWinningEnergyBoxStyle(Role role) {
-        if (role == Role.LAUGHER) {
-            return """
-                    -fx-background-color: rgba(30,144,255,0.72);
-                    -fx-background-radius: 14;
-                    -fx-border-color: rgba(210,235,255,0.95);
-                    -fx-border-width: 2;
-                    -fx-border-radius: 14;
-                    -fx-padding: 16;
-                    -fx-effect: dropshadow(three-pass-box, rgba(80,180,255,0.75), 22, 0, 0, 0);
-                    """;
-        }
-
-        return """
-                -fx-background-color: rgba(220,38,38,0.76);
-                -fx-background-radius: 14;
-                -fx-border-color: rgba(255,220,220,0.95);
-                -fx-border-width: 2;
-                -fx-border-radius: 14;
-                -fx-padding: 16;
-                -fx-effect: dropshadow(three-pass-box, rgba(255,80,80,0.75), 22, 0, 0, 0);
-                """;
     }
 
     private Button createMenuButton(String text, Role winnerRole) {
@@ -168,43 +126,8 @@ public class GameOverView {
         button.getStyleClass().add("menu-font");
         button.setOnMouseEntered(e -> SoundManager.playHoverSound());
         if (winnerRole == Role.SCARER) {
-            button.setStyle("""
-                    -fx-background-color:
-                        linear-gradient(#ff8a8a 0%, #b91c1c 50%, #6f0f0f 51%, #9f1717 100%),
-                        linear-gradient(#202020 0%, #111111 100%),
-                        linear-gradient(#8e3e3e, #772e2e);
-                    -fx-background-insets: 0, 1, 2;
-                    -fx-background-radius: 5, 4, 3;
-                    -fx-text-fill: white;
-                    -fx-font-weight: bold;
-                    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0, 0, 1);
-                    """);
-            button.setOnMousePressed(e -> {
-                SoundManager.playButtonSound();
-                button.setStyle("""
-                        -fx-background-color:
-                            linear-gradient(#b91c1c 0%, #7f1111 50%, #3f0808 51%, #5f0d0d 100%),
-                            linear-gradient(#101010 0%, #000000 100%),
-                            linear-gradient(#772e2e, #471a1a);
-                        -fx-background-insets: 0, 1, 2;
-                        -fx-background-radius: 5, 4, 3;
-                        -fx-text-fill: #bbbbbb;
-                        -fx-font-weight: bold;
-                        -fx-translate-y: 2px;
-                        -fx-effect: none;
-                        """);
-            });
-            button.setOnMouseReleased(e -> button.setStyle("""
-                    -fx-background-color:
-                        linear-gradient(#ff8a8a 0%, #b91c1c 50%, #6f0f0f 51%, #9f1717 100%),
-                        linear-gradient(#202020 0%, #111111 100%),
-                        linear-gradient(#8e3e3e, #772e2e);
-                    -fx-background-insets: 0, 1, 2;
-                    -fx-background-radius: 5, 4, 3;
-                    -fx-text-fill: white;
-                    -fx-font-weight: bold;
-                    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0, 0, 1);
-                    """));
+            button.getStyleClass().add("scarer-win-button");
+            button.setOnMousePressed(e -> SoundManager.playButtonSound());
             return button;
         }
         button.setOnMousePressed(e -> SoundManager.playButtonSound());

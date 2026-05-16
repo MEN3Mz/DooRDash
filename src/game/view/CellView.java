@@ -41,6 +41,8 @@ public class CellView extends StackPane {
     private final ImageView previousOpponentImageView;
 
     public CellView() {
+        getStylesheets().add(getClass().getResource("/game/assets/css/cell-view.css").toExternalForm());
+        getStyleClass().add("cell");
         numberLabel = new Label();
         playerLabel = new Label("YOU");
         opponentLabel = new Label("OPP");
@@ -66,7 +68,6 @@ public class CellView extends StackPane {
         opponentLabel.setVisible(false);
 
         setPrefSize(70, 70);
-        setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-background-color: lightgray;");
 
         StackPane.setMargin(numberLabel, new Insets(4));
         StackPane.setMargin(playerLabel, new Insets(4));

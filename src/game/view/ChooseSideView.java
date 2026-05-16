@@ -23,73 +23,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class ChooseSideView {
-    private static final String SELECT_BUTTON_STYLE = "-fx-background-color: rgba(9, 17, 26, 0.82);"
-            + "-fx-text-fill: white;"
-            + "-fx-font-weight: bold;"
-            + "-fx-font-size: 16px;"
-            + "-fx-background-radius: 12;"
-            + "-fx-padding: 12 24 12 24;"
-            + "-fx-border-color: rgba(255,255,255,0.45);"
-            + "-fx-border-radius: 12;";
-    private static final String START_BUTTON_STYLE = "-fx-background-color: "
-            + "linear-gradient(#70b1ff 0%, #1a5cad 50%, #0a3b75 51%, #114b91 100%), "
-            + "linear-gradient(#202020 0%, #111111 100%), "
-            + "linear-gradient(#3e5e8e, #2e4a77); "
-            + "-fx-background-insets: 0,1,2; "
-            + "-fx-background-radius: 5,4,3; "
-            + "-fx-text-fill: white;"
-            + "-fx-font-weight: bold;"
-            + "-fx-font-size: 18px;"
-            + "-fx-padding: 12 34 12 34;"
-            + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );";
-    private static final String START_BUTTON_HOVER_STYLE = "-fx-background-color: "
-            + "linear-gradient(#a8d2ff 0%, #2f80ed 50%, #0f56a8 51%, #1b65bf 100%), "
-            + "linear-gradient(#303030 0%, #161616 100%), "
-            + "linear-gradient(#5c7fb4, #3d6094); "
-            + "-fx-background-insets: 0,1,2; "
-            + "-fx-background-radius: 5,4,3; "
-            + "-fx-text-fill: white;"
-            + "-fx-font-weight: bold;"
-            + "-fx-font-size: 18px;"
-            + "-fx-padding: 12 34 12 34;"
-            + "-fx-scale-x: 1.03;"
-            + "-fx-scale-y: 1.03;"
-            + "-fx-effect: dropshadow( three-pass-box , rgba(120,190,255,0.75) , 10, 0.0 , 0 , 1 );";
-    private static final String START_BUTTON_PRESSED_STYLE = "-fx-background-color: "
-            + "linear-gradient(#1a5cad 0%, #0a3b75 50%, #051d3a 51%, #082a52 100%), "
-            + "linear-gradient(#101010 0%, #000000 100%), "
-            + "linear-gradient(#2e4a77, #1a2b47); "
-            + "-fx-background-insets: 0,1,2; "
-            + "-fx-background-radius: 5,4,3; "
-            + "-fx-text-fill: #bbbbbb;"
-            + "-fx-font-weight: bold;"
-            + "-fx-font-size: 18px;"
-            + "-fx-padding: 12 34 12 34;"
-            + "-fx-translate-y: 2px;"
-            + "-fx-effect: none;";
-    private static final String DISABLED_START_BUTTON_STYLE = "-fx-background-color: rgba(80, 88, 98, 0.88);"
-            + "-fx-text-fill: #d7dde4;"
-            + "-fx-font-weight: bold;"
-            + "-fx-font-size: 18px;"
-            + "-fx-background-radius: 16;"
-            + "-fx-padding: 12 34 12 34;";
-    private static final String INFO_BUTTON_STYLE = "-fx-background-color: rgba(8, 16, 26, 0.88);"
-            + "-fx-text-fill: white;"
-            + "-fx-font-weight: bold;"
-            + "-fx-font-size: 18px;"
-            + "-fx-background-radius: 20;"
-            + "-fx-min-width: 38px;"
-            + "-fx-min-height: 38px;"
-            + "-fx-max-width: 38px;"
-            + "-fx-max-height: 38px;"
-            + "-fx-border-color: rgba(255,255,255,0.45);"
-            + "-fx-border-radius: 20;";
-    private static final String DETAILS_PANEL_STYLE = "-fx-background-color: rgba(8, 16, 26, 0.78);"
-            + "-fx-background-radius: 18;"
-            + "-fx-padding: 18;"
-            + "-fx-border-color: rgba(255,255,255,0.18);"
-            + "-fx-border-radius: 18;";
-
     private static final String SCARER_SELECTED_IMAGE = "/game/assets/choose-side/scarersOptions.png";
     private static final String SCARER_DIMMED_IMAGE = "/game/assets/choose-side/scarersOptionsDark.png";
     private static final String LAUGHER_SELECTED_IMAGE = "/game/assets/choose-side/selectOptionsLaughers.png";
@@ -125,6 +58,7 @@ public class ChooseSideView {
         laugherDetailsBox = createDetailsBox(Role.LAUGHER);
         startGameButton = createStartButton();
         root = buildRoot();
+        root.getStylesheets().add(getClass().getResource("/game/assets/css/choose-side-view.css").toExternalForm());
 
         scarerImageView.getProperties().put("selectedImage", SCARER_SELECTED_IMAGE);
         scarerImageView.getProperties().put("dimmedImage", SCARER_DIMMED_IMAGE);
@@ -197,10 +131,10 @@ public class ChooseSideView {
         teamsRow.setMaxWidth(Double.MAX_VALUE);
 
         Label titleLabel = new Label("Choose Your Side");
-        titleLabel.setStyle("-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: white;");
+        titleLabel.getStyleClass().add("choose-side-title");
 
         Label subtitleLabel = new Label("Press ! to reveal their lineup.");
-        subtitleLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #e4edf7;");
+        subtitleLabel.getStyleClass().add("choose-side-subtitle");
 
         VBox content = new VBox(22, titleLabel, subtitleLabel, teamsRow);
         content.setAlignment(Pos.CENTER);
@@ -212,7 +146,7 @@ public class ChooseSideView {
         BorderPane.setAlignment(startGameButton, Pos.BOTTOM_CENTER);
         BorderPane.setMargin(startGameButton, new Insets(0, 0, 28, 0));
         overlay.setBottom(startGameButton);
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.18);");
+        overlay.getStyleClass().add("choose-side-overlay");
         overlay.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         StackPane pageRoot = new StackPane(backgroundImageView, overlay);
@@ -237,13 +171,12 @@ public class ChooseSideView {
         BorderPane overlayPanel = new BorderPane();
         overlayPanel.setLeft(overlayContent);
         overlayPanel.setPadding(new Insets(12));
-        overlayPanel.setStyle(
-                "-fx-background-color: linear-gradient(to right, rgba(4, 10, 18, 0.78), rgba(4, 10, 18, 0.06));");
+        overlayPanel.getStyleClass().add("team-card-overlay");
 
         StackPane card = new StackPane(imageView, overlayPanel);
         card.setPrefSize(620, 720);
         card.setMaxSize(620, 720);
-        card.setStyle("-fx-background-radius: 24; -fx-border-radius: 24; -fx-border-color: rgba(255,255,255,0.16);");
+        card.getStyleClass().add("team-card");
         StackPane.setAlignment(overlayPanel, Pos.CENTER_LEFT);
         StackPane.setAlignment(chooseButton, Pos.BOTTOM_CENTER);
         StackPane.setMargin(chooseButton, new Insets(0, 0, 26, 0));
@@ -256,7 +189,7 @@ public class ChooseSideView {
 
     private Button createSelectButton(String text, Role role) {
         Button button = new Button(text);
-        button.setStyle(SELECT_BUTTON_STYLE);
+        button.getStyleClass().add("select-button");
         button.setOnMouseEntered(event -> SoundManager.playHoverSound());
         button.setOnMousePressed(event -> SoundManager.playButtonSound());
         button.setOnAction(event -> updateSelection(role));
@@ -265,7 +198,7 @@ public class ChooseSideView {
 
     private VBox createDetailsBox(Role role) {
         Label header = new Label("Team Details");
-        header.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
+        header.getStyleClass().add("details-header");
 
         VBox detailsContent = buildRoleDetailsContent(role);
 
@@ -275,10 +208,10 @@ public class ChooseSideView {
         scrollPane.setMaxHeight(420);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        scrollPane.getStyleClass().add("details-scroll");
 
         VBox detailsBox = new VBox(10, header, scrollPane);
-        detailsBox.setStyle(DETAILS_PANEL_STYLE);
+        detailsBox.getStyleClass().add("details-panel");
         detailsBox.setVisible(false);
         detailsBox.setManaged(false);
         detailsBox.setMaxWidth(500);
@@ -287,7 +220,7 @@ public class ChooseSideView {
 
     private Button createInfoButton() {
         Button button = new Button("!");
-        button.setStyle(INFO_BUTTON_STYLE);
+        button.getStyleClass().add("info-button");
         button.setOnMouseEntered(event -> SoundManager.playHoverSound());
         button.setOnMousePressed(event -> SoundManager.playButtonSound());
         return button;
@@ -296,28 +229,14 @@ public class ChooseSideView {
     private Button createStartButton() {
         Button button = new Button("Start Game");
         button.setDisable(true);
-        button.setStyle(DISABLED_START_BUTTON_STYLE);
+        button.getStyleClass().add("start-button");
         button.setOnMouseEntered(event -> {
             if (!button.isDisabled()) {
                 SoundManager.playHoverSound();
-                button.setStyle(START_BUTTON_HOVER_STYLE);
-            }
-        });
-        button.setOnMouseExited(event -> {
-            if (!button.isDisabled()) {
-                button.setStyle(START_BUTTON_STYLE);
             }
         });
         button.setOnMousePressed(event -> {
             SoundManager.playButtonSound();
-            if (!button.isDisabled()) {
-                button.setStyle(START_BUTTON_PRESSED_STYLE);
-            }
-        });
-        button.setOnMouseReleased(event -> {
-            if (!button.isDisabled()) {
-                button.setStyle(button.isHover() ? START_BUTTON_HOVER_STYLE : START_BUTTON_STYLE);
-            }
         });
         return button;
     }
@@ -329,7 +248,6 @@ public class ChooseSideView {
         applyRoleState(laugherImageView, laugherDetailsBox, role == Role.LAUGHER);
 
         startGameButton.setDisable(role == null);
-        startGameButton.setStyle(role == null ? DISABLED_START_BUTTON_STYLE : START_BUTTON_STYLE);
     }
 
     private void applyRoleState(ImageView imageView, VBox detailsBox, boolean selected) {
@@ -360,7 +278,7 @@ public class ChooseSideView {
                 ? "Team Laughers\nThese monsters rely on speed, flexibility, and efficient movement to create opportunities quickly."
                 : "Team Scarers\nThese monsters use power and strategy to maximize their energy collection.");
         overview.setWrapText(true);
-        overview.setStyle("-fx-font-size: 13px; -fx-text-fill: #edf4fb; -fx-line-spacing: 4; -fx-font-weight: bold;");
+        overview.getStyleClass().add("details-overview");
 
         content.getChildren().add(overview);
 
@@ -381,17 +299,17 @@ public class ChooseSideView {
         portrait.setSmooth(true);
 
         Label nameLabel = new Label(monster.getName());
-        nameLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: 800; -fx-text-fill: white;");
+        nameLabel.getStyleClass().add("monster-info-name");
 
         HBox nameRow = new HBox(10, portrait, nameLabel);
         nameRow.setAlignment(Pos.CENTER_LEFT);
 
         Label detailsLabel = new Label(buildMonsterDetails(monster));
         detailsLabel.setWrapText(true);
-        detailsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #edf4fb; -fx-line-spacing: 3;");
+        detailsLabel.getStyleClass().add("monster-info-details");
 
         VBox card = new VBox(8, nameRow, detailsLabel);
-        card.setStyle("-fx-background-color: rgba(255,255,255,0.06); -fx-background-radius: 12; -fx-padding: 10;");
+        card.getStyleClass().add("monster-info-card");
         return card;
     }
 

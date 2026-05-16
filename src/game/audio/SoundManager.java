@@ -51,6 +51,10 @@ public final class SoundManager {
         playMusic(GAME_MUSIC_PATH);
     }
 
+    public static void stopMusic() {
+        stopCurrentMusic();
+    }
+
     private static void playMusic(String musicPath) {
         if (musicPath.equals(currentMusicPath) && soundtrackPlayer != null) {
             if (soundOn) {

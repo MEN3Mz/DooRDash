@@ -27,13 +27,15 @@ public class PlayerNamesView {
         root = new StackPane();
         root.getStylesheets().add(
                 getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        root.getStylesheets().add(
+                getClass().getResource("/game/assets/css/player-names-view.css").toExternalForm());
 
         playerOneField = createNameField("Player 1 name");
         playerTwoField = createNameField("Player 2 name");
         continueButton = createMenuButton("Continue");
         cancelButton = createMenuButton("Back");
         errorLabel = new Label();
-        errorLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #ffb4b4;");
+        errorLabel.getStyleClass().add("player-names-error");
 
         Rectangle overlayBackground = createOverlayBackground();
         VBox content = createContent();
@@ -68,17 +70,10 @@ public class PlayerNamesView {
 
     private VBox createContent() {
         Label title = new Label("Player Names");
-        title.setStyle("""
-                -fx-font-size: 30px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        title.getStyleClass().add("player-names-title");
 
         Label subtitle = new Label("Enter both names before choosing a side.");
-        subtitle.setStyle("""
-                -fx-font-size: 15px;
-                -fx-text-fill: #cfe4ff;
-                """);
+        subtitle.getStyleClass().add("player-names-subtitle");
 
         HBox buttons = new HBox(16, cancelButton, continueButton);
         buttons.setAlignment(Pos.CENTER);
@@ -86,22 +81,7 @@ public class PlayerNamesView {
         VBox content = new VBox(18, title, subtitle, playerOneField, playerTwoField, errorLabel, buttons);
         content.setAlignment(Pos.CENTER);
         content.setMaxWidth(560);
-        content.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom right,
-                    rgba(8,16,26,0.96),
-                    rgba(15,25,40,0.96));
-
-                -fx-background-radius: 24;
-                -fx-border-radius: 24;
-                -fx-border-width: 2;
-                -fx-border-color: rgba(255,255,255,0.12);
-                -fx-padding: 36;
-                -fx-effect:
-                    dropshadow(three-pass-box,
-                    rgba(0,0,0,0.55),
-                    24, 0, 0, 8);
-                """);
+        content.getStyleClass().add("player-names-popup");
 
         return content;
     }
@@ -110,14 +90,7 @@ public class PlayerNamesView {
         TextField field = new TextField();
         field.setPromptText(promptText);
         field.setMaxWidth(360);
-        field.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.92);
-                -fx-background-radius: 10;
-                -fx-border-color: rgba(255,255,255,0.28);
-                -fx-border-radius: 10;
-                -fx-font-size: 16px;
-                -fx-padding: 12 14;
-                """);
+        field.getStyleClass().add("player-name-field");
 
         return field;
     }

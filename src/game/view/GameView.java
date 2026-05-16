@@ -120,7 +120,6 @@ public class GameView {
 
         this.menuButton = new Button();
         menuButton.getStyleClass().add("game-menu-button");
-        menuButton.setOnMouseEntered(e -> SoundManager.playHoverSound());
         menuButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         buildLayout();
@@ -422,7 +421,6 @@ public class GameView {
         playerSideContainer = new HBox(8, playerInfoColumn, playerTurnLogView);
         playerSideContainer.setAlignment(Pos.TOP_CENTER);
         playerSideContainer.setPrefWidth(620);
-        HBox.setMargin(playerTurnLogView, new Insets(75, 0, 0, 0));
         playerSideContainer.setFillHeight(false);
         playerSideContainer.setStyle("-fx-background-color: transparent;");
 
@@ -443,7 +441,7 @@ public class GameView {
         opponentSideContainer = new HBox(8, opponentTurnLogView, opponentInfoColumn);
         opponentSideContainer.setAlignment(Pos.TOP_CENTER);
         opponentSideContainer.setPrefWidth(620);
-        HBox.setMargin(opponentTurnLogView, new Insets(75, 0, 0, 0));
+
         opponentSideContainer.setFillHeight(false);
         opponentSideContainer.setStyle("-fx-background-color: transparent;");
 

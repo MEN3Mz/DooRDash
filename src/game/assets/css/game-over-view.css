@@ -1,0 +1,76 @@
+.winner-label {
+  -fx-font-size: 26px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.energy-box {
+  -fx-background-color: rgba(0,0,0,0.55);
+  -fx-background-radius: 14;
+  -fx-border-color: rgba(255,255,255,0.25);
+  -fx-border-radius: 14;
+  -fx-padding: 16;
+}
+
+.winning-energy-box-laugher {
+  -fx-background-color: rgba(30,144,255,0.72);
+  -fx-background-radius: 14;
+  -fx-border-color: rgba(210,235,255,0.95);
+  -fx-border-width: 2;
+  -fx-border-radius: 14;
+  -fx-padding: 16;
+  -fx-effect: dropshadow(three-pass-box, rgba(80,180,255,0.75), 22, 0, 0, 0);
+}
+
+.winning-energy-box-scarer {
+  -fx-background-color: rgba(220,38,38,0.76);
+  -fx-background-radius: 14;
+  -fx-border-color: rgba(255,220,220,0.95);
+  -fx-border-width: 2;
+  -fx-border-radius: 14;
+  -fx-padding: 16;
+  -fx-effect: dropshadow(three-pass-box, rgba(255,80,80,0.75), 22, 0, 0, 0);
+}
+
+.winner-team-label {
+  -fx-font-size: 18px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.winner-monster-label {
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #dce8f5;
+}
+
+.winner-energy-label {
+  -fx-font-size: 24px;
+  -fx-font-weight: 900;
+  -fx-text-fill: #cfe4ff;
+}
+
+.scarer-win-button {
+  -fx-background-color:
+    linear-gradient(#ff8a8a 0%, #b91c1c 50%, #6f0f0f 51%, #9f1717 100%),
+    linear-gradient(#202020 0%, #111111 100%),
+    linear-gradient(#8e3e3e, #772e2e);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0, 0, 1);
+}
+
+.scarer-win-button:pressed {
+  -fx-background-color:
+    linear-gradient(#b91c1c 0%, #7f1111 50%, #3f0808 51%, #5f0d0d 100%),
+    linear-gradient(#101010 0%, #000000 100%),
+    linear-gradient(#772e2e, #471a1a);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-text-fill: #bbbbbb;
+  -fx-font-weight: bold;
+  -fx-translate-y: 2px;
+  -fx-effect: none;
+}

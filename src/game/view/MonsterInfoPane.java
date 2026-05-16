@@ -26,6 +26,7 @@ public class MonsterInfoPane extends Pane {
     private Integer previousEnergy;
 
     public MonsterInfoPane() {
+        getStylesheets().add(getClass().getResource("/game/assets/css/monster-info-pane.css").toExternalForm());
         this.setMinWidth(CARD_WIDTH);
         this.setMaxWidth(CARD_WIDTH);
         this.setPrefWidth(CARD_WIDTH);
@@ -47,7 +48,7 @@ public class MonsterInfoPane extends Pane {
         posLabel.setAlignment(Pos.CENTER);
         posLabel.setLayoutX(7);
         posLabel.setLayoutY(180);
-        posLabel.setStyle("-fx-text-fill: white;");
+        posLabel.getStyleClass().add("monster-position-label");
         posLabel.setEffect(new DropShadow(4, Color.BLACK));
 
         energyBar = new ProgressBar(1.0);
@@ -61,7 +62,7 @@ public class MonsterInfoPane extends Pane {
         energyLabel.setAlignment(Pos.CENTER);
         energyLabel.setLayoutX(30);
         energyLabel.setLayoutY(360);
-        energyLabel.setStyle("-fx-text-fill: #102033;");
+        energyLabel.getStyleClass().add("monster-energy-label");
         energyLabel.setEffect(new DropShadow(3, Color.WHITE));
 
         energyChangeLabel = new Label();
@@ -245,8 +246,7 @@ public class MonsterInfoPane extends Pane {
         }
 
         energyChangeLabel.setText(change > 0 ? "+" + change : String.valueOf(change));
-        energyChangeLabel.setStyle(change > 0
-                ? "-fx-text-fill: #35e66b;"
-                : "-fx-text-fill: #ff3b3b;");
+        energyChangeLabel.getStyleClass().removeAll("energy-change-gain", "energy-change-loss");
+        energyChangeLabel.getStyleClass().add(change > 0 ? "energy-change-gain" : "energy-change-loss");
     }
 }

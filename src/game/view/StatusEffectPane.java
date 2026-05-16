@@ -25,6 +25,7 @@ public class StatusEffectPane extends HBox {
     private final double ACTIVE_OPACITY = 1.0;
 
     public StatusEffectPane() {
+        getStylesheets().add(getClass().getResource("/game/assets/css/monster-info-pane.css").toExternalForm());
         this.setAlignment(Pos.BOTTOM_CENTER);
         this.setSpacing(4);
         this.setMaxWidth(Double.MAX_VALUE);
@@ -117,11 +118,7 @@ public class StatusEffectPane extends HBox {
 
     private Label createCounter() {
         Label label = new Label("0");
-        label.setStyle("""
-                -fx-font-size: 9px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        label.getStyleClass().add("status-counter");
         label.setEffect(new DropShadow(2, Color.BLACK));
 
         return label;

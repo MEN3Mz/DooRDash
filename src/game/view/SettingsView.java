@@ -24,6 +24,8 @@ public class SettingsView {
         root = new StackPane();
         root.getStylesheets().add(
                 getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        root.getStylesheets().add(
+                getClass().getResource("/game/assets/css/settings-view.css").toExternalForm());
 
         musicSlider = createMusicSlider();
         effectsSlider = createEffectsSlider();
@@ -46,11 +48,7 @@ public class SettingsView {
 
     private VBox createContent() {
         Label title = new Label("Settings");
-        title.setStyle("""
-                -fx-font-size: 30px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        title.getStyleClass().add("settings-title");
 
         Label musicLabel = createSectionLabel("Background Music");
         Label effectsLabel = createSectionLabel("Game Sounds");
@@ -58,33 +56,14 @@ public class SettingsView {
         VBox content = new VBox(18, title, musicLabel, musicSlider, effectsLabel, effectsSlider, backButton);
         content.setAlignment(Pos.CENTER);
         content.setMaxWidth(520);
-        content.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom right,
-                    rgba(8,16,26,0.96),
-                    rgba(15,25,40,0.96));
-
-                -fx-background-radius: 24;
-                -fx-border-radius: 24;
-                -fx-border-width: 2;
-                -fx-border-color: rgba(255,255,255,0.12);
-                -fx-padding: 36;
-                -fx-effect:
-                    dropshadow(three-pass-box,
-                    rgba(0,0,0,0.55),
-                    24, 0, 0, 8);
-                """);
+        content.getStyleClass().add("settings-popup");
 
         return content;
     }
 
     private Label createSectionLabel(String text) {
         Label label = new Label(text);
-        label.setStyle("""
-                -fx-font-size: 17px;
-                -fx-font-weight: bold;
-                -fx-text-fill: #cfe4ff;
-                """);
+        label.getStyleClass().add("settings-section-label");
 
         return label;
     }

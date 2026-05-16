@@ -6,6 +6,7 @@ import game.engine.cells.ContaminationSock;
 import game.engine.cells.ConveyorBelt;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -112,15 +113,25 @@ public class GameBoardView {
 
             if (cells[row][col] instanceof ContaminationSock) {
                 ContaminationSock sock = (ContaminationSock) cells[row][col];
-                addTransportArrow(index, index + sock.getEffect(), Color.web("#C94A4A"));
+                addTransportArrow(index, index + sock.getEffect(), Color.web("#C94A4A"), isActiveTransportArrow(index));
             } else if (cells[row][col] instanceof ConveyorBelt) {
                 ConveyorBelt belt = (ConveyorBelt) cells[row][col];
-                addTransportArrow(index, index + belt.getEffect(), Color.web("#6FCF97"));
+                addTransportArrow(index, index + belt.getEffect(), Color.web("#6FCF97"), isActiveTransportArrow(index));
             }
         }
     }
 
-    private void addTransportArrow(int fromIndex, int toIndex, Color color) {
+    private boolean isActiveTransportArrow(int fromIndex) {
+        Cell lastLandedCell = game.getBoard().getLastLandedCell();
+
+        if (!(lastLandedCell instanceof ContaminationSock) && !(lastLandedCell instanceof ConveyorBelt)) {
+            return false;
+        }
+
+        return game.getBoard().getLastLandedPosition() == fromIndex;
+    }
+
+    private void addTransportArrow(int fromIndex, int toIndex, Color color, boolean active) {
         if (toIndex < 0 || toIndex >= 100) {
             return;
         }
@@ -147,8 +158,9 @@ public class GameBoardView {
 
         Line line = new Line(fromCenterX, fromCenterY, toCenterX, toCenterY);
         line.setStroke(color);
-        line.setStrokeWidth(8);
+        line.setStrokeWidth(active ? 11 : 6);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
+        line.setOpacity(active ? 0.98 : 0.22);
 
         double angle = Math.atan2(toCenterY - fromCenterY, toCenterX - fromCenterX);
         double arrowLength = 18;
@@ -166,6 +178,13 @@ public class GameBoardView {
                 x2, y2);
 
         arrowHead.setFill(color);
+        arrowHead.setOpacity(active ? 0.98 : 0.22);
+
+        if (active) {
+            DropShadow glow = new DropShadow(18, color);
+            line.setEffect(glow);
+            arrowHead.setEffect(new DropShadow(18, color));
+        }
 
         overlayPane.getChildren().addAll(line, arrowHead);
     }
