@@ -21,6 +21,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -105,13 +106,6 @@ public class GameController {
         });
 
         view.setOnMenu(e -> showPauseMenuOverlay());
-        view.setOnWinTest(e -> triggerWinTest());
-    }
-
-    private void triggerWinTest() {
-        game.forceCurrentWinForTesting();
-        view.refresh();
-        handleGameOver();
     }
 
     private void handleCardDrawnOrGameOver() {
@@ -347,5 +341,26 @@ public class GameController {
         }
 
         stage.show();
+        installTestKeyHandlers();
+    }
+
+    private void installTestKeyHandlers() {
+        stage.getScene().setOnKeyPressed(event -> {
+            if (game.isGameOver()) {
+                return;
+            }
+
+            if (event.getCode() == KeyCode.W) {
+                game.forceCurrentPositionForTesting(Constants.WINNING_POSITION);
+                view.refresh();
+                handleGameOver();
+                event.consume();
+            } else if (event.getCode() == KeyCode.E) {
+                game.forceCurrentEnergyForTesting(Constants.WINNING_ENERGY);
+                view.refresh();
+                handleGameOver();
+                event.consume();
+            }
+        });
     }
 }

@@ -62,7 +62,6 @@ public class GameView {
 
     private final BottomView bottomView;
     private final Button menuButton;
-    private final Button testWinButton;
 
     public GameView(Game game) {
         this(game, "You", "Opponent");
@@ -123,10 +122,6 @@ public class GameView {
         menuButton.getStyleClass().add("game-menu-button");
         menuButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
-        this.testWinButton = new Button("Win Game");
-        applyDebugButtonStyle(testWinButton);
-        testWinButton.setOnMousePressed(e -> SoundManager.playButtonSound());
-
         buildLayout();
 
         // Load CSS
@@ -138,30 +133,12 @@ public class GameView {
         refresh();
     }
 
-    private void applyDebugButtonStyle(Button button) {
-        button.setStyle("""
-                -fx-background-color: #b91c1c;
-                -fx-background-radius: 10;
-                -fx-text-fill: white;
-                -fx-font-size: 14px;
-                -fx-font-weight: bold;
-                -fx-padding: 10 18;
-                -fx-border-color: rgba(255,255,255,0.28);
-                -fx-border-radius: 10;
-                """);
-    }
-
     public void setOnMenu(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
         menuButton.setOnAction(handler);
     }
 
-    public void setOnWinTest(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
-        testWinButton.setOnAction(handler);
-    }
-
     public void setGameControlsDisabled(boolean disabled) {
         bottomView.setControlsDisabled(disabled);
-        testWinButton.setDisable(disabled);
     }
 
     private void buildLayout() {
@@ -215,7 +192,7 @@ public class GameView {
                 """);
         currentPlayerLabel.setEffect(new DropShadow(4, Color.BLACK));
 
-        HBox content = new HBox(24, menuButton, currentPlayerLabel, testWinButton);
+        HBox content = new HBox(24, menuButton, currentPlayerLabel);
         content.setAlignment(Pos.CENTER_LEFT);
         content.setPadding(new Insets(6, 22, 6, 44));
         content.setPrefWidth(650);
@@ -640,7 +617,7 @@ public class GameView {
         }
         if (monster instanceof Schemer) {
             return "Steals energy from ALL " + "\n"
-                    + " other monsters present (teammates-opponents)" + "\n" + " Not affected by the shield.";
+                    + " other monsters present (scarers - laughers)" + "\n" + " Not affected by the shield.";
         }
         return null;
     }
