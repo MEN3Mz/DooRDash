@@ -177,6 +177,25 @@ public class Game {
 		addEvent(current, current.getName() + " was moved to Cell 99 with 1001 energy for testing.");
 	}
 
+	public void forceCurrentPositionForTesting(int position) {
+		if (gameOver)
+			return;
+
+		current.setPosition(position);
+		board.syncMonsterPositions(player, opponent);
+		updateWinState();
+		addEvent(current, current.getName() + " was moved to Cell " + current.getPosition() + " for testing.");
+	}
+
+	public void forceCurrentEnergyForTesting(int energy) {
+		if (gameOver)
+			return;
+
+		current.setEnergy(energy);
+		updateWinState();
+		addEvent(current, current.getName() + " energy was set to " + current.getEnergy() + " for testing.");
+	}
+
 	public void switchTurn() {
 		this.setCurrent(getCurrentOpponent());
 	}

@@ -15,7 +15,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class MainMenuView {
-
     private static final String SOUND_ON_TEXT = "Sound: ON";
     private static final String SOUND_OFF_TEXT = "Sound: OFF";
 
@@ -110,7 +109,6 @@ public class MainMenuView {
 
         BorderPane.setAlignment(logoView, Pos.CENTER);
         BorderPane.setMargin(logoView, new Insets(50, 0, 0, 0));
-
         BorderPane.setAlignment(soundButton, Pos.BOTTOM_LEFT);
         BorderPane.setMargin(soundButton, new Insets(20));
 

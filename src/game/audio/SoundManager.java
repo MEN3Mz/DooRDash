@@ -108,7 +108,7 @@ public final class SoundManager {
 
     public static void setSoundOn(boolean enabled) {
         soundOn = enabled;
-
+        
         if (soundtrackPlayer == null) {
             return;
         }
