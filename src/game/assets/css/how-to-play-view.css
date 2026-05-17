@@ -1,0 +1,46 @@
+.how-to-play-popup {
+  -fx-background-color: linear-gradient(to bottom right, rgba(8,16,26,0.96), rgba(15,25,40,0.96));
+  -fx-background-radius: 24;
+  -fx-border-radius: 24;
+  -fx-border-width: 2;
+  -fx-border-color: rgba(255,255,255,0.12);
+  -fx-padding: 28;
+  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.55), 24, 0, 0, 8);
+}
+
+.how-to-play-title {
+  -fx-font-size: 30px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.how-to-play-subtitle {
+  -fx-font-size: 14px;
+  -fx-text-fill: #cfe4ff;
+  -fx-font-style: italic;
+}
+
+.how-to-play-scroll {
+  -fx-background-color: transparent;
+  -fx-background: transparent;
+}
+
+.how-to-play-section {
+  -fx-background-color: rgba(255,255,255,0.05);
+  -fx-background-radius: 18;
+  -fx-border-color: rgba(255,255,255,0.08);
+  -fx-border-radius: 18;
+  -fx-padding: 18;
+}
+
+.how-to-play-section-title {
+  -fx-font-size: 20px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.how-to-play-section-body {
+  -fx-font-size: 14px;
+  -fx-line-spacing: 5px;
+  -fx-text-fill: #dce8f5;
+}

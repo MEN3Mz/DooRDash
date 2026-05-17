@@ -1,11 +1,16 @@
 package game.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import game.engine.Game;
 import game.engine.Constants;
 import game.engine.Board;
 import game.engine.Role;
 import game.audio.SoundManager;
 import game.engine.monsters.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -23,6 +28,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 public class GameView {
+    private static final double DESIGN_WIDTH = 2140;
+    private static final double DESIGN_HEIGHT = 1080;
 
     private final Game game;
     private final GameBoardView boardView;
@@ -31,6 +38,7 @@ public class GameView {
 
     private final BorderPane root;
     private final StackPane mainRoot;
+    private final StackPane uiLayer;
 
     private final Label currentPlayerLabel;
     private final Label cellInfoLabel;
@@ -59,6 +67,7 @@ public class GameView {
     private Label opponentMonsterTypeLabel;
     private Label opponentPowerUpInfoLabel;
     private Label opponentPassiveTraitLabel;
+    private final Map<Monster, Integer> stationedMonsterPreviousEnergies;
 
     private final BottomView bottomView;
     private final Button menuButton;
@@ -78,11 +87,13 @@ public class GameView {
 
         root = new BorderPane();
         mainRoot = new StackPane();
+        uiLayer = new StackPane(root);
+        setupResponsiveGameScale();
 
         ImageView backgroundView = createBackgroundView();
 
         // Background first, UI second
-        mainRoot.getChildren().addAll(backgroundView, root);
+        mainRoot.getChildren().addAll(backgroundView, uiLayer);
 
         this.currentPlayerLabel = new Label();
 
@@ -102,6 +113,7 @@ public class GameView {
         this.opponentTeamLabel = createTeamLabel();
         this.playerStationedMonsterBox = createStationedMonsterBox();
         this.opponentStationedMonsterBox = createStationedMonsterBox();
+        this.stationedMonsterPreviousEnergies = new HashMap<>();
 
         playerMonsterTypeLabel = createMonsterDetailLabel();
         playerPowerUpInfoLabel = createMonsterDetailLabel();
@@ -123,6 +135,7 @@ public class GameView {
         menuButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         buildLayout();
+        addMenuPanel();
 
         // Load CSS
         mainRoot.getStylesheets().add(
@@ -143,6 +156,9 @@ public class GameView {
 
     private void buildLayout() {
 
+        root.setMinSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+        root.setPrefSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+        root.setMaxSize(DESIGN_WIDTH, DESIGN_HEIGHT);
         root.setPadding(new Insets(12));
 
         HBox leftPanel = createLeftSideContainer();
@@ -183,6 +199,40 @@ public class GameView {
         applyPanelStyle(bottomPanel);
     }
 
+    private void addMenuPanel() {
+        ImageView panelImage = new ImageView(loadImage("/game/assets/panels/menuPanel.png"));
+        panelImage.setFitWidth(80);
+        panelImage.setFitHeight(80);
+        panelImage.setPreserveRatio(true);
+        panelImage.setSmooth(true);
+
+        StackPane menuPanel = new StackPane(panelImage, menuButton);
+        menuPanel.setPrefSize(80, 80);
+        menuPanel.setMinSize(80, 80);
+        menuPanel.setMaxSize(80, 80);
+        menuPanel.setPickOnBounds(false);
+
+        uiLayer.getChildren().add(menuPanel);
+        StackPane.setAlignment(menuPanel, Pos.TOP_LEFT);
+        StackPane.setMargin(menuPanel, new Insets(12, 0, 0, 175));
+    }
+
+    private void setupResponsiveGameScale() {
+        uiLayer.setMinSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+        uiLayer.setPrefSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+        uiLayer.setMaxSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+
+        DoubleBinding fitScale = Bindings.min(
+                Bindings.min(
+                        mainRoot.widthProperty().divide(DESIGN_WIDTH),
+                        mainRoot.heightProperty().divide(DESIGN_HEIGHT)),
+                1.0);
+
+        uiLayer.scaleXProperty().bind(fitScale);
+        uiLayer.scaleYProperty().bind(fitScale);
+        StackPane.setAlignment(uiLayer, Pos.CENTER);
+    }
+
     private StackPane createTopPanel() {
 
         currentPlayerLabel.setStyle("""
@@ -191,16 +241,19 @@ public class GameView {
                 -fx-text-fill: white;
                 """);
         currentPlayerLabel.setEffect(new DropShadow(4, Color.BLACK));
-
-        HBox content = new HBox(24, menuButton, currentPlayerLabel);
-        content.setAlignment(Pos.CENTER_LEFT);
-        content.setPadding(new Insets(6, 22, 6, 44));
+        HBox content = new HBox(currentPlayerLabel);
+        content.setAlignment(Pos.CENTER);
+        content.setPadding(new Insets(6, 22, 0, 22));
         content.setPrefWidth(650);
         content.setMaxWidth(650);
 
+        currentPlayerLabel.setMaxWidth(650 - 44);
+        currentPlayerLabel.setAlignment(Pos.CENTER);
+
         ImageView panelImage = new ImageView(loadImage("/game/assets/panels/top panel.png"));
-        panelImage.setPreserveRatio(true);
+        panelImage.setPreserveRatio(false);
         panelImage.setFitWidth(650);
+        panelImage.setFitHeight(150);
         panelImage.setSmooth(true);
 
         StackPane panel = new StackPane(panelImage, content);
@@ -399,6 +452,7 @@ public class GameView {
         playerSideContainer = new HBox(8, playerInfoColumn, playerTurnLogView);
         playerSideContainer.setAlignment(Pos.TOP_CENTER);
         playerSideContainer.setPrefWidth(620);
+        HBox.setMargin(playerTurnLogView, new Insets(80, 0, 0, 0));
         playerSideContainer.setFillHeight(false);
         playerSideContainer.setStyle("-fx-background-color: transparent;");
 
@@ -419,6 +473,8 @@ public class GameView {
         opponentSideContainer = new HBox(8, opponentTurnLogView, opponentInfoColumn);
         opponentSideContainer.setAlignment(Pos.TOP_CENTER);
         opponentSideContainer.setPrefWidth(620);
+        HBox.setMargin(opponentTurnLogView, new Insets(80, 0, 0, 0));
+
         opponentSideContainer.setFillHeight(false);
         opponentSideContainer.setStyle("-fx-background-color: transparent;");
 
@@ -483,10 +539,10 @@ public class GameView {
     }
 
     private HBox createStationedMonsterBox() {
-        HBox box = new HBox(8);
+        HBox box = new HBox(10);
         box.setAlignment(Pos.CENTER);
         box.setPrefWidth(372);
-        box.setMinHeight(30);
+        box.setMinHeight(54);
 
         return box;
     }
@@ -503,9 +559,62 @@ public class GameView {
                 portrait.setPreserveRatio(true);
                 portrait.setSmooth(true);
                 portrait.setEffect(new DropShadow(3, Color.BLACK));
-                monsterBox.getChildren().add(portrait);
+
+                Label energyLabel = createStationedMonsterEnergyLabel(monster.getEnergy());
+                Label changeLabel = createStationedMonsterChangeLabel(monster);
+
+                VBox monsterStack = new VBox(1, portrait, energyLabel, changeLabel);
+                monsterStack.setAlignment(Pos.CENTER);
+                monsterStack.setMinWidth(42);
+                monsterStack.setPrefWidth(42);
+                monsterBox.getChildren().add(monsterStack);
             }
         }
+    }
+
+    private Label createStationedMonsterEnergyLabel(int energy) {
+        Label label = new Label(String.valueOf(energy));
+        label.setAlignment(Pos.CENTER);
+        label.setStyle("""
+                -fx-font-size: 9px;
+                -fx-font-weight: 900;
+                -fx-text-fill: white;
+                """);
+        label.setEffect(new DropShadow(3, Color.BLACK));
+
+        return label;
+    }
+
+    private Label createStationedMonsterChangeLabel(Monster monster) {
+        Integer previousEnergy = stationedMonsterPreviousEnergies.get(monster);
+        int currentEnergy = monster.getEnergy();
+        stationedMonsterPreviousEnergies.put(monster, currentEnergy);
+
+        Label label = new Label();
+        label.setMinHeight(10);
+        label.setAlignment(Pos.CENTER);
+        label.setStyle("""
+                -fx-font-size: 8px;
+                -fx-font-weight: 900;
+                -fx-text-fill: transparent;
+                """);
+
+        if (previousEnergy == null) {
+            return label;
+        }
+
+        int change = currentEnergy - previousEnergy;
+        if (change == 0) {
+            return label;
+        }
+
+        label.setText(change > 0 ? "+" + change : String.valueOf(change));
+        label.setStyle(change > 0
+                ? "-fx-font-size: 8px; -fx-font-weight: 900; -fx-text-fill: #35e66b;"
+                : "-fx-font-size: 8px; -fx-font-weight: 900; -fx-text-fill: #ff3b3b;");
+        label.setEffect(new DropShadow(2, Color.BLACK));
+
+        return label;
     }
 
     private Label createMonsterHeader() {

@@ -1,0 +1,36 @@
+.game-type-title {
+  -fx-font-size: 34px;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+}
+
+.game-type-subtitle {
+  -fx-font-size: 16px;
+  -fx-text-fill: #e4edf7;
+}
+
+.game-type-overlay {
+  -fx-background-color: rgba(0, 0, 0, 0.18);
+}
+
+.game-type-card {
+  -fx-background-radius: 24;
+  -fx-border-radius: 24;
+  -fx-border-color: rgba(255,255,255,0.16);
+}
+
+.game-type-card-overlay {
+  -fx-background-color: linear-gradient(to right, rgba(4, 10, 18, 0.78), rgba(4, 10, 18, 0.06));
+}
+
+.game-type-card-title {
+  -fx-font-size: 28px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.game-type-card-description {
+  -fx-font-size: 15px;
+  -fx-text-fill: #edf4fb;
+  -fx-line-spacing: 4;
+}

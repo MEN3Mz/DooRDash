@@ -8,6 +8,7 @@ import game.engine.cards.Card;
 import game.engine.cards.ConfusionCard;
 import game.engine.cells.ContaminationSock;
 import game.engine.cells.ConveyorBelt;
+import game.engine.cells.DoorCell;
 import game.engine.exceptions.InvalidMoveException;
 import game.engine.exceptions.OutOfEnergyException;
 import game.engine.monsters.Monster;
@@ -64,8 +65,11 @@ public class GameController {
                 boolean opponentWasShielded = game.getOpponent().isShielded();
                 boolean playerWasFrozen = game.getPlayer().isFrozen();
                 boolean opponentWasFrozen = game.getOpponent().isFrozen();
+                Monster actingMonster = game.getCurrent();
+                int actingMonsterEnergyBefore = actingMonster.getEnergy();
                 int rolledValue = game.playTurn();
                 playLandedCellSound();
+                playEnergyChangeSound(actingMonster, actingMonsterEnergyBefore);
                 playStatusChangeSounds(playerWasShielded, opponentWasShielded, playerWasFrozen, opponentWasFrozen);
 
                 view.getBottomView().setDiceValue(rolledValue);
@@ -127,6 +131,11 @@ public class GameController {
             SoundManager.playBeltSound();
         } else if (game.getBoard().getLastLandedCell() instanceof ContaminationSock) {
             SoundManager.playSockSound();
+        } else if (game.getBoard().getLastLandedCell() instanceof DoorCell) {
+            DoorCell doorCell = (DoorCell) game.getBoard().getLastLandedCell();
+            if (doorCell.wasLastLandingEnergyChangeActivation()) {
+                SoundManager.playDoorSound();
+            }
         }
     }
 
@@ -140,6 +149,21 @@ public class GameController {
         playShieldChangeSound(opponentWasShielded, game.getOpponent().isShielded());
         playFreezeChangeSound(playerWasFrozen, game.getPlayer().isFrozen());
         playFreezeChangeSound(opponentWasFrozen, game.getOpponent().isFrozen());
+    }
+
+    private void playEnergyChangeSound(Monster monster, int energyBefore) {
+        if (game.getBoard().getLastLandedCell() instanceof ConveyorBelt
+                || game.getBoard().getLastLandedCell() instanceof ContaminationSock) {
+            return;
+        }
+
+        int energyAfter = monster.getEnergy();
+
+        if (energyAfter < energyBefore) {
+            SoundManager.playDamageSound();
+        } else if (energyAfter > energyBefore) {
+            SoundManager.playEnergyIncreaseSound();
+        }
     }
 
     private void playShieldChangeSound(boolean wasShielded, boolean isShielded) {
@@ -185,6 +209,7 @@ public class GameController {
 
         if (game.getWinner() != null) {
             System.out.println(game.getWinner().getName() + " wins!");
+            SoundManager.stopMusic();
             playWinSound(game.getWinner());
             showGameOverView(game.getWinner());
         }
@@ -209,30 +234,11 @@ public class GameController {
         VBox content = new VBox(20);
         content.setMaxWidth(520);
         content.setMaxHeight(420);
-        content.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom right,
-                    rgba(8,16,26,0.96),
-                    rgba(15,25,40,0.96));
-
-                -fx-background-radius: 24;
-                -fx-border-radius: 24;
-                -fx-border-width: 2;
-                -fx-border-color: rgba(255,255,255,0.12);
-                -fx-padding: 36;
-                -fx-effect:
-                    dropshadow(three-pass-box,
-                    rgba(0,0,0,0.55),
-                    24, 0, 0, 8);
-                """);
+        content.getStyleClass().add("pause-popup");
         content.setAlignment(Pos.CENTER);
 
         Label title = new Label("Game Paused");
-        title.setStyle("""
-                -fx-font-size: 30px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        title.getStyleClass().add("pause-title");
 
         Button resumeButton = createPauseButton("Resume Game");
         resumeButton.setOnAction(e -> hideOverlay());
@@ -263,6 +269,8 @@ public class GameController {
         overlayPane = new StackPane();
         overlayPane.getStylesheets().add(
                 getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        overlayPane.getStylesheets().add(
+                getClass().getResource("/game/assets/css/pause-view.css").toExternalForm());
         ((StackPane) overlayPane).getChildren().addAll(overlayBackground, content);
         StackPane.setAlignment(content, Pos.CENTER);
 
@@ -275,6 +283,7 @@ public class GameController {
         button.setPrefHeight(58);
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
+        button.setOnMouseEntered(e -> SoundManager.playHoverSound());
         button.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         return button;

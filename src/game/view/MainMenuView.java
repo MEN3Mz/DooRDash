@@ -30,6 +30,8 @@ public class MainMenuView {
         root = new StackPane();
         root.getStylesheets().add(
                 getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        root.getStylesheets().add(
+                getClass().getResource("/game/assets/css/main-menu-view.css").toExternalForm());
 
         startButton = createMenuButton("Start Game");
         settingsButton = createMenuButton("Settings");
@@ -101,7 +103,7 @@ public class MainMenuView {
         menuContainer.setAlignment(Pos.CENTER);
 
         BorderPane overlay = new BorderPane();
-        overlay.setStyle("-fx-background-color: transparent;");
+        overlay.getStyleClass().add("main-menu-overlay");
 
         overlay.setTop(logoView);
         overlay.setCenter(menuContainer);
@@ -122,6 +124,7 @@ public class MainMenuView {
 
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
+        button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> SoundManager.playHoverSound());
         button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             SoundManager.playButtonSound();
             button.getStyleClass().remove("menu-button-active");
@@ -137,6 +140,7 @@ public class MainMenuView {
         Button soundButton = new Button(SOUND_ON_TEXT);
 
         soundButton.getStyleClass().add("sound-on");
+        soundButton.setOnMouseEntered(e -> SoundManager.playHoverSound());
         soundButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         soundButton.setOnAction(e -> {

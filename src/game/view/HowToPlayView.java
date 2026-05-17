@@ -24,6 +24,8 @@ public class HowToPlayView {
         root = new StackPane();
         root.getStylesheets().add(
                 getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        root.getStylesheets().add(
+                getClass().getResource("/game/assets/css/how-to-play-view.css").toExternalForm());
 
         Rectangle overlayBackground = createOverlayBackground();
         VBox content = createHowToPlayContent();
@@ -49,38 +51,15 @@ public class HowToPlayView {
         content.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
         content.setMaxWidth(820);
 
-        content.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom right,
-                    rgba(8,16,26,0.96),
-                    rgba(15,25,40,0.96));
-
-                -fx-background-radius: 24;
-                -fx-border-radius: 24;
-                -fx-border-width: 2;
-                -fx-border-color: rgba(255,255,255,0.12);
-                -fx-padding: 28;
-                -fx-effect:
-                    dropshadow(three-pass-box,
-                    rgba(0,0,0,0.55),
-                    24, 0, 0, 8);
-                """);
+        content.getStyleClass().add("how-to-play-popup");
 
         Label title = new Label("DooR DasH: Scare vs Laugh Touchdown");
 
-        title.setStyle("""
-                -fx-font-size: 30px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        title.getStyleClass().add("how-to-play-title");
 
         Label subtitle = new Label("\"We scare because we care.\"   -   \"We laugh, that's our path.\"");
 
-        subtitle.setStyle("""
-                -fx-font-size: 14px;
-                -fx-text-fill: #cfe4ff;
-                -fx-font-style: italic;
-                """);
+        subtitle.getStyleClass().add("how-to-play-subtitle");
 
         VBox instructionsBox = new VBox(18);
         instructionsBox.setPadding(new Insets(5));
@@ -190,10 +169,7 @@ public class HowToPlayView {
         scrollPane.setFitToWidth(true);
         scrollPane.setPannable(true);
 
-        scrollPane.setStyle("""
-                -fx-background-color: transparent;
-                -fx-background: transparent;
-                """);
+        scrollPane.getStyleClass().add("how-to-play-scroll");
 
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
@@ -202,6 +178,7 @@ public class HowToPlayView {
         backButton.setPrefHeight(48);
         backButton.getStyleClass().add("menu-button");
         backButton.getStyleClass().add("menu-font");
+        backButton.setOnMouseEntered(e -> SoundManager.playHoverSound());
         backButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         content.getChildren().addAll(
@@ -217,30 +194,16 @@ public class HowToPlayView {
 
         Label titleLabel = new Label(title);
 
-        titleLabel.setStyle("""
-                -fx-font-size: 20px;
-                -fx-font-weight: 900;
-                -fx-text-fill: white;
-                """);
+        titleLabel.getStyleClass().add("how-to-play-section-title");
 
         Label bodyLabel = new Label(body);
         bodyLabel.setWrapText(true);
 
-        bodyLabel.setStyle("""
-                -fx-font-size: 14px;
-                -fx-line-spacing: 5px;
-                -fx-text-fill: #dce8f5;
-                """);
+        bodyLabel.getStyleClass().add("how-to-play-section-body");
 
         VBox section = new VBox(10, titleLabel, bodyLabel);
 
-        section.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.05);
-                -fx-background-radius: 18;
-                -fx-border-color: rgba(255,255,255,0.08);
-                -fx-border-radius: 18;
-                -fx-padding: 18;
-                """);
+        section.getStyleClass().add("how-to-play-section");
 
         return section;
     }

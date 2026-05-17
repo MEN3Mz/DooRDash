@@ -1,0 +1,166 @@
+.choose-side-title {
+  -fx-font-size: 34px;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+}
+
+.choose-side-subtitle {
+  -fx-font-size: 16px;
+  -fx-text-fill: #e4edf7;
+}
+
+.choose-side-overlay {
+  -fx-background-color: rgba(0, 0, 0, 0.18);
+}
+
+.team-card {
+  -fx-background-radius: 24;
+  -fx-border-radius: 24;
+  -fx-border-color: rgba(255,255,255,0.16);
+}
+
+.team-card-overlay {
+  -fx-background-color: linear-gradient(to right, rgba(4, 10, 18, 0.78), rgba(4, 10, 18, 0.06));
+}
+
+.select-button {
+  -fx-background-color: rgba(9, 17, 26, 0.82);
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 16px;
+  -fx-background-radius: 12;
+  -fx-padding: 12 24 12 24;
+  -fx-border-color: rgba(255,255,255,0.45);
+  -fx-border-radius: 12;
+}
+
+.select-button:hover {
+  -fx-background-color: rgba(22, 47, 76, 0.94);
+  -fx-border-color: rgba(130, 200, 255, 0.9);
+  -fx-effect: dropshadow(three-pass-box, rgba(80, 170, 255, 0.65), 12, 0, 0, 1);
+  -fx-scale-x: 1.04;
+  -fx-scale-y: 1.04;
+}
+
+.select-button:pressed {
+  -fx-background-color: rgba(7, 20, 36, 0.96);
+  -fx-border-color: rgba(255,255,255,0.34);
+  -fx-translate-y: 2px;
+  -fx-effect: none;
+}
+
+.info-button {
+  -fx-background-color: rgba(8, 16, 26, 0.88);
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 18px;
+  -fx-background-radius: 20;
+  -fx-min-width: 38px;
+  -fx-min-height: 38px;
+  -fx-max-width: 38px;
+  -fx-max-height: 38px;
+  -fx-border-color: rgba(255,255,255,0.45);
+  -fx-border-radius: 20;
+}
+
+.info-button:hover {
+  -fx-background-color: rgba(24, 64, 104, 0.96);
+  -fx-border-color: rgba(130, 200, 255, 0.92);
+  -fx-effect: dropshadow(three-pass-box, rgba(80, 170, 255, 0.7), 12, 0, 0, 1);
+  -fx-scale-x: 1.12;
+  -fx-scale-y: 1.12;
+}
+
+.info-button:pressed {
+  -fx-background-color: rgba(6, 18, 32, 0.98);
+  -fx-border-color: rgba(255,255,255,0.35);
+  -fx-translate-y: 2px;
+  -fx-effect: none;
+}
+
+.details-panel {
+  -fx-background-color: rgba(8, 16, 26, 0.78);
+  -fx-background-radius: 18;
+  -fx-padding: 18;
+  -fx-border-color: rgba(255,255,255,0.18);
+  -fx-border-radius: 18;
+}
+
+.details-header {
+  -fx-font-size: 18px;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+}
+
+.details-scroll {
+  -fx-background: transparent;
+  -fx-background-color: transparent;
+}
+
+.details-overview {
+  -fx-font-size: 13px;
+  -fx-text-fill: #edf4fb;
+  -fx-line-spacing: 4;
+  -fx-font-weight: bold;
+}
+
+.monster-info-name {
+  -fx-font-size: 15px;
+  -fx-font-weight: 800;
+  -fx-text-fill: white;
+}
+
+.monster-info-details {
+  -fx-font-size: 12px;
+  -fx-text-fill: #edf4fb;
+  -fx-line-spacing: 3;
+}
+
+.monster-info-card {
+  -fx-background-color: rgba(255,255,255,0.06);
+  -fx-background-radius: 12;
+  -fx-padding: 10;
+}
+
+.start-button {
+  -fx-background-color:
+    linear-gradient(#70b1ff 0%, #1a5cad 50%, #0a3b75 51%, #114b91 100%),
+    linear-gradient(#202020 0%, #111111 100%),
+    linear-gradient(#3e5e8e, #2e4a77);
+  -fx-background-insets: 0,1,2;
+  -fx-background-radius: 5,4,3;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 18px;
+  -fx-padding: 12 34 12 34;
+  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 1);
+}
+
+.start-button:hover {
+  -fx-background-color:
+    linear-gradient(#a8d2ff 0%, #2f80ed 50%, #0f56a8 51%, #1b65bf 100%),
+    linear-gradient(#303030 0%, #161616 100%),
+    linear-gradient(#5c7fb4, #3d6094);
+  -fx-scale-x: 1.03;
+  -fx-scale-y: 1.03;
+  -fx-effect: dropshadow(three-pass-box, rgba(120,190,255,0.75), 10, 0, 0, 1);
+}
+
+.start-button:pressed {
+  -fx-background-color:
+    linear-gradient(#1a5cad 0%, #0a3b75 50%, #051d3a 51%, #082a52 100%),
+    linear-gradient(#101010 0%, #000000 100%),
+    linear-gradient(#2e4a77, #1a2b47);
+  -fx-text-fill: #bbbbbb;
+  -fx-translate-y: 2px;
+  -fx-effect: none;
+}
+
+.start-button:disabled {
+  -fx-background-color: rgba(80, 88, 98, 0.88);
+  -fx-text-fill: #d7dde4;
+  -fx-font-weight: bold;
+  -fx-font-size: 18px;
+  -fx-background-radius: 16;
+  -fx-padding: 12 34 12 34;
+}

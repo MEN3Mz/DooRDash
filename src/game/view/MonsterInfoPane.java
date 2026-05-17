@@ -19,11 +19,14 @@ public class MonsterInfoPane extends Pane {
 
     private Label posLabel;
     private Label energyLabel;
+    private Label energyChangeLabel;
     private ProgressBar energyBar;
     private StatusEffectPane effectsPane;
     private ImageView capsuleFrame; // Renamed to capsuleFrame
+    private Integer previousEnergy;
 
     public MonsterInfoPane() {
+        getStylesheets().add(getClass().getResource("/game/assets/css/monster-info-pane.css").toExternalForm());
         this.setMinWidth(CARD_WIDTH);
         this.setMaxWidth(CARD_WIDTH);
         this.setPrefWidth(CARD_WIDTH);
@@ -45,7 +48,7 @@ public class MonsterInfoPane extends Pane {
         posLabel.setAlignment(Pos.CENTER);
         posLabel.setLayoutX(7);
         posLabel.setLayoutY(180);
-        posLabel.setStyle("-fx-text-fill: white;");
+        posLabel.getStyleClass().add("monster-position-label");
         posLabel.setEffect(new DropShadow(4, Color.BLACK));
 
         energyBar = new ProgressBar(1.0);
@@ -59,14 +62,22 @@ public class MonsterInfoPane extends Pane {
         energyLabel.setAlignment(Pos.CENTER);
         energyLabel.setLayoutX(30);
         energyLabel.setLayoutY(360);
-        energyLabel.setStyle("-fx-text-fill: #102033;");
+        energyLabel.getStyleClass().add("monster-energy-label");
         energyLabel.setEffect(new DropShadow(3, Color.WHITE));
+
+        energyChangeLabel = new Label();
+        energyChangeLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 13));
+        energyChangeLabel.setPrefWidth(58);
+        energyChangeLabel.setAlignment(Pos.CENTER_LEFT);
+        energyChangeLabel.setLayoutX(128);
+        energyChangeLabel.setLayoutY(368);
+        energyChangeLabel.setEffect(new DropShadow(3, Color.BLACK));
 
         effectsPane = new StatusEffectPane();
         effectsPane.setLayoutX(23);
         effectsPane.setLayoutY(228);
 
-        this.getChildren().addAll(capsuleFrame, energyBar, effectsPane, posLabel, energyLabel);
+        this.getChildren().addAll(capsuleFrame, energyBar, effectsPane, posLabel, energyLabel, energyChangeLabel);
     }
 
     public void updateUI(String name, String type, String originalRole, String currentRole,
@@ -86,6 +97,7 @@ public class MonsterInfoPane extends Pane {
 
         posLabel.setText(String.valueOf(pos));
         posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, pos >= 100 ? 21 : 26));
+        updateEnergyChangeLabel(energy);
         energyLabel.setText(String.valueOf(energy));
 
         double progress = energy / 1000.0;
@@ -216,5 +228,25 @@ public class MonsterInfoPane extends Pane {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateEnergyChangeLabel(int energy) {
+        if (previousEnergy == null) {
+            energyChangeLabel.setText("");
+            previousEnergy = energy;
+            return;
+        }
+
+        int change = energy - previousEnergy;
+        previousEnergy = energy;
+
+        if (change == 0) {
+            energyChangeLabel.setText("");
+            return;
+        }
+
+        energyChangeLabel.setText(change > 0 ? "+" + change : String.valueOf(change));
+        energyChangeLabel.getStyleClass().removeAll("energy-change-gain", "energy-change-loss");
+        energyChangeLabel.getStyleClass().add(change > 0 ? "energy-change-gain" : "energy-change-loss");
     }
 }

@@ -42,6 +42,8 @@ public class BottomView {
 
         root.getStylesheets().add(
                 getClass().getResource("/game/assets/css/buttons.css").toExternalForm());
+        root.getStylesheets().add(
+                getClass().getResource("/game/assets/css/bottom-view.css").toExternalForm());
     }
 
     // ------------------------

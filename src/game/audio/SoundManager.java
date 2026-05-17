@@ -13,11 +13,15 @@ public final class SoundManager {
     private static final String MAIN_MENU_MUSIC_PATH = "/game/assets/soundTrack/MainMenu.mp3";
     private static final String GAME_MUSIC_PATH = "/game/assets/soundTrack/Game.mp3";
     private static final String BUTTON_SOUND_PATH = "/game/assets/soundTrack/Button.mp3";
+    private static final String HOVER_SOUND_PATH = "/game/assets/soundTrack/hover.mp3";
     private static final String DICE_SOUND_PATH = "/game/assets/soundTrack/diceRoll.mp3";
     private static final String POWER_UP_SOUND_PATH = "/game/assets/soundTrack/PowerUp.mp3";
     private static final String INVALID_SOUND_PATH = "/game/assets/soundTrack/PowerUpInvalid.mp3";
     private static final String BELT_SOUND_PATH = "/game/assets/soundTrack/Belt.mp3";
     private static final String SOCK_SOUND_PATH = "/game/assets/soundTrack/Sock.mp3";
+    private static final String DOOR_SOUND_PATH = "/game/assets/soundTrack/door.mp3";
+    private static final String DAMAGE_SOUND_PATH = "/game/assets/soundTrack/damage.mp3";
+    private static final String ENERGY_INCREASE_SOUND_PATH = "/game/assets/soundTrack/energyIncrease.mp3";
     private static final String LAUGH_WIN_SOUND_PATH = "/game/assets/soundTrack/LaughWin.mp3";
     private static final String SCARE_WIN_SOUND_PATH = "/game/assets/soundTrack/ScareWin.mp3";
     private static final String SHIELD_ADD_SOUND_PATH = "/game/assets/soundTrack/ShieldAdd.mp3";
@@ -45,6 +49,10 @@ public final class SoundManager {
 
     public static void playGameMusic() {
         playMusic(GAME_MUSIC_PATH);
+    }
+
+    public static void stopMusic() {
+        stopCurrentMusic();
     }
 
     private static void playMusic(String musicPath) {
@@ -148,6 +156,10 @@ public final class SoundManager {
         playEffect(BUTTON_SOUND_PATH);
     }
 
+    public static void playHoverSound() {
+        playEffect(HOVER_SOUND_PATH);
+    }
+
     public static void playDiceRollSound() {
         playEffect(DICE_SOUND_PATH);
     }
@@ -166,6 +178,18 @@ public final class SoundManager {
 
     public static void playSockSound() {
         playEffect(SOCK_SOUND_PATH);
+    }
+
+    public static void playDoorSound() {
+        playEffect(DOOR_SOUND_PATH);
+    }
+
+    public static void playDamageSound() {
+        playEffect(DAMAGE_SOUND_PATH);
+    }
+
+    public static void playEnergyIncreaseSound() {
+        playEffect(ENERGY_INCREASE_SOUND_PATH);
     }
 
     public static void playLaughWinSound() {
