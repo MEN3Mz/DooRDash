@@ -17,6 +17,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineCap;
 
 public class GameBoardView {
+    private static final double BOARD_PIXEL_SIZE = CellView.CELL_SIZE * 10;
 
     private final GridPane boardGrid;
     private final CellView[][] cellViews;
@@ -42,8 +43,15 @@ public class GameBoardView {
         overlayPane.setMouseTransparent(true);
         overlayPane.setManaged(false);
 
-        boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        boardRoot.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        boardGrid.setMinSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
+        boardGrid.setPrefSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
+        boardGrid.setMaxSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
+        boardRoot.setMinSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
+        boardRoot.setPrefSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
+        boardRoot.setMaxSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
+        overlayPane.setMinSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
+        overlayPane.setPrefSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
+        overlayPane.setMaxSize(BOARD_PIXEL_SIZE, BOARD_PIXEL_SIZE);
 
         boardRoot.getChildren().addAll(boardGrid, overlayPane);
 
@@ -156,24 +164,35 @@ public class GameBoardView {
         toCenterX -= overlayScene.getMinX();
         toCenterY -= overlayScene.getMinY();
 
-        Line line = new Line(fromCenterX, fromCenterY, toCenterX, toCenterY);
+        double deltaX = toCenterX - fromCenterX;
+        double deltaY = toCenterY - fromCenterY;
+        double distance = Math.hypot(deltaX, deltaY);
+        if (distance == 0) {
+            return;
+        }
+
+        double targetInset = Math.min(toCell.getWidth(), toCell.getHeight()) / 2.0;
+        double targetEdgeX = toCenterX - (deltaX / distance) * targetInset;
+        double targetEdgeY = toCenterY - (deltaY / distance) * targetInset;
+
+        Line line = new Line(fromCenterX, fromCenterY, targetEdgeX, targetEdgeY);
         line.setStroke(color);
         line.setStrokeWidth(active ? 11 : 6);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
         line.setOpacity(active ? 0.98 : 0.22);
 
-        double angle = Math.atan2(toCenterY - fromCenterY, toCenterX - fromCenterX);
+        double angle = Math.atan2(targetEdgeY - fromCenterY, targetEdgeX - fromCenterX);
         double arrowLength = 18;
         double arrowWidth = 10;
 
-        double x1 = toCenterX - arrowLength * Math.cos(angle) + arrowWidth * Math.sin(angle);
-        double y1 = toCenterY - arrowLength * Math.sin(angle) - arrowWidth * Math.cos(angle);
+        double x1 = targetEdgeX - arrowLength * Math.cos(angle) + arrowWidth * Math.sin(angle);
+        double y1 = targetEdgeY - arrowLength * Math.sin(angle) - arrowWidth * Math.cos(angle);
 
-        double x2 = toCenterX - arrowLength * Math.cos(angle) - arrowWidth * Math.sin(angle);
-        double y2 = toCenterY - arrowLength * Math.sin(angle) + arrowWidth * Math.cos(angle);
+        double x2 = targetEdgeX - arrowLength * Math.cos(angle) - arrowWidth * Math.sin(angle);
+        double y2 = targetEdgeY - arrowLength * Math.sin(angle) + arrowWidth * Math.cos(angle);
 
         Polygon arrowHead = new Polygon(
-                toCenterX, toCenterY,
+                targetEdgeX, targetEdgeY,
                 x1, y1,
                 x2, y2);
 

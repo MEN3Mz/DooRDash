@@ -34,6 +34,21 @@
   -fx-border-radius: 12;
 }
 
+.select-button:hover {
+  -fx-background-color: rgba(22, 47, 76, 0.94);
+  -fx-border-color: rgba(130, 200, 255, 0.9);
+  -fx-effect: dropshadow(three-pass-box, rgba(80, 170, 255, 0.65), 12, 0, 0, 1);
+  -fx-scale-x: 1.04;
+  -fx-scale-y: 1.04;
+}
+
+.select-button:pressed {
+  -fx-background-color: rgba(7, 20, 36, 0.96);
+  -fx-border-color: rgba(255,255,255,0.34);
+  -fx-translate-y: 2px;
+  -fx-effect: none;
+}
+
 .info-button {
   -fx-background-color: rgba(8, 16, 26, 0.88);
   -fx-text-fill: white;
@@ -46,6 +61,21 @@
   -fx-max-height: 38px;
   -fx-border-color: rgba(255,255,255,0.45);
   -fx-border-radius: 20;
+}
+
+.info-button:hover {
+  -fx-background-color: rgba(24, 64, 104, 0.96);
+  -fx-border-color: rgba(130, 200, 255, 0.92);
+  -fx-effect: dropshadow(three-pass-box, rgba(80, 170, 255, 0.7), 12, 0, 0, 1);
+  -fx-scale-x: 1.12;
+  -fx-scale-y: 1.12;
+}
+
+.info-button:pressed {
+  -fx-background-color: rgba(6, 18, 32, 0.98);
+  -fx-border-color: rgba(255,255,255,0.35);
+  -fx-translate-y: 2px;
+  -fx-effect: none;
 }
 
 .details-panel {
