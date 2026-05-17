@@ -9,6 +9,8 @@ import game.engine.Board;
 import game.engine.Role;
 import game.audio.SoundManager;
 import game.engine.monsters.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -26,6 +28,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 public class GameView {
+    private static final double DESIGN_WIDTH = 2140;
+    private static final double DESIGN_HEIGHT = 1080;
 
     private final Game game;
     private final GameBoardView boardView;
@@ -34,6 +38,7 @@ public class GameView {
 
     private final BorderPane root;
     private final StackPane mainRoot;
+    private final StackPane uiLayer;
 
     private final Label currentPlayerLabel;
     private final Label cellInfoLabel;
@@ -82,11 +87,13 @@ public class GameView {
 
         root = new BorderPane();
         mainRoot = new StackPane();
+        uiLayer = new StackPane(root);
+        setupResponsiveGameScale();
 
         ImageView backgroundView = createBackgroundView();
 
         // Background first, UI second
-        mainRoot.getChildren().addAll(backgroundView, root);
+        mainRoot.getChildren().addAll(backgroundView, uiLayer);
 
         this.currentPlayerLabel = new Label();
 
@@ -149,6 +156,9 @@ public class GameView {
 
     private void buildLayout() {
 
+        root.setMinSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+        root.setPrefSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+        root.setMaxSize(DESIGN_WIDTH, DESIGN_HEIGHT);
         root.setPadding(new Insets(12));
 
         HBox leftPanel = createLeftSideContainer();
@@ -202,9 +212,25 @@ public class GameView {
         menuPanel.setMaxSize(80, 80);
         menuPanel.setPickOnBounds(false);
 
-        mainRoot.getChildren().add(menuPanel);
+        uiLayer.getChildren().add(menuPanel);
         StackPane.setAlignment(menuPanel, Pos.TOP_LEFT);
         StackPane.setMargin(menuPanel, new Insets(12, 0, 0, 175));
+    }
+
+    private void setupResponsiveGameScale() {
+        uiLayer.setMinSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+        uiLayer.setPrefSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+        uiLayer.setMaxSize(DESIGN_WIDTH, DESIGN_HEIGHT);
+
+        DoubleBinding fitScale = Bindings.min(
+                Bindings.min(
+                        mainRoot.widthProperty().divide(DESIGN_WIDTH),
+                        mainRoot.heightProperty().divide(DESIGN_HEIGHT)),
+                1.0);
+
+        uiLayer.scaleXProperty().bind(fitScale);
+        uiLayer.scaleYProperty().bind(fitScale);
+        StackPane.setAlignment(uiLayer, Pos.CENTER);
     }
 
     private StackPane createTopPanel() {
