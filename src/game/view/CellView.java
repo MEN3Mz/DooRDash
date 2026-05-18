@@ -202,6 +202,7 @@ public class CellView extends StackPane {
         boolean playerOnCell = playerPosition == index;
         boolean opponentOnCell = opponentPosition == index;
         boolean occupiedByCurrentMonster = playerOnCell || opponentOnCell;
+        positionPlayerLabels(playerOnCell && opponentOnCell);
 
         if (playerOnCell) {
             playerLabel.setVisible(true);
@@ -298,6 +299,14 @@ public class CellView extends StackPane {
         }
 
         applyStatusBorder(index, player, opponent, playerPosition, opponentPosition);
+    }
+
+    private void positionPlayerLabels(boolean bothPlayersOnCell) {
+        StackPane.setAlignment(playerLabel, Pos.TOP_RIGHT);
+        StackPane.setMargin(playerLabel, new Insets(4));
+
+        StackPane.setAlignment(opponentLabel, bothPlayersOnCell ? Pos.BOTTOM_RIGHT : Pos.TOP_RIGHT);
+        StackPane.setMargin(opponentLabel, bothPlayersOnCell ? new Insets(0, 4, 4, 0) : new Insets(4));
     }
 
     private void resetCellImageLayout() {
