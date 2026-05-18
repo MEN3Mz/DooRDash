@@ -92,7 +92,7 @@ public class GameController {
                 boolean opponentWasShielded = game.getOpponent().isShielded();
                 boolean playerWasFrozen = game.getPlayer().isFrozen();
                 boolean opponentWasFrozen = game.getOpponent().isFrozen();
-                if (game.getCurrent().getEnergy() >= Constants.POWERUP_COST) {
+                if (game.canCurrentUsePowerup()) {
                     SoundManager.playPowerUpSound();
                 } else {
                     SoundManager.playInvalidSound();
@@ -103,6 +103,8 @@ public class GameController {
                 handleGameOver();
 
             } catch (OutOfEnergyException ex) {
+                view.refresh();
+            } catch (IllegalStateException ex) {
                 view.refresh();
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -216,7 +218,7 @@ public class GameController {
     }
 
     private void playWinSound(Monster winner) {
-        if (winner.getRole() == Role.LAUGHER) {
+        if (winner.getOriginalRole() == Role.LAUGHER) {
             SoundManager.playLaughWinSound();
         } else {
             SoundManager.playScareWinSound();

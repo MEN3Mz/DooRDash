@@ -14,10 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class SettingsView {
+    private static final String SOUND_ON_TEXT = "Sound: ON";
+    private static final String SOUND_OFF_TEXT = "Sound: OFF";
 
     private final StackPane root;
     private final Slider musicSlider;
     private final Slider effectsSlider;
+    private final Button soundToggleButton;
     private final Button backButton;
 
     public SettingsView() {
@@ -29,6 +32,7 @@ public class SettingsView {
 
         musicSlider = createMusicSlider();
         effectsSlider = createEffectsSlider();
+        soundToggleButton = createSoundToggleButton();
         backButton = createMenuButton("Back");
 
         Rectangle overlayBackground = createOverlayBackground();
@@ -53,7 +57,7 @@ public class SettingsView {
         Label musicLabel = createSectionLabel("Background Music");
         Label effectsLabel = createSectionLabel("Game Sounds");
 
-        VBox content = new VBox(18, title, musicLabel, musicSlider, effectsLabel, effectsSlider, backButton);
+        VBox content = new VBox(18, title, soundToggleButton, musicLabel, musicSlider, effectsLabel, effectsSlider, backButton);
         content.setAlignment(Pos.CENTER);
         content.setMaxWidth(520);
         content.getStyleClass().add("settings-popup");
@@ -72,6 +76,7 @@ public class SettingsView {
         Slider slider = createSlider(SoundManager.getMusicVolume());
         slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             SoundManager.setMusicVolume(newValue.doubleValue() / 100.0);
+            refreshSoundToggleButton();
         });
 
         return slider;
@@ -81,6 +86,7 @@ public class SettingsView {
         Slider slider = createSlider(SoundManager.getEffectsVolume());
         slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             SoundManager.setEffectsVolume(newValue.doubleValue() / 100.0);
+            refreshSoundToggleButton();
         });
 
         return slider;
@@ -95,6 +101,32 @@ public class SettingsView {
         slider.setBlockIncrement(5);
 
         return slider;
+    }
+
+    private Button createSoundToggleButton() {
+        Button button = createMenuButton("");
+        button.setPrefWidth(180);
+        button.setPrefHeight(42);
+        button.setOnAction(e -> {
+            SoundManager.setSoundOn(!SoundManager.isSoundOn());
+            musicSlider.setValue(SoundManager.getMusicVolume() * 100);
+            effectsSlider.setValue(SoundManager.getEffectsVolume() * 100);
+            refreshSoundToggleButton();
+        });
+        refreshSoundToggleButton(button);
+
+        return button;
+    }
+
+    private void refreshSoundToggleButton() {
+        refreshSoundToggleButton(soundToggleButton);
+    }
+
+    private void refreshSoundToggleButton(Button button) {
+        boolean soundOn = SoundManager.isSoundOn();
+        button.setText(soundOn ? SOUND_ON_TEXT : SOUND_OFF_TEXT);
+        button.getStyleClass().removeAll("sound-on", "sound-off");
+        button.getStyleClass().add(soundOn ? "sound-on" : "sound-off");
     }
 
     private Button createMenuButton(String text) {

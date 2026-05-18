@@ -35,6 +35,8 @@ public final class SoundManager {
     private static boolean soundOn = true;
     private static double musicVolume = 0.35;
     private static double effectsVolume = 0.75;
+    private static double previousMusicVolume = musicVolume;
+    private static double previousEffectsVolume = effectsVolume;
 
     private SoundManager() {
     }
@@ -115,13 +117,38 @@ public final class SoundManager {
     }
 
     public static void setSoundOn(boolean enabled) {
+        if (soundOn == enabled) {
+            return;
+        }
+
         soundOn = enabled;
-        
+
+        if (soundOn) {
+            musicVolume = previousMusicVolume > 0 ? previousMusicVolume : 0.35;
+            effectsVolume = previousEffectsVolume > 0 ? previousEffectsVolume : 0.75;
+        } else {
+            if (musicVolume > 0) {
+                previousMusicVolume = musicVolume;
+            }
+            if (effectsVolume > 0) {
+                previousEffectsVolume = effectsVolume;
+            }
+            musicVolume = 0.0;
+            effectsVolume = 0.0;
+        }
+
+        applyCurrentMusicState();
+        updateActiveEffectsVolume();
+    }
+
+    private static void applyCurrentMusicState() {
         if (soundtrackPlayer == null) {
             return;
         }
 
-        if (soundOn) {
+        soundtrackPlayer.setVolume(musicVolume);
+
+        if (soundOn && musicVolume > 0) {
             soundtrackPlayer.play();
         } else {
             soundtrackPlayer.pause();
@@ -135,9 +162,13 @@ public final class SoundManager {
     public static void setMusicVolume(double newVolume) {
         musicVolume = clampVolume(newVolume);
 
-        if (soundtrackPlayer != null) {
-            soundtrackPlayer.setVolume(musicVolume);
+        if (musicVolume > 0) {
+            previousMusicVolume = musicVolume;
+            soundOn = true;
         }
+
+        updateSoundOnFromVolumes();
+        applyCurrentMusicState();
     }
 
     public static double getMusicVolume() {
@@ -146,6 +177,14 @@ public final class SoundManager {
 
     public static void setEffectsVolume(double newVolume) {
         effectsVolume = clampVolume(newVolume);
+
+        if (effectsVolume > 0) {
+            previousEffectsVolume = effectsVolume;
+            soundOn = true;
+        }
+
+        updateSoundOnFromVolumes();
+        updateActiveEffectsVolume();
     }
 
     public static double getEffectsVolume() {
@@ -230,7 +269,7 @@ public final class SoundManager {
     }
 
     private static void playEffect(String path) {
-        if (!soundOn) {
+        if (!soundOn || effectsVolume <= 0) {
             return;
         }
 
@@ -257,5 +296,15 @@ public final class SoundManager {
 
     private static double clampVolume(double value) {
         return Math.max(0.0, Math.min(1.0, value));
+    }
+
+    private static void updateSoundOnFromVolumes() {
+        soundOn = musicVolume > 0 || effectsVolume > 0;
+    }
+
+    private static void updateActiveEffectsVolume() {
+        for (MediaPlayer effectPlayer : new ArrayList<>(activeEffects)) {
+            effectPlayer.setVolume(effectsVolume);
+        }
     }
 }

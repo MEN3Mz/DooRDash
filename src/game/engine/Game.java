@@ -26,13 +26,13 @@ public class Game {
 	private boolean gameOver;
 	private Monster winner;
 	private Card lastDrawnCard;
-	private String lastCardDrawer;
 	private ArrayList<String> eventLog;
 	private ArrayList<String> playerEventLog;
 	private ArrayList<String> opponentEventLog;
 	private int playerPreviousPosition;
 	private int opponentPreviousPosition;
 	private int lastRolledValue;
+	private boolean powerupUsedThisTurn;
 
 	public Game(Role playerRole) throws IOException {
 		this.board = new Board(DataLoader.readCards());
@@ -45,13 +45,13 @@ public class Game {
 		this.gameOver = false;
 		this.winner = null;
 		this.lastDrawnCard = null;
-		this.lastCardDrawer = null;
 		this.eventLog = new ArrayList<>();
 		this.playerEventLog = new ArrayList<>();
 		this.opponentEventLog = new ArrayList<>();
 		this.playerPreviousPosition = player.getPosition();
 		this.opponentPreviousPosition = opponent.getPosition();
 		this.lastRolledValue = 0;
+		this.powerupUsedThisTurn = false;
 
 		allMonsters.remove(player);
 		allMonsters.remove(opponent);
@@ -105,6 +105,11 @@ public class Game {
 		if (gameOver)
 			return;
 
+		if (powerupUsedThisTurn) {
+			addEvent(current, current.getName() + " already used a power-up this turn.");
+			throw new IllegalStateException("Power-up already used this turn");
+		}
+
 		if (current.getEnergy() < Constants.POWERUP_COST) {
 			addEvent(current, current.getName() + " tried to use power-up but needs "
 					+ Constants.POWERUP_COST + " energy.");
@@ -113,6 +118,7 @@ public class Game {
 
 		current.executePowerupEffect(getCurrentOpponent());
 		current.setEnergy(current.getEnergy() - Constants.POWERUP_COST);
+		powerupUsedThisTurn = true;
 	}
 
 	public int playTurn() throws InvalidMoveException {
@@ -120,7 +126,6 @@ public class Game {
 			return 0;
 
 		lastDrawnCard = null;
-		lastCardDrawer = null;
 		Board.clearLastDrawnCard();
 
 		if (current.isFrozen()) {
@@ -150,9 +155,6 @@ public class Game {
 			throw exception;
 		}
 		lastDrawnCard = Board.getLastDrawnCard();
-		if (lastDrawnCard != null) {
-			lastCardDrawer = describePlayer(actingMonster);
-		}
 		addTurnEvents(actingMonster, roll, startPosition, startEnergy);
 		addShieldBlockEventIfNeeded(actingMonster, actingWasShielded, startEnergy);
 		addShieldBlockEventIfNeeded(actingOpponent, opponentWasShielded, opponentStartEnergy);
@@ -164,17 +166,6 @@ public class Game {
 
 		switchTurn();
 		return roll;
-	}
-
-	public void forceCurrentWinForTesting() {
-		if (gameOver)
-			return;
-
-		current.setEnergy(Constants.WINNING_ENERGY + 1);
-		current.setPosition(Constants.WINNING_POSITION);
-		board.syncMonsterPositions(player, opponent);
-		updateWinState();
-		addEvent(current, current.getName() + " was moved to Cell 99 with 1001 energy for testing.");
 	}
 
 	public void forceCurrentPositionForTesting(int position) {
@@ -198,6 +189,11 @@ public class Game {
 
 	public void switchTurn() {
 		this.setCurrent(getCurrentOpponent());
+		powerupUsedThisTurn = false;
+	}
+
+	public boolean canCurrentUsePowerup() {
+		return !powerupUsedThisTurn && current.getEnergy() >= Constants.POWERUP_COST;
 	}
 
 	public boolean checkWinCondition(Monster monster) {
@@ -244,14 +240,6 @@ public class Game {
 
 	public Card getLastDrawnCard() {
 		return lastDrawnCard;
-	}
-
-	public String getLastCardDrawer() {
-		return lastCardDrawer;
-	}
-
-	private String describePlayer(Monster monster) {
-		return (monster == player ? "You" : "Opponent") + " - " + monster.getName();
 	}
 
 	public ArrayList<String> getEventLog() {

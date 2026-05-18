@@ -2,7 +2,6 @@ package game.view;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import game.engine.cells.*;
 import game.engine.monsters.*;
 import javafx.geometry.*;
@@ -32,7 +31,6 @@ public class CellView extends StackPane {
     private static final String BELT_PATH = "/game/assets/transport/belt.png";
     private static final String CARDS_PATH = "/game/assets/cards/Cards.png";
     private static final String SHIELD_OVERLAY_PATH = "/game/assets/statusEffects/shieldOverlay.png";
-    private static final String FROZEN_OVERLAY_PATH = "/game/assets/statusEffects/frozenOverlay.png";
 
     private final ImageView doorImageView;
     private final ImageView sockImageView;
@@ -41,7 +39,6 @@ public class CellView extends StackPane {
     private final ImageView cellMonsterImageView;
     private final ImageView monsterImageView;
     private final ImageView shieldOverlayImageView;
-    private final ImageView frozenOverlayImageView;
     private final ImageView previousPlayerImageView;
     private final ImageView previousOpponentImageView;
 
@@ -117,18 +114,11 @@ public class CellView extends StackPane {
         shieldOverlayImageView.setPreserveRatio(true);
         shieldOverlayImageView.setVisible(false);
 
-        frozenOverlayImageView = new ImageView();
-        frozenOverlayImageView.setFitWidth(34);
-        frozenOverlayImageView.setFitHeight(28);
-        frozenOverlayImageView.setPreserveRatio(true);
-        frozenOverlayImageView.setVisible(false);
-
         previousPlayerImageView = createPreviousPositionView();
         previousOpponentImageView = createPreviousPositionView();
 
         monsterImageView.setSmooth(true);
         shieldOverlayImageView.setSmooth(true);
-        frozenOverlayImageView.setSmooth(true);
         doorImageView.setSmooth(true);
         sockImageView.setSmooth(true);
         beltImageView.setSmooth(true);
@@ -144,13 +134,11 @@ public class CellView extends StackPane {
         this.getChildren().add(previousOpponentImageView);
         this.getChildren().add(monsterImageView);
         this.getChildren().add(shieldOverlayImageView);
-        this.getChildren().add(frozenOverlayImageView);
 
         StackPane.setAlignment(previousPlayerImageView, Pos.CENTER);
         StackPane.setAlignment(previousOpponentImageView, Pos.CENTER);
         StackPane.setAlignment(monsterImageView, Pos.CENTER);
         StackPane.setAlignment(shieldOverlayImageView, Pos.BOTTOM_CENTER);
-        StackPane.setAlignment(frozenOverlayImageView, Pos.BOTTOM_CENTER);
         StackPane.setAlignment(doorImageView, Pos.CENTER);
         StackPane.setAlignment(sockImageView, Pos.CENTER);
         StackPane.setAlignment(beltImageView, Pos.CENTER);
@@ -189,8 +177,6 @@ public class CellView extends StackPane {
         monsterImageView.setEffect(null);
         shieldOverlayImageView.setVisible(false);
         shieldOverlayImageView.setImage(null);
-        frozenOverlayImageView.setVisible(false);
-        frozenOverlayImageView.setImage(null);
         resetCellImageLayout();
 
         playerLabel.setVisible(false);
@@ -216,6 +202,7 @@ public class CellView extends StackPane {
         boolean playerOnCell = playerPosition == index;
         boolean opponentOnCell = opponentPosition == index;
         boolean occupiedByCurrentMonster = playerOnCell || opponentOnCell;
+        positionPlayerLabels(playerOnCell && opponentOnCell);
 
         if (playerOnCell) {
             playerLabel.setVisible(true);
@@ -314,6 +301,14 @@ public class CellView extends StackPane {
         applyStatusBorder(index, player, opponent, playerPosition, opponentPosition);
     }
 
+    private void positionPlayerLabels(boolean bothPlayersOnCell) {
+        StackPane.setAlignment(playerLabel, Pos.TOP_RIGHT);
+        StackPane.setMargin(playerLabel, new Insets(4));
+
+        StackPane.setAlignment(opponentLabel, bothPlayersOnCell ? Pos.BOTTOM_RIGHT : Pos.TOP_RIGHT);
+        StackPane.setMargin(opponentLabel, bothPlayersOnCell ? new Insets(0, 4, 4, 0) : new Insets(4));
+    }
+
     private void resetCellImageLayout() {
         setCellImageSize(doorImageView, 52, 52);
         setCellImageSize(sockImageView, 42, 42);
@@ -322,7 +317,6 @@ public class CellView extends StackPane {
         setCellImageSize(cellMonsterImageView, 42, 42);
         setCellImageSize(monsterImageView, 60, 52);
         setCellImageSize(shieldOverlayImageView, 34, 28);
-        setCellImageSize(frozenOverlayImageView, 34, 28);
 
         StackPane.setAlignment(doorImageView, Pos.CENTER);
         StackPane.setAlignment(sockImageView, Pos.CENTER);
@@ -331,9 +325,7 @@ public class CellView extends StackPane {
         StackPane.setAlignment(cellMonsterImageView, Pos.CENTER);
         StackPane.setAlignment(monsterImageView, Pos.CENTER);
         StackPane.setAlignment(shieldOverlayImageView, Pos.BOTTOM_CENTER);
-        StackPane.setAlignment(frozenOverlayImageView, Pos.BOTTOM_CENTER);
         StackPane.setMargin(shieldOverlayImageView, new Insets(0, 18, -2, 0));
-        StackPane.setMargin(frozenOverlayImageView, new Insets(0, 0, -2, 18));
         StackPane.setMargin(doorImageView, Insets.EMPTY);
         StackPane.setMargin(sockImageView, Insets.EMPTY);
         StackPane.setMargin(beltImageView, Insets.EMPTY);
@@ -358,7 +350,6 @@ public class CellView extends StackPane {
     private void makeCurrentMonsterFillCell() {
         setCellImageSize(monsterImageView, 58, 54);
         setCellImageSize(shieldOverlayImageView, 38, 30);
-        setCellImageSize(frozenOverlayImageView, 38, 30);
     }
 
     private void applyStatusOverlays(Monster monsterOnCell) {
@@ -371,10 +362,6 @@ public class CellView extends StackPane {
             shieldOverlayImageView.setVisible(true);
         }
 
-        if (monsterOnCell.isFrozen()) {
-            frozenOverlayImageView.setImage(ImageCache.get(FROZEN_OVERLAY_PATH));
-            frozenOverlayImageView.setVisible(true);
-        }
     }
 
     private void applyNewLocationHighlight(

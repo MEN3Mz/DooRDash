@@ -144,16 +144,24 @@ public class MainMenuView {
         soundButton.setOnMousePressed(e -> SoundManager.playButtonSound());
 
         soundButton.setOnAction(e -> {
-            boolean isOn = SOUND_ON_TEXT.equals(soundButton.getText());
-
-            soundButton.setText(isOn ? SOUND_OFF_TEXT : SOUND_ON_TEXT);
-            SoundManager.setSoundOn(!isOn);
-
-            soundButton.getStyleClass().removeAll("sound-on", "sound-off");
-            soundButton.getStyleClass().add(isOn ? "sound-off" : "sound-on");
+            SoundManager.setSoundOn(!SoundManager.isSoundOn());
+            refreshSoundButton();
         });
 
+        refreshSoundButton(soundButton);
+
         return soundButton;
+    }
+
+    public void refreshSoundButton() {
+        refreshSoundButton(soundButton);
+    }
+
+    private void refreshSoundButton(Button button) {
+        boolean soundOn = SoundManager.isSoundOn();
+        button.setText(soundOn ? SOUND_ON_TEXT : SOUND_OFF_TEXT);
+        button.getStyleClass().removeAll("sound-on", "sound-off");
+        button.getStyleClass().add(soundOn ? "sound-on" : "sound-off");
     }
 
     private Image loadImage(String path) {
