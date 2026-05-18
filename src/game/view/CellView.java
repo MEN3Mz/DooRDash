@@ -2,7 +2,6 @@ package game.view;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import game.engine.cells.*;
 import game.engine.monsters.*;
 import javafx.geometry.*;

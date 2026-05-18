@@ -75,12 +75,13 @@ public class PlayerNamesView {
         Label subtitle = new Label("Enter both names before choosing a side.");
         subtitle.getStyleClass().add("player-names-subtitle");
 
-        HBox buttons = new HBox(16, cancelButton, continueButton);
+        HBox buttons = new HBox(12, cancelButton, continueButton);
         buttons.setAlignment(Pos.CENTER);
 
-        VBox content = new VBox(18, title, subtitle, playerOneField, playerTwoField, errorLabel, buttons);
+        VBox content = new VBox(12, title, subtitle, playerOneField, playerTwoField, errorLabel, buttons);
         content.setAlignment(Pos.CENTER);
-        content.setMaxWidth(560);
+        content.setMaxWidth(460);
+        content.setMaxHeight(560);
         content.getStyleClass().add("player-names-popup");
 
         return content;
@@ -89,7 +90,7 @@ public class PlayerNamesView {
     private TextField createNameField(String promptText) {
         TextField field = new TextField();
         field.setPromptText(promptText);
-        field.setMaxWidth(360);
+        field.setMaxWidth(320);
         field.getStyleClass().add("player-name-field");
 
         return field;
@@ -97,8 +98,8 @@ public class PlayerNamesView {
 
     private Button createMenuButton(String text) {
         Button button = new Button(text);
-        button.setPrefWidth(220);
-        button.setPrefHeight(52);
+        button.setPrefWidth(170);
+        button.setPrefHeight(46);
         button.getStyleClass().add("menu-button");
         button.getStyleClass().add("menu-font");
         button.setOnMouseEntered(e -> SoundManager.playHoverSound());

@@ -20,7 +20,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -41,8 +40,6 @@ public class GameView {
     private final StackPane uiLayer;
 
     private final Label currentPlayerLabel;
-    private final Label cellInfoLabel;
-    private final Label diceInfoLabel;
 
     private final MonsterInfoPane playerPane;
     private final MonsterInfoPane opponentPane;
@@ -98,9 +95,6 @@ public class GameView {
         mainRoot.getChildren().addAll(backgroundView, uiLayer);
 
         this.currentPlayerLabel = new Label();
-
-        this.cellInfoLabel = new Label("Cell: none selected");
-        this.diceInfoLabel = new Label("Dice: not rolled");
 
         this.playerPane = new MonsterInfoPane();
         this.opponentPane = new MonsterInfoPane();
@@ -361,14 +355,6 @@ public class GameView {
         updateTeamSection(playerTeamLabel, playerStationedMonsterBox, player.getRole());
         updateTeamSection(opponentTeamLabel, opponentStationedMonsterBox, opponent.getRole());
         updateSidePanelFocus();
-    }
-
-    public void setCellInfo(String text) {
-        cellInfoLabel.setText(text);
-    }
-
-    public void setDiceInfo(String text) {
-        diceInfoLabel.setText(text);
     }
 
     public StackPane getRoot() {

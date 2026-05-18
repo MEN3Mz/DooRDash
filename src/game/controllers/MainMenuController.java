@@ -123,6 +123,7 @@ public class MainMenuController {
 
         ((StackPane) view.getRoot()).getChildren().remove(settingsOverlay);
         settingsOverlay = null;
+        view.refreshSoundButton();
     }
 
     private void show() {
