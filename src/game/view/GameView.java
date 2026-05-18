@@ -57,6 +57,8 @@ public class GameView {
     private final Label opponentTeamLabel;
     private final HBox playerStationedMonsterBox;
     private final HBox opponentStationedMonsterBox;
+    private final ImageView playerSidePanelImage;
+    private final ImageView opponentSidePanelImage;
     private HBox playerSideContainer;
     private HBox opponentSideContainer;
 
@@ -113,6 +115,8 @@ public class GameView {
         this.opponentTeamLabel = createTeamLabel();
         this.playerStationedMonsterBox = createStationedMonsterBox();
         this.opponentStationedMonsterBox = createStationedMonsterBox();
+        this.playerSidePanelImage = new ImageView();
+        this.opponentSidePanelImage = new ImageView();
         this.stationedMonsterPreviousEnergies = new HashMap<>();
 
         playerMonsterTypeLabel = createMonsterDetailLabel();
@@ -352,6 +356,8 @@ public class GameView {
 
         updateDoorImage(playerDoorView, player);
         updateDoorImage(opponentDoorView, opponent);
+        updateSidePanelImage(playerSidePanelImage, player);
+        updateSidePanelImage(opponentSidePanelImage, opponent);
         updateTeamSection(playerTeamLabel, playerStationedMonsterBox, player.getRole());
         updateTeamSection(opponentTeamLabel, opponentStationedMonsterBox, opponent.getRole());
         updateSidePanelFocus();
@@ -401,6 +407,7 @@ public class GameView {
             ImageView doorView,
             Label teamLabel,
             HBox stationedMonsterBox,
+            ImageView sidePanelImage,
             Label MonsterTypeLabel, Label PowerUpInfoLabel, Label PassiveTraitLabel) {
 
         VBox content = new VBox(4);
@@ -421,7 +428,7 @@ public class GameView {
         content.setFillWidth(false);
         VBox.setMargin(doorView, new Insets(-8, 0, 0, 0));
 
-        ImageView sidePanelImage = new ImageView(loadImage("/game/assets/panels/sidePanel.png"));
+        sidePanelImage.setImage(loadImage("/game/assets/panels/sidePanel.png"));
         sidePanelImage.setPreserveRatio(true);
         sidePanelImage.setFitWidth(430);
         sidePanelImage.setSmooth(true);
@@ -445,6 +452,7 @@ public class GameView {
                 playerDoorView,
                 playerTeamLabel,
                 playerStationedMonsterBox,
+                playerSidePanelImage,
                 playerMonsterTypeLabel,
                 playerPowerUpInfoLabel,
                 playerPassiveTraitLabel);
@@ -466,6 +474,7 @@ public class GameView {
                 opponentDoorView,
                 opponentTeamLabel,
                 opponentStationedMonsterBox,
+                opponentSidePanelImage,
                 opponentMonsterTypeLabel,
                 opponentPowerUpInfoLabel,
                 opponentPassiveTraitLabel);
@@ -486,6 +495,20 @@ public class GameView {
 
         playerSideContainer.setOpacity(playerTurn ? 1.0 : 0.48);
         opponentSideContainer.setOpacity(playerTurn ? 0.48 : 1.0);
+    }
+
+    private void updateSidePanelImage(ImageView sidePanelImage, Monster monster) {
+        String path;
+
+        if (monster.isFrozen()) {
+            path = "/game/assets/panels/frozenSidePanel.png";
+        } else if (monster.isShielded()) {
+            path = "/game/assets/panels/shieldedSidePanel.png";
+        } else {
+            path = "/game/assets/panels/sidePanel.png";
+        }
+
+        sidePanelImage.setImage(loadImage(path));
     }
 
     private Label createTeamLabel() {

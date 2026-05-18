@@ -216,7 +216,7 @@ public class GameController {
     }
 
     private void playWinSound(Monster winner) {
-        if (winner.getRole() == Role.LAUGHER) {
+        if (winner.getOriginalRole() == Role.LAUGHER) {
             SoundManager.playLaughWinSound();
         } else {
             SoundManager.playScareWinSound();

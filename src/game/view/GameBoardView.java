@@ -150,19 +150,14 @@ public class GameBoardView {
         CellView fromCell = cellViews[from[0]][from[1]];
         CellView toCell = cellViews[to[0]][to[1]];
 
-        Bounds fromScene = fromCell.localToScene(fromCell.getBoundsInLocal());
-        Bounds toScene = toCell.localToScene(toCell.getBoundsInLocal());
-        Bounds overlayScene = overlayPane.localToScene(overlayPane.getBoundsInLocal());
+        Bounds gridBounds = boardGrid.getBoundsInParent();
+        Bounds fromBounds = fromCell.getBoundsInParent();
+        Bounds toBounds = toCell.getBoundsInParent();
 
-        double fromCenterX = (fromScene.getMinX() + fromScene.getMaxX()) / 2;
-        double fromCenterY = (fromScene.getMinY() + fromScene.getMaxY()) / 2;
-        double toCenterX = (toScene.getMinX() + toScene.getMaxX()) / 2;
-        double toCenterY = (toScene.getMinY() + toScene.getMaxY()) / 2;
-
-        fromCenterX -= overlayScene.getMinX();
-        fromCenterY -= overlayScene.getMinY();
-        toCenterX -= overlayScene.getMinX();
-        toCenterY -= overlayScene.getMinY();
+        double fromCenterX = gridBounds.getMinX() + fromBounds.getMinX() + fromBounds.getWidth() / 2;
+        double fromCenterY = gridBounds.getMinY() + fromBounds.getMinY() + fromBounds.getHeight() / 2;
+        double toCenterX = gridBounds.getMinX() + toBounds.getMinX() + toBounds.getWidth() / 2;
+        double toCenterY = gridBounds.getMinY() + toBounds.getMinY() + toBounds.getHeight() / 2;
 
         double deltaX = toCenterX - fromCenterX;
         double deltaY = toCenterY - fromCenterY;
@@ -171,7 +166,7 @@ public class GameBoardView {
             return;
         }
 
-        double targetInset = Math.min(toCell.getWidth(), toCell.getHeight()) / 2.0;
+        double targetInset = Math.min(toBounds.getWidth(), toBounds.getHeight()) / 2.0;
         double targetEdgeX = toCenterX - (deltaX / distance) * targetInset;
         double targetEdgeY = toCenterY - (deltaY / distance) * targetInset;
 
