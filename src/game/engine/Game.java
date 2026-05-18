@@ -32,6 +32,7 @@ public class Game {
 	private int playerPreviousPosition;
 	private int opponentPreviousPosition;
 	private int lastRolledValue;
+	private boolean powerupUsedThisTurn;
 
 	public Game(Role playerRole) throws IOException {
 		this.board = new Board(DataLoader.readCards());
@@ -50,6 +51,7 @@ public class Game {
 		this.playerPreviousPosition = player.getPosition();
 		this.opponentPreviousPosition = opponent.getPosition();
 		this.lastRolledValue = 0;
+		this.powerupUsedThisTurn = false;
 
 		allMonsters.remove(player);
 		allMonsters.remove(opponent);
@@ -103,6 +105,11 @@ public class Game {
 		if (gameOver)
 			return;
 
+		if (powerupUsedThisTurn) {
+			addEvent(current, current.getName() + " already used a power-up this turn.");
+			throw new IllegalStateException("Power-up already used this turn");
+		}
+
 		if (current.getEnergy() < Constants.POWERUP_COST) {
 			addEvent(current, current.getName() + " tried to use power-up but needs "
 					+ Constants.POWERUP_COST + " energy.");
@@ -111,6 +118,7 @@ public class Game {
 
 		current.executePowerupEffect(getCurrentOpponent());
 		current.setEnergy(current.getEnergy() - Constants.POWERUP_COST);
+		powerupUsedThisTurn = true;
 	}
 
 	public int playTurn() throws InvalidMoveException {
@@ -181,6 +189,11 @@ public class Game {
 
 	public void switchTurn() {
 		this.setCurrent(getCurrentOpponent());
+		powerupUsedThisTurn = false;
+	}
+
+	public boolean canCurrentUsePowerup() {
+		return !powerupUsedThisTurn && current.getEnergy() >= Constants.POWERUP_COST;
 	}
 
 	public boolean checkWinCondition(Monster monster) {

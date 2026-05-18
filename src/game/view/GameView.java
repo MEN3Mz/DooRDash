@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import game.engine.Game;
-import game.engine.Constants;
 import game.engine.Board;
 import game.engine.Role;
 import game.audio.SoundManager;
@@ -345,8 +344,7 @@ public class GameView {
         currentPlayerLabel.setText(
                 "Current Turn: " + getCurrentPlayerName() + " - " + game.getCurrent().getName());
 
-        bottomView.setPowerUpAvailable(
-                game.getCurrent().getEnergy() >= Constants.POWERUP_COST);
+        bottomView.setPowerUpAvailable(game.canCurrentUsePowerup());
 
         updateDoorImage(playerDoorView, player);
         updateDoorImage(opponentDoorView, opponent);
