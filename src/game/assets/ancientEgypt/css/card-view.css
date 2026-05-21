@@ -1,0 +1,35 @@
+.card-popup {
+  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.55), 24, 0, 0, 8);
+}
+
+.card-title {
+  -fx-font-size: 25px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, black, 4, 0, 0, 1);
+}
+
+.card-name {
+  -fx-font-size: 20px;
+  -fx-font-weight: 900;
+  -fx-text-fill: #fff0b8;
+  -fx-effect: dropshadow(three-pass-box, black, 4, 0, 0, 1);
+}
+
+.card-detail {
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #fff4c7;
+  -fx-effect: dropshadow(three-pass-box, black, 3, 0, 0, 1);
+}
+
+.card-description {
+  -fx-font-size: 14px;
+  -fx-line-spacing: 5px;
+  -fx-text-fill: #fff4c7;
+  -fx-effect: dropshadow(three-pass-box, black, 3, 0, 0, 1);
+}
+
+
+
+

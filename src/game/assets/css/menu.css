@@ -65,3 +65,26 @@
   -fx-font-family: "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
   -fx-font-size: 18px;
 }
+
+.theme-context-menu {
+  -fx-background-color: linear-gradient(to bottom, rgba(31, 41, 51, 0.96), rgba(15, 25, 40, 0.96));
+  -fx-background-radius: 10;
+  -fx-border-color: #78beff;
+  -fx-border-radius: 10;
+  -fx-border-width: 2;
+  -fx-padding: 6;
+}
+
+.theme-context-menu .menu-item {
+  -fx-background-radius: 7;
+  -fx-padding: 8 16 8 16;
+}
+
+.theme-context-menu .menu-item:focused {
+  -fx-background-color: linear-gradient(to right, #2f80ed, #78beff);
+}
+
+.theme-context-menu .menu-item .label {
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+}

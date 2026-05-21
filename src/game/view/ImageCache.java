@@ -7,6 +7,11 @@ public final class ImageCache {
     private static final Map<String, Image> CACHE = new HashMap<>();
 
     public static Image get(String path) {
-        return CACHE.computeIfAbsent(path, p -> new Image(ImageCache.class.getResourceAsStream(p)));
+        String cacheKey = ThemeManager.getCurrentTheme().name() + ":" + path;
+        return CACHE.computeIfAbsent(cacheKey, key -> ThemeManager.loadImage(path));
+    }
+
+    public static void clear() {
+        CACHE.clear();
     }
 }

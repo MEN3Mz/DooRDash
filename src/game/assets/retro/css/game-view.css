@@ -1,0 +1,39 @@
+.current-player-label {
+  -fx-font-size: 22px;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+}
+
+.bottom-panel {
+  -fx-background-color: linear-gradient(to bottom, #1f2933, #3e4c59);
+  -fx-background-radius: 14;
+  -fx-border-color: #bcccdc;
+  -fx-border-width: 2;
+  -fx-border-radius: 14;
+}
+
+.transparent-panel {
+  -fx-background-color: transparent;
+}
+
+.monster-header {
+  -fx-font-size: 13px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+  -fx-padding: 4 6 4 6;
+}
+
+.team-label {
+  -fx-font-size: 14px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+  -fx-padding: 0 4 0 4;
+}
+
+.monster-detail-label {
+  -fx-font-size: 9px;
+  -fx-font-weight: 800;
+  -fx-text-fill: white;
+  -fx-padding: 0 2 0 2;
+  -fx-line-spacing: -1px;
+}

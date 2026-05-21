@@ -24,8 +24,8 @@ public class BottomView {
     public BottomView() {
 
         diceView = new ImageView();
-        diceView.setFitWidth(80);
-        diceView.setFitHeight(80);
+        diceView.setFitWidth(120);
+        diceView.setFitHeight(120);
         diceView.setPreserveRatio(true);
 
         setDiceValue(5);
@@ -41,9 +41,9 @@ public class BottomView {
         root.setAlignment(Pos.CENTER_LEFT);
 
         root.getStylesheets().add(
-                getClass().getResource("/game/assets/css/buttons.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/buttons.css"));
         root.getStylesheets().add(
-                getClass().getResource("/game/assets/css/bottom-view.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/bottom-view.css"));
     }
 
     // ------------------------
@@ -51,9 +51,7 @@ public class BottomView {
     // ------------------------
 
     public void setDiceValue(int value) {
-        Image image = new Image(
-                getClass().getResourceAsStream(
-                        "/game/assets/dice/dice" + value + ".png"));
+        Image image = ThemeManager.loadImage("/game/assets/dice/dice" + value + ".png");
 
         diceView.setImage(image);
     }

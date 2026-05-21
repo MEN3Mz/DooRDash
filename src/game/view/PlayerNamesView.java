@@ -26,9 +26,9 @@ public class PlayerNamesView {
     public PlayerNamesView() {
         root = new StackPane();
         root.getStylesheets().add(
-                getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/menu.css"));
         root.getStylesheets().add(
-                getClass().getResource("/game/assets/css/player-names-view.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/player-names-view.css"));
 
         playerOneField = createNameField("Player 1 name");
         playerTwoField = createNameField("Player 2 name");

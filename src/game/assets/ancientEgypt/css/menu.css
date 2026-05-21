@@ -1,0 +1,94 @@
+/* SOUND BUTTON */
+
+.sound-on {
+  -fx-background-color: darkgray;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+}
+
+.sound-off {
+  -fx-background-color: #555555;
+  -fx-text-fill: lightgray;
+  -fx-font-weight: bold;
+}
+
+/* MENU BUTTON BASE */
+
+.menu-button {
+  -fx-background-color:
+    linear-gradient(#f6d56b 0%, #b98216 50%, #6f4306 51%, #8c5a0a 100%),
+    linear-gradient(#2b1a05 0%, #140b02 100%), linear-gradient(#9a6a1e, #71470c);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0, 0, 1);
+}
+
+.menu-button:hover {
+  -fx-background-color:
+    linear-gradient(#ffe69a 0%, #d99a1f 50%, #8a5608 51%, #b1700e 100%),
+    linear-gradient(#3a2508 0%, #1a1003 100%),
+    linear-gradient(#c99a3a, #8f641c);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(246, 202, 88, 0.75), 10, 0, 0, 1);
+  -fx-scale-x: 1.03;
+  -fx-scale-y: 1.03;
+}
+
+/* PRESSED STATE */
+
+.menu-button:pressed {
+  -fx-background-color:
+    linear-gradient(#b98216 0%, #6f4306 50%, #3b2404 51%, #4c2e05 100%),
+    linear-gradient(#1b1002 0%, #090501 100%), linear-gradient(#71470c, #4a3008);
+  -fx-translate-y: 2px;
+  -fx-text-fill: #bbbbbb;
+  -fx-effect: none;
+}
+
+.menu-button-active {
+  -fx-background-color:
+    linear-gradient(#b98216 0%, #6f4306 50%, #3b2404 51%, #4c2e05 100%),
+    linear-gradient(#1b1002 0%, #090501 100%),
+    linear-gradient(#71470c, #4a3008);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-translate-y: 2px;
+  -fx-text-fill: #bbbbbb;
+  -fx-effect: none;
+}
+
+.menu-font {
+  -fx-font-family: "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+  -fx-font-size: 18px;
+}
+
+.theme-context-menu {
+  -fx-background-color: linear-gradient(to bottom, rgba(91, 58, 13, 0.97), rgba(45, 28, 6, 0.97));
+  -fx-background-radius: 10;
+  -fx-border-color: #f6ca58;
+  -fx-border-radius: 10;
+  -fx-border-width: 2;
+  -fx-padding: 6;
+}
+
+.theme-context-menu .menu-item {
+  -fx-background-radius: 7;
+  -fx-padding: 8 16 8 16;
+}
+
+.theme-context-menu .menu-item:focused {
+  -fx-background-color: linear-gradient(to right, #b47918, #f6ca58);
+}
+
+.theme-context-menu .menu-item .label {
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+}
+
+
+
+

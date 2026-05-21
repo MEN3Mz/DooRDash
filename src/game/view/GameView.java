@@ -136,9 +136,7 @@ public class GameView {
 
         // Load CSS
         mainRoot.getStylesheets().add(
-                getClass()
-                        .getResource("/game/assets/css/buttons.css")
-                        .toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/buttons.css"));
 
         refresh();
     }
@@ -283,16 +281,7 @@ public class GameView {
 
     private void applyPanelStyle(javafx.scene.layout.Region panel) {
 
-        panel.setStyle("""
-                -fx-background-color:
-                    linear-gradient(to bottom, #1f2933, #3e4c59);
-
-                -fx-background-radius: 14;
-
-                -fx-border-color: #bcccdc;
-                -fx-border-width: 2;
-                -fx-border-radius: 14;
-                """);
+        panel.setStyle(ThemeManager.getBottomPanelStyle());
     }
 
     public void refresh() {
@@ -374,7 +363,7 @@ public class GameView {
     }
 
     private Image loadImage(String resourcePath) {
-        return new Image(getClass().getResourceAsStream(resourcePath));
+        return ThemeManager.loadImage(resourcePath);
     }
 
     public BottomView getBottomView() {
@@ -493,6 +482,16 @@ public class GameView {
         }
 
         sidePanelImage.setImage(loadImage(path));
+        updateSidePanelImageSize(sidePanelImage, monster);
+    }
+
+    private void updateSidePanelImageSize(ImageView sidePanelImage, Monster monster) {
+        if (ThemeManager.isAncientEgyptian()) {
+            sidePanelImage.setFitWidth(monster.isShielded() ? 390 : 430);
+            return;
+        }
+
+        sidePanelImage.setFitWidth(430);
     }
 
     private Label createTeamLabel() {
@@ -617,7 +616,8 @@ public class GameView {
 
         label.setText(change > 0 ? "+" + change : String.valueOf(change));
         label.setStyle(change > 0
-                ? "-fx-font-size: 8px; -fx-font-weight: 900; -fx-text-fill: #35e66b;"
+                ? "-fx-font-size: 8px; -fx-font-weight: 900; -fx-text-fill: "
+                        + (ThemeManager.isAncientEgyptian() ? "#76d85d" : "#35e66b") + ";"
                 : "-fx-font-size: 8px; -fx-font-weight: 900; -fx-text-fill: #ff3b3b;");
         label.setEffect(new DropShadow(2, Color.BLACK));
 

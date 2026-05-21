@@ -1,0 +1,170 @@
+.choose-side-title {
+  -fx-font-size: 34px;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.85), 9, 0, 0, 1);
+}
+
+.choose-side-subtitle {
+  -fx-font-size: 16px;
+  -fx-text-fill: #c8ffff;
+}
+
+.choose-side-overlay {
+  -fx-background-color: rgba(8, 4, 28, 0.25);
+}
+
+.team-card {
+  -fx-background-radius: 24;
+  -fx-border-radius: 24;
+  -fx-border-color: rgba(0, 229, 255, 0.38);
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.45), 12, 0, 0, 1);
+}
+
+.team-card-overlay {
+  -fx-background-color: linear-gradient(to right, rgba(10, 4, 35, 0.82), rgba(10, 4, 35, 0.06));
+}
+
+.select-button {
+  -fx-background-color: linear-gradient(#ff66dd, #7c2cff);
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 16px;
+  -fx-background-radius: 12;
+  -fx-padding: 12 24 12 24;
+  -fx-border-color: #00e5ff;
+  -fx-border-radius: 12;
+  -fx-border-width: 2;
+}
+
+.select-button:hover {
+  -fx-background-color: linear-gradient(#39f6ff, #ff4fd8);
+  -fx-border-color: #fff06a;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.86), 14, 0, 0, 1);
+  -fx-scale-x: 1.04;
+  -fx-scale-y: 1.04;
+}
+
+.select-button:pressed {
+  -fx-background-color: linear-gradient(#5b1bb8, #101552);
+  -fx-border-color: #ff4fd8;
+  -fx-translate-y: 2px;
+  -fx-effect: none;
+}
+
+.info-button {
+  -fx-background-color: linear-gradient(#00e5ff, #2b46ff);
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 18px;
+  -fx-background-radius: 20;
+  -fx-min-width: 38px;
+  -fx-min-height: 38px;
+  -fx-max-width: 38px;
+  -fx-max-height: 38px;
+  -fx-border-color: #ff4fd8;
+  -fx-border-radius: 20;
+  -fx-border-width: 2;
+}
+
+.info-button:hover {
+  -fx-background-color: linear-gradient(#fff06a, #ff4fd8);
+  -fx-border-color: #00e5ff;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.9), 14, 0, 0, 1);
+  -fx-scale-x: 1.12;
+  -fx-scale-y: 1.12;
+}
+
+.info-button:pressed {
+  -fx-background-color: linear-gradient(#5b1bb8, #101552);
+  -fx-border-color: #ff4fd8;
+  -fx-translate-y: 2px;
+  -fx-effect: none;
+}
+
+.details-panel {
+  -fx-background-color: rgba(15, 6, 45, 0.86);
+  -fx-background-radius: 18;
+  -fx-padding: 18;
+  -fx-border-color: rgba(0, 229, 255, 0.5);
+  -fx-border-radius: 18;
+}
+
+.details-header {
+  -fx-font-size: 18px;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+}
+
+.details-scroll {
+  -fx-background: transparent;
+  -fx-background-color: transparent;
+}
+
+.details-overview {
+  -fx-font-size: 13px;
+  -fx-text-fill: #c8ffff;
+  -fx-line-spacing: 4;
+  -fx-font-weight: bold;
+}
+
+.monster-info-name {
+  -fx-font-size: 15px;
+  -fx-font-weight: 800;
+  -fx-text-fill: white;
+}
+
+.monster-info-details {
+  -fx-font-size: 12px;
+  -fx-text-fill: #f1e9ff;
+  -fx-line-spacing: 3;
+}
+
+.monster-info-card {
+  -fx-background-color: rgba(255, 79, 216, 0.13);
+  -fx-background-radius: 12;
+  -fx-padding: 10;
+}
+
+.start-button {
+  -fx-background-color:
+    linear-gradient(#ff8df0 0%, #ff3fd0 46%, #9b2cff 47%, #1824b8 100%),
+    linear-gradient(#160826 0%, #050714 100%),
+    linear-gradient(#00e5ff, #ff4fd8);
+  -fx-background-insets: 0,1,2;
+  -fx-background-radius: 5,4,3;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 18px;
+  -fx-padding: 12 34 12 34;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.72), 8, 0, 0, 1);
+}
+
+.start-button:hover {
+  -fx-background-color:
+    linear-gradient(#c8ffff 0%, #27e9ff 46%, #ff4fd8 47%, #7c2cff 100%),
+    linear-gradient(#241044 0%, #09091b 100%),
+    linear-gradient(#fff06a, #00e5ff);
+  -fx-scale-x: 1.03;
+  -fx-scale-y: 1.03;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.9), 14, 0, 0, 1);
+}
+
+.start-button:pressed {
+  -fx-background-color:
+    linear-gradient(#9220d6 0%, #44118f 50%, #141850 51%, #070a28 100%),
+    linear-gradient(#080510 0%, #000000 100%),
+    linear-gradient(#ff4fd8, #00e5ff);
+  -fx-text-fill: #e7ddff;
+  -fx-translate-y: 2px;
+  -fx-effect: none;
+}
+
+.start-button:disabled {
+  -fx-background-color: rgba(62, 52, 102, 0.88);
+  -fx-text-fill: #c7b8ff;
+  -fx-font-weight: bold;
+  -fx-font-size: 18px;
+  -fx-background-radius: 16;
+  -fx-padding: 12 34 12 34;
+}

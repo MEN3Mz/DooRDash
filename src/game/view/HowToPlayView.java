@@ -26,9 +26,9 @@ public class HowToPlayView {
   public HowToPlayView() {
     root = new StackPane();
     root.getStylesheets().add(
-        getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+        ThemeManager.loadStylesheet("/game/assets/css/menu.css"));
     root.getStylesheets().add(
-        getClass().getResource("/game/assets/css/how-to-play-view.css").toExternalForm());
+        ThemeManager.loadStylesheet("/game/assets/css/how-to-play-view.css"));
 
     Rectangle overlayBackground = createOverlayBackground();
     VBox content = createHowToPlayContent();

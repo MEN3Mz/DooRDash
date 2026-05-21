@@ -1,0 +1,35 @@
+.player-names-popup {
+  -fx-background-color: linear-gradient(to bottom right, rgba(35, 8, 74, 0.97), rgba(8, 13, 38, 0.97));
+  -fx-background-radius: 24;
+  -fx-border-radius: 24;
+  -fx-border-width: 2;
+  -fx-border-color: rgba(0, 229, 255, 0.55);
+  -fx-padding: 24;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.55), 24, 0, 0, 8);
+}
+
+.player-names-title {
+  -fx-font-size: 26px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.player-names-subtitle {
+  -fx-font-size: 13px;
+  -fx-text-fill: #c8ffff;
+}
+
+.player-names-error {
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #ff9bdc;
+}
+
+.player-name-field {
+  -fx-background-color: rgba(255,255,255,0.95);
+  -fx-background-radius: 10;
+  -fx-border-color: #00e5ff;
+  -fx-border-radius: 10;
+  -fx-font-size: 14px;
+  -fx-padding: 9 12;
+}

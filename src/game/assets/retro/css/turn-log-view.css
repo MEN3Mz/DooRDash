@@ -1,0 +1,23 @@
+.turn-log {
+  -fx-background-color: linear-gradient(to bottom, rgba(35,17,78,0.94), rgba(8,13,38,0.94));
+  -fx-background-radius: 14;
+  -fx-border-color: #00e5ff;
+  -fx-border-width: 2;
+  -fx-border-radius: 14;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.42), 10, 0, 0, 1);
+}
+
+.turn-log-title {
+  -fx-font-size: 14px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.turn-log-entry {
+  -fx-font-size: 11px;
+  -fx-line-spacing: 2px;
+  -fx-text-fill: #f2edff;
+  -fx-background-color: rgba(255, 79, 216, 0.14);
+  -fx-background-radius: 8;
+  -fx-padding: 7;
+}

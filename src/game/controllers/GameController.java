@@ -17,6 +17,7 @@ import game.view.GameOverView;
 import game.view.GameView;
 import game.view.HowToPlayView;
 import game.view.SettingsView;
+import game.view.ThemeManager;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -58,32 +59,7 @@ public class GameController {
     private void bindEvents() {
 
         view.getBottomView().setOnRollDice(e -> {
-            try {
-                SoundManager.playDiceRollSound();
-                lastTurnPlayerName = getCurrentPlayerName();
-                boolean playerWasShielded = game.getPlayer().isShielded();
-                boolean opponentWasShielded = game.getOpponent().isShielded();
-                boolean playerWasFrozen = game.getPlayer().isFrozen();
-                boolean opponentWasFrozen = game.getOpponent().isFrozen();
-                Monster actingMonster = game.getCurrent();
-                int actingMonsterEnergyBefore = actingMonster.getEnergy();
-                int rolledValue = game.playTurn();
-                playLandedCellSound();
-                playEnergyChangeSound(actingMonster, actingMonsterEnergyBefore);
-                playStatusChangeSounds(playerWasShielded, opponentWasShielded, playerWasFrozen, opponentWasFrozen);
-
-                view.getBottomView().setDiceValue(rolledValue);
-                view.refresh();
-                handleCardDrawnOrGameOver();
-
-            } catch (InvalidMoveException ex) {
-                SoundManager.playInvalidSound();
-                view.getBottomView().setDiceValue(game.getLastRolledValue());
-                view.refresh();
-                System.out.println("Invalid move: " + ex.getMessage() + " Roll again.");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            playRollTurn();
         });
 
         view.getBottomView().setOnPowerUp(e -> {
@@ -112,6 +88,35 @@ public class GameController {
         });
 
         view.setOnMenu(e -> showPauseMenuOverlay());
+    }
+
+    private void playRollTurn() {
+        try {
+            SoundManager.playDiceRollSound();
+            lastTurnPlayerName = getCurrentPlayerName();
+            boolean playerWasShielded = game.getPlayer().isShielded();
+            boolean opponentWasShielded = game.getOpponent().isShielded();
+            boolean playerWasFrozen = game.getPlayer().isFrozen();
+            boolean opponentWasFrozen = game.getOpponent().isFrozen();
+            Monster actingMonster = game.getCurrent();
+            int actingMonsterEnergyBefore = actingMonster.getEnergy();
+            int rolledValue = game.playTurn();
+            playLandedCellSound();
+            playEnergyChangeSound(actingMonster, actingMonsterEnergyBefore);
+            playStatusChangeSounds(playerWasShielded, opponentWasShielded, playerWasFrozen, opponentWasFrozen);
+
+            view.getBottomView().setDiceValue(rolledValue);
+            view.refresh();
+            handleCardDrawnOrGameOver();
+
+        } catch (InvalidMoveException ex) {
+            SoundManager.playInvalidSound();
+            view.getBottomView().setDiceValue(game.getLastRolledValue());
+            view.refresh();
+            System.out.println("Invalid move: " + ex.getMessage() + " Roll again.");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void handleCardDrawnOrGameOver() {
@@ -270,9 +275,9 @@ public class GameController {
 
         overlayPane = new StackPane();
         overlayPane.getStylesheets().add(
-                getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/menu.css"));
         overlayPane.getStylesheets().add(
-                getClass().getResource("/game/assets/css/pause-view.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/pause-view.css"));
         ((StackPane) overlayPane).getChildren().addAll(overlayBackground, content);
         StackPane.setAlignment(content, Pos.CENTER);
 

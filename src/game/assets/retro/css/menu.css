@@ -1,0 +1,94 @@
+/* RETRO SOUND BUTTON */
+
+.sound-on {
+  -fx-background-color: linear-gradient(#2dfcff, #1676ff);
+  -fx-text-fill: #fff8ff;
+  -fx-font-weight: bold;
+  -fx-border-color: #ff4fd8;
+  -fx-border-radius: 6;
+}
+
+.sound-off {
+  -fx-background-color: linear-gradient(#3c255f, #15142e);
+  -fx-text-fill: #c7b8ff;
+  -fx-font-weight: bold;
+  -fx-border-color: #7856ff;
+  -fx-border-radius: 6;
+}
+
+/* RETRO MENU BUTTON BASE */
+
+.menu-button {
+  -fx-background-color:
+    linear-gradient(#ff8df0 0%, #ff3fd0 46%, #9b2cff 47%, #1824b8 100%),
+    linear-gradient(#160826 0%, #050714 100%),
+    linear-gradient(#00e5ff, #ff4fd8);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.72), 8, 0, 0, 1);
+}
+
+.menu-button:hover {
+  -fx-background-color:
+    linear-gradient(#c8ffff 0%, #27e9ff 46%, #ff4fd8 47%, #7c2cff 100%),
+    linear-gradient(#241044 0%, #09091b 100%),
+    linear-gradient(#fff06a, #00e5ff);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.9), 14, 0, 0, 1);
+  -fx-scale-x: 1.03;
+  -fx-scale-y: 1.03;
+}
+
+.menu-button:pressed {
+  -fx-background-color:
+    linear-gradient(#9220d6 0%, #44118f 50%, #141850 51%, #070a28 100%),
+    linear-gradient(#080510 0%, #000000 100%),
+    linear-gradient(#ff4fd8, #00e5ff);
+  -fx-translate-y: 2px;
+  -fx-text-fill: #e7ddff;
+  -fx-effect: none;
+}
+
+.menu-button-active {
+  -fx-background-color:
+    linear-gradient(#9220d6 0%, #44118f 50%, #141850 51%, #070a28 100%),
+    linear-gradient(#080510 0%, #000000 100%),
+    linear-gradient(#ff4fd8, #00e5ff);
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
+  -fx-translate-y: 2px;
+  -fx-text-fill: #e7ddff;
+  -fx-effect: none;
+}
+
+.menu-font {
+  -fx-font-family: "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+  -fx-font-size: 18px;
+}
+
+.theme-context-menu {
+  -fx-background-color: linear-gradient(to bottom, rgba(29, 8, 58, 0.98), rgba(8, 12, 38, 0.98));
+  -fx-background-radius: 10;
+  -fx-border-color: #00e5ff;
+  -fx-border-radius: 10;
+  -fx-border-width: 2;
+  -fx-padding: 6;
+}
+
+.theme-context-menu .menu-item {
+  -fx-background-radius: 7;
+  -fx-padding: 8 16 8 16;
+}
+
+.theme-context-menu .menu-item:focused {
+  -fx-background-color: linear-gradient(to right, #ff4fd8, #00e5ff);
+}
+
+.theme-context-menu .menu-item .label {
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+}

@@ -1,0 +1,62 @@
+.how-to-play-popup {
+  -fx-background-color: linear-gradient(to bottom right, rgba(35, 8, 74, 0.97), rgba(8, 13, 38, 0.97));
+  -fx-background-radius: 24;
+  -fx-border-radius: 24;
+  -fx-border-width: 2;
+  -fx-border-color: rgba(0, 229, 255, 0.55);
+  -fx-padding: 22 28 22 28;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.55), 24, 0, 0, 8);
+}
+
+.how-to-play-title {
+  -fx-font-size: 30px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.how-to-play-subtitle {
+  -fx-font-size: 14px;
+  -fx-text-fill: #c8ffff;
+  -fx-font-style: italic;
+}
+
+.how-to-play-scroll {
+  -fx-background-color: transparent;
+  -fx-background: transparent;
+}
+
+.how-to-play-section {
+  -fx-background-color: rgba(255, 79, 216, 0.11);
+  -fx-background-radius: 18;
+  -fx-border-color: rgba(0, 229, 255, 0.34);
+  -fx-border-radius: 18;
+  -fx-padding: 12 14 12 14;
+}
+
+.how-to-play-text-column {
+  -fx-min-width: 0;
+}
+
+.how-to-play-section-title {
+  -fx-font-size: 18px;
+  -fx-font-weight: 900;
+  -fx-text-fill: white;
+}
+
+.how-to-play-section-body {
+  -fx-font-size: 13px;
+  -fx-line-spacing: 3px;
+  -fx-text-fill: #f2edff;
+}
+
+.how-to-play-visual-pane {
+  -fx-background-color: rgba(0, 229, 255, 0.1);
+  -fx-background-radius: 14;
+  -fx-border-color: rgba(255, 79, 216, 0.36);
+  -fx-border-radius: 14;
+  -fx-padding: 8;
+}
+
+.how-to-play-image {
+  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.65), 8, 0, 0, 3);
+}

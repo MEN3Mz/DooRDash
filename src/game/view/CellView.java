@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 
 public class CellView extends StackPane {
     public static final double CELL_SIZE = 78;
-    private static final String DEFAULT_CELL_STYLE = "-fx-border-color: #3C4148; -fx-border-width: 2; -fx-background-color: linear-gradient(to bottom, #F4F7FA, #AEB7C1);";
 
     private final Label numberLabel;
     private final Label playerLabel;
@@ -43,7 +42,7 @@ public class CellView extends StackPane {
     private final ImageView previousOpponentImageView;
 
     public CellView() {
-        getStylesheets().add(getClass().getResource("/game/assets/css/cell-view.css").toExternalForm());
+        getStylesheets().add(ThemeManager.loadStylesheet("/game/assets/css/cell-view.css"));
         getStyleClass().add("cell");
         numberLabel = new Label();
         playerLabel = new Label("YOU");
@@ -182,16 +181,14 @@ public class CellView extends StackPane {
         playerLabel.setVisible(false);
         opponentLabel.setVisible(false);
         doorLabel.setVisible(false);
-        setStyle(DEFAULT_CELL_STYLE);
+        setStyle(ThemeManager.getDefaultCellStyle());
 
         if (player.getRole() == Role.LAUGHER) {
-            playerLabel.setStyle(
-                    "-fx-background-color: #2F80ED; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
+            playerLabel.setStyle(ThemeManager.getLaugherLabelStyle());
             opponentLabel.setStyle(
                     "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
         } else {
-            opponentLabel.setStyle(
-                    "-fx-background-color: #2F80ED; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
+            opponentLabel.setStyle(ThemeManager.getLaugherLabelStyle());
             playerLabel.setStyle(
                     "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
 
@@ -235,8 +232,7 @@ public class CellView extends StackPane {
 
         else if (cell instanceof DoorCell) {
             DoorCell doorCell = (DoorCell) cell;
-            setStyle(
-                    "-fx-border-color: #1E4F73; -fx-border-width: 2; -fx-background-color: linear-gradient(to bottom, #8FD3FF, #3D79A6);");
+            setStyle(ThemeManager.getDoorCellStyle());
 
             if (doorCell.isActivated()) {
                 doorImageView.setImage(ImageCache.get(OPEN_DOOR_PATH));
@@ -246,7 +242,7 @@ public class CellView extends StackPane {
                 if (doorCell.getRole() == Role.LAUGHER) {
                     doorImageView.setImage(ImageCache.get(DOOR_IMAGE_PATHS[0]));
                     doorLabel.setStyle(
-                            "-fx-text-fill: #4FC3F7; -fx-font-weight: bold; -fx-font-stroke: 2px solid #000507; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
+                            "-fx-text-fill: " + ThemeManager.getLaugherTextColor() + "; -fx-font-weight: bold; -fx-font-stroke: 2px solid #000507; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
                 } else {
                     doorImageView.setImage(ImageCache.get(DOOR_IMAGE_PATHS[1]));
                     doorLabel.setStyle(
@@ -265,7 +261,7 @@ public class CellView extends StackPane {
 
                 cellMonsterImageView.setImage(ImageCache.get(getMonsterImagePath(mc.getCellMonster())));
                 doorLabel.setStyle(
-                        "-fx-text-fill: #2F80ED; -fx-font-weight: bold; -fx-font-stroke: 2px solid #01060c; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
+                        "-fx-text-fill: " + ThemeManager.getLaugherTextColor() + "; -fx-font-weight: bold; -fx-font-stroke: 2px solid #01060c; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
 
                 setStyle("-fx-border-color: Green ; -fx-border-width: 2");
             } else {
@@ -431,7 +427,8 @@ public class CellView extends StackPane {
         }
 
         if (monsterOnCell.isFrozen()) {
-            setStyle(getStyle() + "; -fx-border-color: #0094ff; -fx-border-width: 6;");
+            setStyle(getStyle() + "; -fx-border-color: " + (ThemeManager.isAncientEgyptian() ? "#f6c74a" : "#0094ff")
+                    + "; -fx-border-width: 6;");
         }
     }
 

@@ -25,7 +25,7 @@ public class StatusEffectPane extends HBox {
     private final double ACTIVE_OPACITY = 1.0;
 
     public StatusEffectPane() {
-        getStylesheets().add(getClass().getResource("/game/assets/css/monster-info-pane.css").toExternalForm());
+        getStylesheets().add(ThemeManager.loadStylesheet("/game/assets/css/monster-info-pane.css"));
         this.setAlignment(Pos.BOTTOM_CENTER);
         this.setSpacing(4);
         this.setMaxWidth(Double.MAX_VALUE);
@@ -54,7 +54,7 @@ public class StatusEffectPane extends HBox {
     }
 
     private ImageView createIcon(String path) {
-        java.net.URL resource = getClass().getResource(path);
+        java.net.URL resource = ThemeManager.resolveImageUrl(path);
 
         if (resource == null) {
             System.err.println("Error: Could not find image at " + path);

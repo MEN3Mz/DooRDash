@@ -1,6 +1,8 @@
 package game.view;
 
 import game.view.StatusEffectPane;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -11,10 +13,13 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 
 public class MonsterInfoPane extends Pane {
     private static final double CARD_WIDTH = 180;
+    private static final double EGYPTIAN_SCARER_IMAGE_WIDTH = 205;
     private static final double CARD_HEIGHT = 287;
+    private static final double EGYPTIAN_TALL_IMAGE_HEIGHT = 302;
     private static final double PANEL_HEIGHT = 405;
 
     private Label posLabel;
@@ -24,9 +29,10 @@ public class MonsterInfoPane extends Pane {
     private StatusEffectPane effectsPane;
     private ImageView capsuleFrame; // Renamed to capsuleFrame
     private Integer previousEnergy;
+    private Timeline energyShake;
 
     public MonsterInfoPane() {
-        getStylesheets().add(getClass().getResource("/game/assets/css/monster-info-pane.css").toExternalForm());
+        getStylesheets().add(ThemeManager.loadStylesheet("/game/assets/css/monster-info-pane.css"));
         this.setMinWidth(CARD_WIDTH);
         this.setMaxWidth(CARD_WIDTH);
         this.setPrefWidth(CARD_WIDTH);
@@ -40,7 +46,7 @@ public class MonsterInfoPane extends Pane {
         capsuleFrame.setPreserveRatio(false);
         capsuleFrame.setSmooth(true);
         capsuleFrame.setLayoutX(-18);
-        capsuleFrame.setLayoutY(296);
+        capsuleFrame.setLayoutY(ThemeManager.isRetro() ? 293 : 296);
 
         posLabel = new Label("0");
         posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 26));
@@ -132,7 +138,7 @@ public class MonsterInfoPane extends Pane {
 
         try {
             String framePath = "/game/assets/MonstersInfo/capsule_frame.png";
-            java.net.URL frameRes = getClass().getResource(framePath);
+            java.net.URL frameRes = ThemeManager.resolveImageUrl(framePath);
             if (frameRes != null) {
                 capsuleFrame.setImage(new Image(frameRes.toExternalForm()));
             }
@@ -217,17 +223,39 @@ public class MonsterInfoPane extends Pane {
         }
 
         try {
-            java.net.URL res = getClass().getResource(bgImg);
+            java.net.URL res = ThemeManager.resolveImageUrl(bgImg);
             if (res != null) {
+                double backgroundImageWidth = getBackgroundImageWidth(currentRole);
+                double backgroundImageHeight = getBackgroundImageHeight(currentRole, isConfused);
+                String backgroundPosition = ThemeManager.isAncientEgyptian() && isConfused ? "center -8px" : "top center";
                 this.setStyle(
                         "-fx-background-image: url('" + res.toExternalForm() + "');" +
-                                "-fx-background-size: " + CARD_WIDTH + "px " + CARD_HEIGHT + "px;" +
-                                "-fx-background-position: top center;" +
+                                "-fx-background-size: " + backgroundImageWidth + "px " + backgroundImageHeight + "px;" +
+                                "-fx-background-position: " + backgroundPosition + ";" +
                                 "-fx-background-repeat: no-repeat;");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private double getBackgroundImageWidth(String currentRole) {
+        if (ThemeManager.isAncientEgyptian()
+                && currentRole != null
+                && currentRole.equalsIgnoreCase("SCARER")) {
+            return EGYPTIAN_SCARER_IMAGE_WIDTH;
+        }
+
+        return CARD_WIDTH;
+    }
+
+    private double getBackgroundImageHeight(String currentRole, boolean isConfused) {
+        if (ThemeManager.isAncientEgyptian()
+                && (isConfused || (currentRole != null && currentRole.equalsIgnoreCase("SCARER")))) {
+            return EGYPTIAN_TALL_IMAGE_HEIGHT;
+        }
+
+        return CARD_HEIGHT;
     }
 
     private void updateEnergyChangeLabel(int energy) {
@@ -248,5 +276,26 @@ public class MonsterInfoPane extends Pane {
         energyChangeLabel.setText(change > 0 ? "+" + change : String.valueOf(change));
         energyChangeLabel.getStyleClass().removeAll("energy-change-gain", "energy-change-loss");
         energyChangeLabel.getStyleClass().add(change > 0 ? "energy-change-gain" : "energy-change-loss");
+        playEnergyShake();
+    }
+
+    private void playEnergyShake() {
+        if (energyShake != null) {
+            energyShake.stop();
+        }
+
+        energyShake = new Timeline(
+                new KeyFrame(Duration.ZERO, event -> setEnergyShakeOffset(0)),
+                new KeyFrame(Duration.millis(45), event -> setEnergyShakeOffset(-4)),
+                new KeyFrame(Duration.millis(90), event -> setEnergyShakeOffset(4)),
+                new KeyFrame(Duration.millis(135), event -> setEnergyShakeOffset(-3)),
+                new KeyFrame(Duration.millis(180), event -> setEnergyShakeOffset(3)),
+                new KeyFrame(Duration.millis(225), event -> setEnergyShakeOffset(0)));
+        energyShake.play();
+    }
+
+    private void setEnergyShakeOffset(double offset) {
+        capsuleFrame.setTranslateX(offset);
+        energyBar.setTranslateX(offset);
     }
 }

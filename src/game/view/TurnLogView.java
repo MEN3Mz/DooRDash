@@ -11,7 +11,7 @@ public class TurnLogView extends VBox {
     private final VBox entriesBox;
 
     public TurnLogView(String titleText) {
-        getStylesheets().add(getClass().getResource("/game/assets/css/turn-log-view.css").toExternalForm());
+        getStylesheets().add(ThemeManager.loadStylesheet("/game/assets/css/turn-log-view.css"));
         getStyleClass().add("turn-log");
         setSpacing(10);
         setPadding(new Insets(14));

@@ -58,7 +58,7 @@ public class ChooseSideView {
         laugherDetailsBox = createDetailsBox(Role.LAUGHER);
         startGameButton = createStartButton();
         root = buildRoot();
-        root.getStylesheets().add(getClass().getResource("/game/assets/css/choose-side-view.css").toExternalForm());
+        root.getStylesheets().add(ThemeManager.loadStylesheet("/game/assets/css/choose-side-view.css"));
 
         scarerImageView.getProperties().put("selectedImage", SCARER_SELECTED_IMAGE);
         scarerImageView.getProperties().put("dimmedImage", SCARER_DIMMED_IMAGE);
@@ -433,6 +433,6 @@ public class ChooseSideView {
     }
 
     private Image loadImage(String resourcePath) {
-        return new Image(getClass().getResourceAsStream(resourcePath));
+        return ThemeManager.loadImage(resourcePath);
     }
 }

@@ -26,9 +26,9 @@ public class SettingsView {
     public SettingsView() {
         root = new StackPane();
         root.getStylesheets().add(
-                getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/menu.css"));
         root.getStylesheets().add(
-                getClass().getResource("/game/assets/css/settings-view.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/settings-view.css"));
 
         musicSlider = createMusicSlider();
         effectsSlider = createEffectsSlider();

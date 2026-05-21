@@ -37,7 +37,7 @@
             <Button fx:id="fullscreenButton"
                     prefHeight="54"
                     prefWidth="260"
-                    style="-fx-background-color: linear-gradient(#70b1ff 0%, #1a5cad 50%, #0a3b75 51%, #114b91 100%); -fx-text-fill: white; -fx-font-size: 17px; -fx-font-weight: bold; -fx-background-radius: 10;"
+                    style="-fx-background-color: linear-gradient(#f6d56b 0%, #b98216 50%, #6f4306 51%, #8c5a0a 100%); -fx-text-fill: white; -fx-font-size: 17px; -fx-font-weight: bold; -fx-background-radius: 10;"
                     text="Enter Fullscreen" />
 
         </VBox>

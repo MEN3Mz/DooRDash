@@ -123,7 +123,8 @@ public class GameBoardView {
                 addTransportArrow(index, index + sock.getEffect(), Color.web("#C94A4A"), isActiveTransportArrow(index));
             } else if (cells[row][col] instanceof ConveyorBelt) {
                 ConveyorBelt belt = (ConveyorBelt) cells[row][col];
-                addTransportArrow(index, index + belt.getEffect(), Color.web("#6FCF97"), isActiveTransportArrow(index));
+                addTransportArrow(index, index + belt.getEffect(), ThemeManager.getTransportForwardColor(),
+                        isActiveTransportArrow(index));
             }
         }
     }

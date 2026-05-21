@@ -31,9 +31,9 @@ public class GameOverView {
     public GameOverView(Monster winner, Monster player, Monster opponent, String winnerPlayerName) {
         root = new StackPane();
         root.getStylesheets().add(
-                getClass().getResource("/game/assets/css/menu.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/menu.css"));
         root.getStylesheets().add(
-                getClass().getResource("/game/assets/css/game-over-view.css").toExternalForm());
+                ThemeManager.loadStylesheet("/game/assets/css/game-over-view.css"));
 
         mainMenuButton = createMenuButton("Main Menu", winner.getOriginalRole());
         exitButton = createMenuButton("Exit Game", winner.getOriginalRole());
@@ -162,7 +162,7 @@ public class GameOverView {
     }
 
     private Image loadImage(String path) {
-        return new Image(getClass().getResourceAsStream(path));
+        return ThemeManager.loadImage(path);
     }
 
     private String getMonsterImagePath(Monster monster) {
