@@ -1,21 +1,26 @@
 .monster-position-label {
   -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(0,229,255,0.95), 8, 0, 0, 1);
 }
 
 .monster-energy-label {
-  -fx-text-fill: #102033;
+  -fx-text-fill: #fff06a;
+  -fx-effect: dropshadow(three-pass-box, rgba(255,79,216,0.95), 8, 0, 0, 1);
 }
 
 .energy-change-gain {
-  -fx-text-fill: #35e66b;
+  -fx-text-fill: #39ff9f;
+  -fx-effect: dropshadow(three-pass-box, rgba(57,255,159,0.95), 8, 0, 0, 1);
 }
 
 .energy-change-loss {
-  -fx-text-fill: #ff3b3b;
+  -fx-text-fill: #ff4fd8;
+  -fx-effect: dropshadow(three-pass-box, rgba(255,79,216,0.95), 8, 0, 0, 1);
 }
 
 .status-counter {
-  -fx-font-size: 9px;
+  -fx-font-size: 10px;
   -fx-font-weight: 900;
-  -fx-text-fill: white;
+  -fx-text-fill: #fff06a;
+  -fx-effect: dropshadow(three-pass-box, rgba(0,229,255,0.95), 8, 0, 0, 1);
 }

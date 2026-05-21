@@ -12,4 +12,5 @@
   -fx-font-size: 30px;
   -fx-font-weight: 900;
   -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.85), 9, 0, 0, 1);
 }

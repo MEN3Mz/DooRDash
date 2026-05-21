@@ -8,6 +8,7 @@
 .choose-side-subtitle {
   -fx-font-size: 16px;
   -fx-text-fill: #c8ffff;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.8), 7, 0, 0, 1);
 }
 
 .choose-side-overlay {
@@ -30,6 +31,7 @@
   -fx-text-fill: white;
   -fx-font-weight: bold;
   -fx-font-size: 16px;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.8), 7, 0, 0, 1);
   -fx-background-radius: 12;
   -fx-padding: 12 24 12 24;
   -fx-border-color: #00e5ff;
@@ -57,6 +59,7 @@
   -fx-text-fill: white;
   -fx-font-weight: bold;
   -fx-font-size: 18px;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.9), 8, 0, 0, 1);
   -fx-background-radius: 20;
   -fx-min-width: 38px;
   -fx-min-height: 38px;
@@ -94,6 +97,7 @@
   -fx-font-size: 18px;
   -fx-font-weight: bold;
   -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.8), 7, 0, 0, 1);
 }
 
 .details-scroll {
@@ -106,18 +110,21 @@
   -fx-text-fill: #c8ffff;
   -fx-line-spacing: 4;
   -fx-font-weight: bold;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.55), 5, 0, 0, 1);
 }
 
 .monster-info-name {
   -fx-font-size: 15px;
   -fx-font-weight: 800;
   -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.75), 6, 0, 0, 1);
 }
 
 .monster-info-details {
   -fx-font-size: 12px;
   -fx-text-fill: #f1e9ff;
   -fx-line-spacing: 3;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.45), 4, 0, 0, 1);
 }
 
 .monster-info-card {

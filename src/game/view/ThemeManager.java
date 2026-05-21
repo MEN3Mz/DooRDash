@@ -181,6 +181,35 @@ public final class ThemeManager {
         return ThemeManager.class.getResource(defaultPath);
     }
 
+    public static URL resolveThemeAwareUrl(String defaultPath) {
+        String resolvedPath = resolveThemeAwarePath(defaultPath);
+        URL themedResource = ThemeManager.class.getResource(resolvedPath);
+
+        if (themedResource != null) {
+            return themedResource;
+        }
+
+        File sourceAsset = new File("src" + resolvedPath);
+        if (sourceAsset.exists()) {
+            try {
+                return sourceAsset.toURI().toURL();
+            } catch (Exception e) {
+                return ThemeManager.class.getResource(defaultPath);
+            }
+        }
+
+        File caseInsensitiveSourceAsset = findCaseInsensitiveSourceAsset(resolvedPath);
+        if (caseInsensitiveSourceAsset != null) {
+            try {
+                return caseInsensitiveSourceAsset.toURI().toURL();
+            } catch (Exception e) {
+                return ThemeManager.class.getResource(defaultPath);
+            }
+        }
+
+        return ThemeManager.class.getResource(defaultPath);
+    }
+
     public static String loadStylesheet(String defaultPath) {
         URL stylesheet = resolveAssetUrl(defaultPath);
 
@@ -239,6 +268,20 @@ public final class ThemeManager {
         return defaultPath;
     }
 
+    private static String resolveThemeAwarePath(String defaultPath) {
+        if (currentTheme == Theme.DEFAULT || defaultPath == null || !defaultPath.startsWith(ASSETS_ROOT + "/")) {
+            return defaultPath;
+        }
+
+        String themedPath = ASSETS_ROOT + currentTheme.assetPrefix + defaultPath.substring(ASSETS_ROOT.length());
+
+        if (resourceExists(themedPath)) {
+            return themedPath;
+        }
+
+        return defaultPath;
+    }
+
     private static boolean isThemeableImagePath(String path) {
         return path != null
                 && path.startsWith(ASSETS_ROOT + "/")
@@ -257,6 +300,22 @@ public final class ThemeManager {
             return true;
         }
 
-        return new File("src" + path).exists();
+        return new File("src" + path).exists() || findCaseInsensitiveSourceAsset(path) != null;
+    }
+
+    private static File findCaseInsensitiveSourceAsset(String resourcePath) {
+        File exactFile = new File("src" + resourcePath);
+        File parent = exactFile.getParentFile();
+
+        if (parent == null || !parent.isDirectory()) {
+            return null;
+        }
+
+        File[] matches = parent.listFiles(file -> file.getName().equalsIgnoreCase(exactFile.getName()));
+        if (matches == null || matches.length == 0) {
+            return null;
+        }
+
+        return matches[0];
     }
 }

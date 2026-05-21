@@ -6,6 +6,7 @@ import game.engine.Constants;
 import game.engine.Role;
 import game.engine.cards.Card;
 import game.engine.cards.ConfusionCard;
+import game.engine.cards.StartOverCard;
 import game.engine.cells.ContaminationSock;
 import game.engine.cells.ConveyorBelt;
 import game.engine.cells.DoorCell;
@@ -29,6 +30,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 public class GameController {
 
@@ -39,6 +42,7 @@ public class GameController {
     private final String playerTwoName;
     private Parent overlayPane;
     private String lastTurnPlayerName;
+    private boolean gameOverScheduled;
 
     public GameController(Stage stage, Role role) throws Exception {
         this(stage, role, "You", "Opponent");
@@ -125,6 +129,9 @@ public class GameController {
         if (drawnCard != null) {
             if (drawnCard instanceof ConfusionCard) {
                 SoundManager.playConfusionSound();
+                view.playConfusionShake();
+            } else if (drawnCard instanceof StartOverCard) {
+                SoundManager.playFallingSound();
             }
             showCardOverlay(drawnCard, lastTurnPlayerName);
             return;
@@ -215,11 +222,24 @@ public class GameController {
         view.setGameControlsDisabled(true);
 
         if (game.getWinner() != null) {
-            System.out.println(game.getWinner().getName() + " wins!");
-            SoundManager.stopMusic();
-            playWinSound(game.getWinner());
-            showGameOverView(game.getWinner());
+            scheduleGameOverPopup(game.getWinner());
         }
+    }
+
+    private void scheduleGameOverPopup(Monster winner) {
+        if (gameOverScheduled) {
+            return;
+        }
+
+        gameOverScheduled = true;
+        PauseTransition delay = new PauseTransition(Duration.seconds(1));
+        delay.setOnFinished(event -> {
+            System.out.println(winner.getName() + " wins!");
+            SoundManager.stopMusic();
+            playWinSound(winner);
+            showGameOverView(winner);
+        });
+        delay.play();
     }
 
     private void playWinSound(Monster winner) {

@@ -215,6 +215,7 @@ public class MainMenuView {
         applyThemeStylesheets();
         refreshThemeButton();
         applyThemeImages();
+        SoundManager.playMainMenuMusic();
     }
 
     private String themeLabel(ThemeManager.Theme theme) {

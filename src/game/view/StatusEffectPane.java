@@ -23,6 +23,8 @@ public class StatusEffectPane extends HBox {
     private final ColorAdjust desaturated = new ColorAdjust();
     private final double INACTIVE_OPACITY = 0.09;
     private final double ACTIVE_OPACITY = 1.0;
+    private final DropShadow retroIconGlow = new DropShadow(14, Color.web("#00e5ff"));
+    private final DropShadow retroTextGlow = new DropShadow(8, Color.web("#ff4fd8"));
 
     public StatusEffectPane() {
         getStylesheets().add(ThemeManager.loadStylesheet("/game/assets/css/monster-info-pane.css"));
@@ -97,14 +99,20 @@ public class StatusEffectPane extends HBox {
 
     private void applyStyle(ImageView iv, Label counter, boolean isActive, int turns) {
         if (isActive) {
-            iv.setEffect(null);
+            iv.setEffect(ThemeManager.isRetro() ? retroIconGlow : null);
             iv.setOpacity(ACTIVE_OPACITY);
             counter.setText(String.valueOf(Math.max(1, turns)));
+            counter.setStyle(ThemeManager.isRetro()
+                    ? "-fx-text-fill: #fff06a; -fx-font-size: 10px; -fx-font-weight: 900;"
+                    : "");
+            counter.setEffect(ThemeManager.isRetro() ? retroTextGlow : new DropShadow(2, Color.BLACK));
             counter.setOpacity(ACTIVE_OPACITY);
         } else {
             iv.setEffect(desaturated);
             iv.setOpacity(INACTIVE_OPACITY);
             counter.setText("0");
+            counter.setStyle("");
+            counter.setEffect(new DropShadow(2, Color.BLACK));
             counter.setOpacity(0.95);
         }
     }

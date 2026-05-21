@@ -8,10 +8,13 @@ import game.engine.Board;
 import game.engine.Role;
 import game.audio.SoundManager;
 import game.engine.monsters.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -24,6 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 public class GameView {
     private static final double DESIGN_WIDTH = 2140;
@@ -57,6 +61,7 @@ public class GameView {
     private final ImageView opponentSidePanelImage;
     private HBox playerSideContainer;
     private HBox opponentSideContainer;
+    private Timeline confusionShake;
 
     private Label playerMonsterTypeLabel;
     private Label playerPowerUpInfoLabel;
@@ -372,6 +377,35 @@ public class GameView {
 
     public GameBoardView getBoardView() {
         return boardView;
+    }
+
+    public void playConfusionShake() {
+        if (confusionShake != null) {
+            confusionShake.stop();
+        }
+
+        confusionShake = new Timeline(
+                new KeyFrame(Duration.ZERO, event -> setConfusionShakeOffset(0)),
+                new KeyFrame(Duration.millis(45), event -> setConfusionShakeOffset(-9)),
+                new KeyFrame(Duration.millis(90), event -> setConfusionShakeOffset(9)),
+                new KeyFrame(Duration.millis(135), event -> setConfusionShakeOffset(-7)),
+                new KeyFrame(Duration.millis(180), event -> setConfusionShakeOffset(7)),
+                new KeyFrame(Duration.millis(225), event -> setConfusionShakeOffset(-4)),
+                new KeyFrame(Duration.millis(270), event -> setConfusionShakeOffset(4)),
+                new KeyFrame(Duration.millis(315), event -> setConfusionShakeOffset(0)));
+        confusionShake.play();
+    }
+
+    private void setConfusionShakeOffset(double offset) {
+        setNodeShakeOffset(boardView.getBoardRoot(), offset);
+        setNodeShakeOffset(playerSideContainer, offset);
+        setNodeShakeOffset(opponentSideContainer, -offset);
+    }
+
+    private void setNodeShakeOffset(Node node, double offset) {
+        if (node != null) {
+            node.setTranslateX(offset);
+        }
     }
 
     private StackPane createPlayerInfoColumn(

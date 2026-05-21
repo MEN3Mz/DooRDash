@@ -68,6 +68,7 @@
 .menu-font {
   -fx-font-family: "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
   -fx-font-size: 18px;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.8), 7, 0, 0, 1);
 }
 
 .theme-context-menu {
@@ -91,4 +92,5 @@
 .theme-context-menu .menu-item .label {
   -fx-text-fill: white;
   -fx-font-weight: bold;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.8), 7, 0, 0, 1);
 }

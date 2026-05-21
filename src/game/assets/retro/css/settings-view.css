@@ -12,10 +12,12 @@
   -fx-font-size: 30px;
   -fx-font-weight: 900;
   -fx-text-fill: white;
+  -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.85), 9, 0, 0, 1);
 }
 
 .settings-section-label {
   -fx-font-size: 17px;
   -fx-font-weight: bold;
   -fx-text-fill: #c8ffff;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.75), 7, 0, 0, 1);
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.net.URL;
 import java.util.List;
 
+import game.view.ThemeManager;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -22,6 +23,7 @@ public final class SoundManager {
     private static final String DOOR_SOUND_PATH = "/game/assets/soundTrack/door.mp3";
     private static final String DAMAGE_SOUND_PATH = "/game/assets/soundTrack/damage.mp3";
     private static final String ENERGY_INCREASE_SOUND_PATH = "/game/assets/soundTrack/energyIncrease.mp3";
+    private static final String FALLING_SOUND_PATH = "/game/assets/soundTrack/falling.mp3";
     private static final String LAUGH_WIN_SOUND_PATH = "/game/assets/soundTrack/LaughWin.mp3";
     private static final String SCARE_WIN_SOUND_PATH = "/game/assets/soundTrack/ScareWin.mp3";
     private static final String SHIELD_ADD_SOUND_PATH = "/game/assets/soundTrack/ShieldAdd.mp3";
@@ -31,6 +33,7 @@ public final class SoundManager {
     private static final String CONFUSION_SOUND_PATH = "/game/assets/soundTrack/Confusion.mp3";
     private static MediaPlayer soundtrackPlayer;
     private static String currentMusicPath;
+    private static String currentMusicUrl;
     private static final List<MediaPlayer> activeEffects = new ArrayList<>();
     private static boolean soundOn = true;
     private static double musicVolume = 0.35;
@@ -58,7 +61,12 @@ public final class SoundManager {
     }
 
     private static void playMusic(String musicPath) {
-        if (musicPath.equals(currentMusicPath) && soundtrackPlayer != null) {
+        String musicUrl = findSoundUrl(musicPath);
+
+        if (musicPath.equals(currentMusicPath)
+                && musicUrl != null
+                && musicUrl.equals(currentMusicUrl)
+                && soundtrackPlayer != null) {
             if (soundOn) {
                 soundtrackPlayer.play();
             }
@@ -68,8 +76,6 @@ public final class SoundManager {
         stopCurrentMusic();
 
         try {
-            String musicUrl = findSoundUrl(musicPath);
-
             if (musicUrl == null) {
                 System.err.println("Music not found: " + musicPath);
                 return;
@@ -79,6 +85,7 @@ public final class SoundManager {
             soundtrackPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             soundtrackPlayer.setVolume(musicVolume);
             currentMusicPath = musicPath;
+            currentMusicUrl = musicUrl;
 
             if (soundOn) {
                 soundtrackPlayer.play();
@@ -98,10 +105,11 @@ public final class SoundManager {
         soundtrackPlayer.dispose();
         soundtrackPlayer = null;
         currentMusicPath = null;
+        currentMusicUrl = null;
     }
 
     private static String findSoundUrl(String resourcePath) {
-        URL resource = SoundManager.class.getResource(resourcePath);
+        URL resource = ThemeManager.resolveThemeAwareUrl(resourcePath);
 
         if (resource != null) {
             return resource.toExternalForm();
@@ -229,6 +237,10 @@ public final class SoundManager {
 
     public static void playEnergyIncreaseSound() {
         playEffect(ENERGY_INCREASE_SOUND_PATH);
+    }
+
+    public static void playFallingSound() {
+        playEffect(FALLING_SOUND_PATH);
     }
 
     public static void playLaughWinSound() {
