@@ -49,13 +49,13 @@ public class MonsterInfoPane extends Pane {
         capsuleFrame.setLayoutY(ThemeManager.isRetro() ? 293 : 296);
 
         posLabel = new Label("0");
-        posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 26));
+        posLabel.setFont(Font.font(ThemeManager.getThemeFontName(), FontWeight.BOLD, ThemeManager.isRetro() ? 15 : 26));
         posLabel.setPrefWidth(52);
         posLabel.setAlignment(Pos.CENTER);
         posLabel.setLayoutX(7);
-        posLabel.setLayoutY(180);
+        posLabel.setLayoutY(ThemeManager.isRetro() ? 186 : 180);
         posLabel.getStyleClass().add("monster-position-label");
-        posLabel.setEffect(new DropShadow(4, Color.BLACK));
+        posLabel.setEffect(getRetroTextEffect(4, Color.BLACK));
 
         energyBar = new ProgressBar(1.0);
         energyBar.setPrefWidth(74);
@@ -63,21 +63,21 @@ public class MonsterInfoPane extends Pane {
         energyBar.setLayoutY(311);
 
         energyLabel = new Label("0");
-        energyLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 28));
+        energyLabel.setFont(Font.font(ThemeManager.getThemeFontName(), FontWeight.BOLD, ThemeManager.isRetro() ? 20 : 28));
         energyLabel.setPrefWidth(120);
         energyLabel.setAlignment(Pos.CENTER);
         energyLabel.setLayoutX(30);
         energyLabel.setLayoutY(360);
         energyLabel.getStyleClass().add("monster-energy-label");
-        energyLabel.setEffect(new DropShadow(3, Color.WHITE));
+        energyLabel.setEffect(getRetroTextEffect(3, Color.WHITE));
 
         energyChangeLabel = new Label();
-        energyChangeLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 13));
+        energyChangeLabel.setFont(Font.font(ThemeManager.getThemeFontName(), FontWeight.BOLD, ThemeManager.isRetro() ? 9 : 13));
         energyChangeLabel.setPrefWidth(58);
         energyChangeLabel.setAlignment(Pos.CENTER_LEFT);
         energyChangeLabel.setLayoutX(128);
         energyChangeLabel.setLayoutY(368);
-        energyChangeLabel.setEffect(new DropShadow(3, Color.BLACK));
+        energyChangeLabel.setEffect(getRetroTextEffect(3, Color.BLACK));
 
         effectsPane = new StatusEffectPane();
         effectsPane.setLayoutX(23);
@@ -102,7 +102,10 @@ public class MonsterInfoPane extends Pane {
             int shieldTurns, int frozenTurns, int powerUpTurns, int confusionTurns) {
 
         posLabel.setText(String.valueOf(pos));
-        posLabel.setFont(Font.font("Arial Rounded MT Bold", FontWeight.BOLD, pos >= 100 ? 21 : 26));
+        posLabel.setFont(Font.font(
+                ThemeManager.getThemeFontName(),
+                FontWeight.BOLD,
+                ThemeManager.isRetro() ? (pos >= 100 ? 12 : 15) : (pos >= 100 ? 21 : 26)));
         updateEnergyChangeLabel(energy);
         energyLabel.setText(String.valueOf(energy));
 
@@ -276,7 +279,23 @@ public class MonsterInfoPane extends Pane {
         energyChangeLabel.setText(change > 0 ? "+" + change : String.valueOf(change));
         energyChangeLabel.getStyleClass().removeAll("energy-change-gain", "energy-change-loss");
         energyChangeLabel.getStyleClass().add(change > 0 ? "energy-change-gain" : "energy-change-loss");
+        energyChangeLabel.setEffect(getRetroTextEffect(3, Color.BLACK));
         playEnergyShake();
+    }
+
+    private DropShadow getRetroTextEffect(double defaultRadius, Color defaultColor) {
+        if (!ThemeManager.isRetro()) {
+            return new DropShadow(defaultRadius, defaultColor);
+        }
+
+        DropShadow cyanGlow = new DropShadow(10, Color.web("#00e5ff"));
+        cyanGlow.setSpread(0.25);
+
+        DropShadow pinkGlow = new DropShadow(7, Color.web("#ff4fd8"));
+        pinkGlow.setSpread(0.18);
+        pinkGlow.setInput(cyanGlow);
+
+        return pinkGlow;
     }
 
     private void playEnergyShake() {

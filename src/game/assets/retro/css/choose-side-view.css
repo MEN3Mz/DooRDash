@@ -1,12 +1,24 @@
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("../fonts/PressStart2P-Regular.ttf");
+}
+
+Label, .label, .button {
+  -fx-font-family: "Press Start 2P", "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+}
+Label, .label {
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.86), 8, 0, 0, 1);
+}
+
 .choose-side-title {
-  -fx-font-size: 34px;
+  -fx-font-size: 18px;
   -fx-font-weight: bold;
   -fx-text-fill: white;
   -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.85), 9, 0, 0, 1);
 }
 
 .choose-side-subtitle {
-  -fx-font-size: 16px;
+  -fx-font-size: 8px;
   -fx-text-fill: #c8ffff;
   -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.8), 7, 0, 0, 1);
 }
@@ -30,7 +42,7 @@
   -fx-background-color: linear-gradient(#ff66dd, #7c2cff);
   -fx-text-fill: white;
   -fx-font-weight: bold;
-  -fx-font-size: 16px;
+  -fx-font-size: 9px;
   -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.8), 7, 0, 0, 1);
   -fx-background-radius: 12;
   -fx-padding: 12 24 12 24;
@@ -58,13 +70,13 @@
   -fx-background-color: linear-gradient(#00e5ff, #2b46ff);
   -fx-text-fill: white;
   -fx-font-weight: bold;
-  -fx-font-size: 18px;
+  -fx-font-size: 7px;
   -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.9), 8, 0, 0, 1);
   -fx-background-radius: 20;
-  -fx-min-width: 38px;
-  -fx-min-height: 38px;
-  -fx-max-width: 38px;
-  -fx-max-height: 38px;
+  -fx-min-width: 37px;
+  -fx-min-height: 37px;
+  -fx-max-width: 37px;
+  -fx-max-height: 37px;
   -fx-border-color: #ff4fd8;
   -fx-border-radius: 20;
   -fx-border-width: 2;
@@ -94,7 +106,7 @@
 }
 
 .details-header {
-  -fx-font-size: 18px;
+  -fx-font-size: 7px;
   -fx-font-weight: bold;
   -fx-text-fill: white;
   -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.8), 7, 0, 0, 1);
@@ -106,7 +118,7 @@
 }
 
 .details-overview {
-  -fx-font-size: 13px;
+  -fx-font-size: 7px;
   -fx-text-fill: #c8ffff;
   -fx-line-spacing: 4;
   -fx-font-weight: bold;
@@ -114,14 +126,14 @@
 }
 
 .monster-info-name {
-  -fx-font-size: 15px;
+  -fx-font-size: 8px;
   -fx-font-weight: 800;
   -fx-text-fill: white;
   -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.75), 6, 0, 0, 1);
 }
 
 .monster-info-details {
-  -fx-font-size: 12px;
+  -fx-font-size: 8px;
   -fx-text-fill: #f1e9ff;
   -fx-line-spacing: 3;
   -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.45), 4, 0, 0, 1);
@@ -142,7 +154,7 @@
   -fx-background-radius: 5,4,3;
   -fx-text-fill: white;
   -fx-font-weight: bold;
-  -fx-font-size: 18px;
+  -fx-font-size: 9px;
   -fx-padding: 12 34 12 34;
   -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.72), 8, 0, 0, 1);
 }
@@ -171,7 +183,7 @@
   -fx-background-color: rgba(62, 52, 102, 0.88);
   -fx-text-fill: #c7b8ff;
   -fx-font-weight: bold;
-  -fx-font-size: 18px;
+  -fx-font-size: 9px;
   -fx-background-radius: 16;
   -fx-padding: 12 34 12 34;
 }

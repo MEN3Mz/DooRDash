@@ -93,6 +93,7 @@ public class GameBoardView {
                     index,
                     game.getPlayer(),
                     game.getOpponent(),
+                    game.getCurrent(),
                     playerPosition,
                     opponentPosition,
                     playerPreviousPosition,

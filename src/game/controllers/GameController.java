@@ -14,6 +14,7 @@ import game.engine.exceptions.InvalidMoveException;
 import game.engine.exceptions.OutOfEnergyException;
 import game.engine.monsters.Monster;
 import game.view.CardView;
+import game.view.DoorAnimationView;
 import game.view.GameOverView;
 import game.view.GameView;
 import game.view.HowToPlayView;
@@ -105,12 +106,17 @@ public class GameController {
             Monster actingMonster = game.getCurrent();
             int actingMonsterEnergyBefore = actingMonster.getEnergy();
             int rolledValue = game.playTurn();
+            DoorCell activatedDoor = getActivatedDoorCell();
             playLandedCellSound();
             playEnergyChangeSound(actingMonster, actingMonsterEnergyBefore);
             playStatusChangeSounds(playerWasShielded, opponentWasShielded, playerWasFrozen, opponentWasFrozen);
 
             view.getBottomView().setDiceValue(rolledValue);
             view.refresh();
+            if (activatedDoor != null) {
+                showDoorAnimationOverlay(activatedDoor, this::handleCardDrawnOrGameOver);
+                return;
+            }
             handleCardDrawnOrGameOver();
 
         } catch (InvalidMoveException ex) {
@@ -151,6 +157,15 @@ public class GameController {
                 SoundManager.playDoorSound();
             }
         }
+    }
+
+    private DoorCell getActivatedDoorCell() {
+        if (!(game.getBoard().getLastLandedCell() instanceof DoorCell)) {
+            return null;
+        }
+
+        DoorCell doorCell = (DoorCell) game.getBoard().getLastLandedCell();
+        return doorCell.wasLastLandingEnergyChangeActivation() ? doorCell : null;
     }
 
     private void playStatusChangeSounds(
@@ -205,6 +220,22 @@ public class GameController {
         cardView.setOnClose(e -> {
             hideOverlay();
             handleGameOver();
+        });
+
+        view.getRoot().getChildren().add(overlayPane);
+    }
+
+    private void showDoorAnimationOverlay(DoorCell doorCell, Runnable onFinished) {
+        hideOverlay();
+
+        DoorAnimationView doorAnimationView = new DoorAnimationView(doorCell.getRole());
+        overlayPane = doorAnimationView.getRoot();
+
+        doorAnimationView.setOnFinished(() -> {
+            hideOverlay();
+            if (onFinished != null) {
+                onFinished.run();
+            }
         });
 
         view.getRoot().getChildren().add(overlayPane);

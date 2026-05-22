@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("../fonts/PressStart2P-Regular.ttf");
+}
+
+Label, .label, .button {
+  -fx-font-family: "Press Start 2P", "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+}
 .roll-button {
   -fx-background-image: url("/game/assets/dice/rollDice2.png");
   -fx-background-repeat: no-repeat;
@@ -54,10 +62,10 @@
   -fx-background-position: center;
   -fx-background-size: contain;
   -fx-background-color: transparent;
-  -fx-min-width: 78px;
-  -fx-min-height: 78px;
-  -fx-pref-width: 78px;
-  -fx-pref-height: 78px;
+  -fx-min-width: 77px;
+  -fx-min-height: 77px;
+  -fx-pref-width: 77px;
+  -fx-pref-height: 77px;
   -fx-padding: 0;
   -fx-border-color: transparent;
   -fx-text-fill: transparent;

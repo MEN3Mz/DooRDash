@@ -6,12 +6,13 @@ import java.net.URL;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public final class ThemeManager {
     public enum Theme {
-        DEFAULT("", "Theme: Default"),
-        RETRO("/retro", "Theme: Back to the 80's"),
-        ANCIENT_EGYPT("/ancientEgypt", "Theme: Ancient Egyptian");
+        DEFAULT("", "Theme: Monstropolis"),
+        RETRO("/retro", "Theme: Vice City"),
+        ANCIENT_EGYPT("/ancientEgypt", "Theme: Giza");
 
         private final String assetPrefix;
         private final String label;
@@ -23,6 +24,11 @@ public final class ThemeManager {
     }
 
     private static final String ASSETS_ROOT = "/game/assets";
+    private static final String EGYPTIAN_FONT_PATH = "/game/assets/ancientEgypt/fonts/Almendra/Almendra-Regular.ttf";
+    private static final String RETRO_FONT_PATH = "/game/assets/retro/fonts/PressStart2P-Regular.ttf";
+    private static final String DEFAULT_FONT_FAMILY = "\"Arial Rounded MT Bold\", Arial, Helvetica, sans-serif";
+    private static String egyptianFontFamily;
+    private static String retroFontFamily;
     private static Theme currentTheme = Theme.DEFAULT;
 
     private ThemeManager() {
@@ -50,7 +56,106 @@ public final class ThemeManager {
         }
 
         currentTheme = theme;
+        if (isAncientEgyptian()) {
+            loadEgyptianFont();
+        } else if (isRetro()) {
+            loadRetroFont();
+        }
         ImageCache.clear();
+    }
+
+    public static String getThemeFontFamily() {
+        if (isRetro()) {
+            String family = loadRetroFont();
+            if (family != null && !family.isBlank()) {
+                return "\"" + family + "\", " + DEFAULT_FONT_FAMILY;
+            }
+        }
+
+        if (isAncientEgyptian()) {
+            String family = loadEgyptianFont();
+            if (family != null && !family.isBlank()) {
+                return "\"" + family + "\", " + DEFAULT_FONT_FAMILY;
+            }
+        }
+
+        return DEFAULT_FONT_FAMILY;
+    }
+
+    public static String getThemeFontName() {
+        if (isRetro()) {
+            String family = loadRetroFont();
+            if (family != null && !family.isBlank()) {
+                return family;
+            }
+        }
+
+        if (isAncientEgyptian()) {
+            String family = loadEgyptianFont();
+            if (family != null && !family.isBlank()) {
+                return family;
+            }
+        }
+
+        return "Arial Rounded MT Bold";
+    }
+
+    public static String getThemeFontInlineStyle() {
+        return " -fx-font-family: " + getThemeFontFamily() + ";";
+    }
+
+    private static String loadEgyptianFont() {
+        if (egyptianFontFamily != null) {
+            return egyptianFontFamily;
+        }
+
+        InputStream fontStream = ThemeManager.class.getResourceAsStream(EGYPTIAN_FONT_PATH);
+        if (fontStream != null) {
+            Font font = Font.loadFont(fontStream, 12);
+            if (font != null) {
+                egyptianFontFamily = font.getFamily();
+                return egyptianFontFamily;
+            }
+        }
+
+        File sourceFont = new File("src" + EGYPTIAN_FONT_PATH);
+        if (sourceFont.exists()) {
+            Font font = Font.loadFont(sourceFont.toURI().toString(), 12);
+            if (font != null) {
+                egyptianFontFamily = font.getFamily();
+                return egyptianFontFamily;
+            }
+        }
+
+        egyptianFontFamily = "";
+        return egyptianFontFamily;
+    }
+
+    private static String loadRetroFont() {
+        if (retroFontFamily != null) {
+            return retroFontFamily;
+        }
+
+        InputStream fontStream = ThemeManager.class.getResourceAsStream(RETRO_FONT_PATH);
+        if (fontStream != null) {
+            Font font = Font.loadFont(fontStream, 12);
+            if (font != null) {
+                retroFontFamily = font.getFamily();
+                return retroFontFamily;
+            }
+        }
+
+        File sourceFont = new File("src" + RETRO_FONT_PATH);
+        if (sourceFont.exists()) {
+            Font font = Font.loadFont(sourceFont.toURI().toString(), 12);
+            if (font != null) {
+                retroFontFamily = font.getFamily();
+                return retroFontFamily;
+            }
+        }
+
+        retroFontFamily = "";
+        return retroFontFamily;
     }
 
     public static Color getLaugherAccentColor() {
@@ -75,7 +180,16 @@ public final class ThemeManager {
 
     public static String getLaugherLabelStyle() {
         return "-fx-background-color: #2F80ED; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold;"
-                + " -fx-background-radius: 10; -fx-padding: 2 5 2 4;";
+                + " -fx-background-radius: 10; -fx-padding: 2 5 2 4;" + getRetroNeonInlineEffect()
+                + getThemeFontInlineStyle();
+    }
+
+    public static String getRetroNeonInlineEffect() {
+        if (!isRetro()) {
+            return "";
+        }
+
+        return " -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.95), 8, 0, 0, 1);";
     }
 
     public static String getDefaultCellStyle() {
@@ -146,6 +260,56 @@ public final class ThemeManager {
                 -fx-border-width: 2;
                 -fx-border-radius: 14;
                 """;
+    }
+
+    public static String getFullscreenButtonStyle() {
+        if (isRetro()) {
+            return """
+                    -fx-background-color:
+                        linear-gradient(#ff8df0 0%, #ff3fd0 46%, #9b2cff 47%, #1824b8 100%),
+                        linear-gradient(#160826 0%, #050714 100%),
+                        linear-gradient(#00e5ff, #ff4fd8);
+                    -fx-background-insets: 0, 1, 2;
+                    -fx-background-radius: 10, 9, 8;
+                    -fx-text-fill: white;
+                    -fx-font-size: 13px;
+                    -fx-font-weight: bold;
+                    -fx-border-color: #00e5ff;
+                    -fx-border-radius: 10;
+                    -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.82), 14, 0, 0, 1);
+                    """ + getThemeFontInlineStyle();
+        }
+
+        if (isAncientEgyptian()) {
+            return """
+                    -fx-background-color:
+                        linear-gradient(#fff2a8 0%, #d59a24 48%, #7a4c08 49%, #a8690d 100%),
+                        linear-gradient(#3b2205, #1c1003);
+                    -fx-background-insets: 0, 2;
+                    -fx-background-radius: 10, 8;
+                    -fx-text-fill: white;
+                    -fx-font-size: 17px;
+                    -fx-font-weight: bold;
+                    -fx-border-color: #f6ca58;
+                    -fx-border-radius: 10;
+                    -fx-effect: dropshadow(three-pass-box, rgba(246, 202, 88, 0.75), 12, 0, 0, 1);
+                    """ + getThemeFontInlineStyle();
+        }
+
+        return """
+                -fx-background-color:
+                    linear-gradient(#70b1ff 0%, #1a5cad 50%, #0a3b75 51%, #114b91 100%),
+                    linear-gradient(#202020 0%, #111111 100%),
+                    linear-gradient(#3e5e8e, #2e4a77);
+                -fx-background-insets: 0, 1, 2;
+                -fx-background-radius: 10, 9, 8;
+                -fx-text-fill: white;
+                -fx-font-size: 17px;
+                -fx-font-weight: bold;
+                -fx-border-color: #78beff;
+                -fx-border-radius: 10;
+                -fx-effect: dropshadow(three-pass-box, rgba(120, 190, 255, 0.65), 10, 0, 0, 1);
+                """ + getThemeFontInlineStyle();
     }
 
     public static void cycleTheme() {

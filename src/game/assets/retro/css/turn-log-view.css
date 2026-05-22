@@ -1,3 +1,15 @@
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("../fonts/PressStart2P-Regular.ttf");
+}
+
+Label, .label, .button {
+  -fx-font-family: "Press Start 2P", "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+}
+Label, .label {
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.86), 8, 0, 0, 1);
+}
+
 .turn-log {
   -fx-background-color: linear-gradient(to bottom, rgba(35,17,78,0.94), rgba(8,13,38,0.94));
   -fx-background-radius: 14;
@@ -8,14 +20,14 @@
 }
 
 .turn-log-title {
-  -fx-font-size: 14px;
+  -fx-font-size: 10px;
   -fx-font-weight: 900;
   -fx-text-fill: white;
   -fx-effect: dropshadow(three-pass-box, rgba(0,229,255,0.9), 8, 0, 0, 1);
 }
 
 .turn-log-entry {
-  -fx-font-size: 11px;
+  -fx-font-size: 8px;
   -fx-line-spacing: 2px;
   -fx-text-fill: #f2edff;
   -fx-background-color: rgba(255, 79, 216, 0.14);

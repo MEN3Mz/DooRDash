@@ -57,9 +57,12 @@ public class SettingsView {
         Label musicLabel = createSectionLabel("Background Music");
         Label effectsLabel = createSectionLabel("Game Sounds");
 
-        VBox content = new VBox(18, title, soundToggleButton, musicLabel, musicSlider, effectsLabel, effectsSlider, backButton);
+        VBox content = new VBox(18, title, soundToggleButton, musicLabel, musicSlider, effectsLabel, effectsSlider,
+                backButton);
         content.setAlignment(Pos.CENTER);
         content.setMaxWidth(520);
+        content.prefHeightProperty().bind(root.heightProperty().multiply(0.5));
+        content.maxHeightProperty().bind(root.heightProperty().multiply(0.5));
         content.getStyleClass().add("settings-popup");
 
         return content;

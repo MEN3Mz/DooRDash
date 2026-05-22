@@ -1,35 +1,54 @@
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("../fonts/PressStart2P-Regular.ttf");
+}
+
+Label,
+.label,
+.button {
+  -fx-font-family:
+    "Press Start 2P", "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+}
+
+Label,
+.label {
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.86), 8, 0, 0, 1);
+}
+
 .card-popup {
-  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.55), 24, 0, 0, 8);
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.55), 24, 0, 0, 8);
 }
 
 .card-title {
-  -fx-font-size: 25px;
+  -fx-font-size: 15px;
   -fx-font-weight: 900;
   -fx-text-fill: white;
   -fx-effect: dropshadow(three-pass-box, black, 4, 0, 0, 1);
 }
 
 .card-name {
-  -fx-font-size: 20px;
+  -fx-font-size: 11px;
   -fx-font-weight: 900;
   -fx-text-fill: #cfe4ff;
   -fx-effect: dropshadow(three-pass-box, black, 4, 0, 0, 1);
 }
 
 .card-detail {
-  -fx-font-size: 13px;
+  -fx-font-size: 6px;
   -fx-font-weight: bold;
   -fx-text-fill: #dce8f5;
   -fx-effect: dropshadow(three-pass-box, black, 3, 0, 0, 1);
 }
 
 .card-description {
-  -fx-font-size: 14px;
-  -fx-line-spacing: 5px;
+  -fx-font-size: 7px;
+  -fx-line-spacing: 3px;
   -fx-text-fill: #dce8f5;
   -fx-effect: dropshadow(three-pass-box, black, 3, 0, 0, 1);
 }
 
 .card-continue-button {
   -fx-translate-y: -18px;
+  -fx-font-size: 7px;
+  -fx-pref-height: 42px;
 }

@@ -221,11 +221,11 @@ public class MainMenuView {
     private String themeLabel(ThemeManager.Theme theme) {
         switch (theme) {
             case DEFAULT:
-                return "Default";
+                return "Monstropolis";
             case RETRO:
-                return "Back to the 80's";
+                return "Vice City";
             case ANCIENT_EGYPT:
-                return "Ancient Egyptian";
+                return "Giza";
             default:
                 return theme.name();
         }

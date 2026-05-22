@@ -9,6 +9,7 @@ import game.engine.exceptions.InvalidMoveException;
 import game.engine.monsters.Monster;
 
 public class Board {
+	private static final int TARGET_CARD_DECK_SIZE = 25;
 	private Cell[][] boardCells;
 	private static ArrayList<Monster> stationedMonsters;
 	private static ArrayList<Card> originalCards;
@@ -111,6 +112,9 @@ public class Board {
 		for (Card card : originalCards)
 			expandedCards.addAll(Collections.nCopies(card.getRarity(), card));
 
+		for (int i = 0; !originalCards.isEmpty() && expandedCards.size() < TARGET_CARD_DECK_SIZE; i++)
+			expandedCards.add(originalCards.get(i % originalCards.size()));
+
 		originalCards = expandedCards;
 	}
 
@@ -124,6 +128,9 @@ public class Board {
 			reloadCards();
 
 		lastDrawnCard = cards.remove(0);
+		if (cards.isEmpty())
+			reloadCards();
+
 		return lastDrawnCard;
 	}
 

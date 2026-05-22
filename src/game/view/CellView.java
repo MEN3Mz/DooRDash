@@ -4,6 +4,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.control.Label;
 import game.engine.cells.*;
 import game.engine.monsters.*;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.geometry.*;
 import game.engine.Role;
 import javafx.scene.image.ImageView;
@@ -11,6 +15,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class CellView extends StackPane {
     public static final double CELL_SIZE = 78;
@@ -40,6 +45,8 @@ public class CellView extends StackPane {
     private final ImageView shieldOverlayImageView;
     private final ImageView previousPlayerImageView;
     private final ImageView previousOpponentImageView;
+    private TranslateTransition currentMonsterBob;
+    private Timeline currentMonsterFlicker;
 
     public CellView() {
         getStylesheets().add(ThemeManager.loadStylesheet("/game/assets/css/cell-view.css"));
@@ -155,6 +162,7 @@ public class CellView extends StackPane {
             int index,
             Monster player,
             Monster opponent,
+            Monster currentMonster,
             int playerPosition,
             int opponentPosition,
             int playerPreviousPosition,
@@ -173,7 +181,10 @@ public class CellView extends StackPane {
         cellMonsterImageView.setImage(null);
         previousPlayerImageView.setImage(null);
         previousOpponentImageView.setImage(null);
+        stopCurrentTurnAnimation();
         monsterImageView.setEffect(null);
+        monsterImageView.setOpacity(1.0);
+        monsterImageView.setTranslateY(0);
         shieldOverlayImageView.setVisible(false);
         shieldOverlayImageView.setImage(null);
         resetCellImageLayout();
@@ -186,11 +197,13 @@ public class CellView extends StackPane {
         if (player.getRole() == Role.LAUGHER) {
             playerLabel.setStyle(ThemeManager.getLaugherLabelStyle());
             opponentLabel.setStyle(
-                    "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
+                    "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;"
+                            + ThemeManager.getRetroNeonInlineEffect() + ThemeManager.getThemeFontInlineStyle());
         } else {
             opponentLabel.setStyle(ThemeManager.getLaugherLabelStyle());
             playerLabel.setStyle(
-                    "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;");
+                    "-fx-background-color: #D64545; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 5 2 4;"
+                            + ThemeManager.getRetroNeonInlineEffect() + ThemeManager.getThemeFontInlineStyle());
 
         }
         playerLabel.setGraphic(createMonsterIcon(player));
@@ -198,6 +211,7 @@ public class CellView extends StackPane {
 
         boolean playerOnCell = playerPosition == index;
         boolean opponentOnCell = opponentPosition == index;
+        boolean currentMonsterOnCell = currentMonster != null && currentMonster.getPosition() == index;
         boolean occupiedByCurrentMonster = playerOnCell || opponentOnCell;
         positionPlayerLabels(playerOnCell && opponentOnCell);
 
@@ -242,11 +256,13 @@ public class CellView extends StackPane {
                 if (doorCell.getRole() == Role.LAUGHER) {
                     doorImageView.setImage(ImageCache.get(DOOR_IMAGE_PATHS[0]));
                     doorLabel.setStyle(
-                            "-fx-text-fill: " + ThemeManager.getLaugherTextColor() + "; -fx-font-weight: bold; -fx-font-stroke: 2px solid #000507; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
+                            "-fx-text-fill: " + ThemeManager.getLaugherTextColor() + "; -fx-font-weight: bold; -fx-font-stroke: 2px solid #000507; -fx-border-radius: 10; -fx-padding: 2 5 2 4;"
+                                    + ThemeManager.getRetroNeonInlineEffect() + ThemeManager.getThemeFontInlineStyle());
                 } else {
                     doorImageView.setImage(ImageCache.get(DOOR_IMAGE_PATHS[1]));
                     doorLabel.setStyle(
-                            "-fx-text-fill: #E53935; -fx-font-weight: bold; -fx-font-stroke: 2px solid #020000; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
+                            "-fx-text-fill: #E53935; -fx-font-weight: bold; -fx-font-stroke: 2px solid #020000; -fx-border-radius: 10; -fx-padding: 2 5 2 4;"
+                                    + ThemeManager.getRetroNeonInlineEffect() + ThemeManager.getThemeFontInlineStyle());
                 }
             }
 
@@ -261,14 +277,16 @@ public class CellView extends StackPane {
 
                 cellMonsterImageView.setImage(ImageCache.get(getMonsterImagePath(mc.getCellMonster())));
                 doorLabel.setStyle(
-                        "-fx-text-fill: " + ThemeManager.getLaugherTextColor() + "; -fx-font-weight: bold; -fx-font-stroke: 2px solid #01060c; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
+                        "-fx-text-fill: " + ThemeManager.getLaugherTextColor() + "; -fx-font-weight: bold; -fx-font-stroke: 2px solid #01060c; -fx-border-radius: 10; -fx-padding: 2 5 2 4;"
+                                + ThemeManager.getRetroNeonInlineEffect() + ThemeManager.getThemeFontInlineStyle());
 
                 setStyle("-fx-border-color: Green ; -fx-border-width: 2");
             } else {
 
                 cellMonsterImageView.setImage(ImageCache.get(getMonsterImagePath(mc.getCellMonster())));
                 doorLabel.setStyle(
-                        "-fx-text-fill: #D64545; -fx-font-weight: bold; -fx-font-stroke: 2px solid #020000; -fx-border-radius: 10; -fx-padding: 2 5 2 4;");
+                        "-fx-text-fill: #D64545; -fx-font-weight: bold; -fx-font-stroke: 2px solid #020000; -fx-border-radius: 10; -fx-padding: 2 5 2 4;"
+                                + ThemeManager.getRetroNeonInlineEffect() + ThemeManager.getThemeFontInlineStyle());
                 setStyle("-fx-border-color: red ; -fx-border-width: 2");
             }
         }
@@ -286,12 +304,21 @@ public class CellView extends StackPane {
 
         }
 
+        if (currentMonsterOnCell) {
+            monsterImageView.setImage(ImageCache.get(getMonsterImagePath(currentMonster)));
+        }
+
         if (occupiedByCurrentMonster) {
             moveCellImagesToBottomRight();
             makeCurrentMonsterFillCell();
-            applyStatusOverlays(playerOnCell ? player : opponent);
+            Monster displayedMonster = currentMonsterOnCell ? currentMonster : (playerOnCell ? player : opponent);
+            applyStatusOverlays(displayedMonster);
             applyNewLocationHighlight(index, playerOnCell, opponentOnCell, player, opponent, playerPreviousPosition,
                     opponentPreviousPosition);
+
+            if (currentMonsterOnCell) {
+                playCurrentTurnAnimation(currentMonster);
+            }
         }
 
         applyStatusBorder(index, player, opponent, playerPosition, opponentPosition);
@@ -378,6 +405,50 @@ public class CellView extends StackPane {
                     ? Color.web("#FF2E2E")
                     : Color.web("#FFF36A");
             monsterImageView.setEffect(new DropShadow(16, highlightColor));
+        }
+    }
+
+    private void playCurrentTurnAnimation(Monster currentMonster) {
+        Color highlightColor = currentMonster.getRole() == Role.SCARER
+                ? Color.web("#FF2E2E")
+                : Color.web("#FFF36A");
+
+        currentMonsterBob = new TranslateTransition(Duration.millis(520), monsterImageView);
+        currentMonsterBob.setFromY(0);
+        currentMonsterBob.setToY(-7);
+        currentMonsterBob.setAutoReverse(true);
+        currentMonsterBob.setCycleCount(Animation.INDEFINITE);
+        currentMonsterBob.play();
+
+        DropShadow softGlow = new DropShadow(14, highlightColor);
+        DropShadow strongGlow = new DropShadow(28, highlightColor);
+
+        currentMonsterFlicker = new Timeline(
+                new KeyFrame(Duration.ZERO, event -> {
+                    monsterImageView.setOpacity(1.0);
+                    monsterImageView.setEffect(strongGlow);
+                }),
+                new KeyFrame(Duration.millis(180), event -> {
+                    monsterImageView.setOpacity(0.78);
+                    monsterImageView.setEffect(softGlow);
+                }),
+                new KeyFrame(Duration.millis(360), event -> {
+                    monsterImageView.setOpacity(1.0);
+                    monsterImageView.setEffect(strongGlow);
+                }));
+        currentMonsterFlicker.setCycleCount(Animation.INDEFINITE);
+        currentMonsterFlicker.play();
+    }
+
+    private void stopCurrentTurnAnimation() {
+        if (currentMonsterBob != null) {
+            currentMonsterBob.stop();
+            currentMonsterBob = null;
+        }
+
+        if (currentMonsterFlicker != null) {
+            currentMonsterFlicker.stop();
+            currentMonsterFlicker = null;
         }
     }
 

@@ -24,6 +24,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 public class CardView {
@@ -75,6 +76,7 @@ public class CardView {
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(350);
         nameLabel.setAlignment(Pos.CENTER);
+        nameLabel.setTextAlignment(TextAlignment.CENTER);
         nameLabel.getStyleClass().add("card-name");
 
         Label typeLabel = createDetailLabel("Type: " + getCardType(card));
@@ -83,8 +85,10 @@ public class CardView {
 
         Label descriptionLabel = new Label(card.getDescription());
         descriptionLabel.setWrapText(true);
-        descriptionLabel.setMaxWidth(340);
+        descriptionLabel.setMaxWidth(300);
+        descriptionLabel.setPrefWidth(300);
         descriptionLabel.setAlignment(Pos.CENTER);
+        descriptionLabel.setTextAlignment(TextAlignment.CENTER);
         descriptionLabel.getStyleClass().add("card-description");
 
         Region spacer = new Region();
@@ -102,6 +106,7 @@ public class CardView {
             details.getChildren().add(extraEffectLabel);
         }
 
+        VBox.setMargin(descriptionLabel, new Insets(8, 0, 0, 0));
         details.getChildren().addAll(descriptionLabel, spacer, closeButton);
         details.setMinHeight(470);
         details.setPrefHeight(470);
@@ -169,6 +174,11 @@ public class CardView {
 
     private Label createDetailLabel(String text) {
         Label label = new Label(text);
+        label.setWrapText(true);
+        label.setMaxWidth(300);
+        label.setPrefWidth(300);
+        label.setAlignment(Pos.CENTER);
+        label.setTextAlignment(TextAlignment.CENTER);
         label.getStyleClass().add("card-detail");
 
         return label;

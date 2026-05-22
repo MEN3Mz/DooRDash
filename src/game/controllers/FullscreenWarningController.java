@@ -1,5 +1,6 @@
 package game.controllers;
 
+import game.view.ThemeManager;
 import javafx.animation.TranslateTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
@@ -22,6 +23,7 @@ public class FullscreenWarningController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        fullscreenButton.setStyle(ThemeManager.getFullscreenButtonStyle());
         Platform.runLater(() -> animateLabel());
     }
 

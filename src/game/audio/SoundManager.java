@@ -20,7 +20,7 @@ public final class SoundManager {
     private static final String INVALID_SOUND_PATH = "/game/assets/soundTrack/PowerUpInvalid.mp3";
     private static final String BELT_SOUND_PATH = "/game/assets/soundTrack/Belt.mp3";
     private static final String SOCK_SOUND_PATH = "/game/assets/soundTrack/Sock.mp3";
-    private static final String DOOR_SOUND_PATH = "/game/assets/soundTrack/door.mp3";
+    private static final String DOOR_SOUND_PATH = "/game/assets/soundTrack/door";
     private static final String DAMAGE_SOUND_PATH = "/game/assets/soundTrack/damage.mp3";
     private static final String ENERGY_INCREASE_SOUND_PATH = "/game/assets/soundTrack/energyIncrease.mp3";
     private static final String FALLING_SOUND_PATH = "/game/assets/soundTrack/falling.mp3";
@@ -228,7 +228,9 @@ public final class SoundManager {
     }
 
     public static void playDoorSound() {
-        playEffect(DOOR_SOUND_PATH);
+        int RandomDoorSoundNumber = (int) (Math.random() * 3) + 1;
+        String doorSoundPath = DOOR_SOUND_PATH + RandomDoorSoundNumber + ".mp3";
+        playEffect(doorSoundPath);
     }
 
     public static void playDamageSound() {

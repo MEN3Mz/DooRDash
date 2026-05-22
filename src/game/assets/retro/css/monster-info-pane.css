@@ -1,3 +1,15 @@
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("../fonts/PressStart2P-Regular.ttf");
+}
+
+Label, .label, .button {
+  -fx-font-family: "Press Start 2P", "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+}
+Label, .label {
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.86), 8, 0, 0, 1);
+}
+
 .monster-position-label {
   -fx-text-fill: white;
   -fx-effect: dropshadow(three-pass-box, rgba(0,229,255,0.95), 8, 0, 0, 1);
@@ -19,7 +31,7 @@
 }
 
 .status-counter {
-  -fx-font-size: 10px;
+  -fx-font-size: 8px;
   -fx-font-weight: 900;
   -fx-text-fill: #fff06a;
   -fx-effect: dropshadow(three-pass-box, rgba(0,229,255,0.95), 8, 0, 0, 1);

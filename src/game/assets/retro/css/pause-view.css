@@ -1,3 +1,15 @@
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("../fonts/PressStart2P-Regular.ttf");
+}
+
+Label, .label, .button {
+  -fx-font-family: "Press Start 2P", "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+}
+Label, .label {
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.86), 8, 0, 0, 1);
+}
+
 .pause-popup {
   -fx-background-color: linear-gradient(to bottom right, rgba(35, 8, 74, 0.97), rgba(8, 13, 38, 0.97));
   -fx-background-radius: 24;
@@ -9,7 +21,7 @@
 }
 
 .pause-title {
-  -fx-font-size: 30px;
+  -fx-font-size: 22px;
   -fx-font-weight: 900;
   -fx-text-fill: white;
   -fx-effect: dropshadow(three-pass-box, rgba(255, 79, 216, 0.85), 9, 0, 0, 1);

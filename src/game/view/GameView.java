@@ -50,6 +50,8 @@ public class GameView {
     private final Label opponentHeaderLabel;
     private final TurnLogView playerTurnLogView;
     private final TurnLogView opponentTurnLogView;
+    private final ImageView[] cardDeckRearViews;
+    private final Label cardDeckCountLabel;
 
     private final ImageView playerDoorView;
     private final ImageView opponentDoorView;
@@ -106,6 +108,8 @@ public class GameView {
         this.opponentHeaderLabel = createMonsterHeader();
         this.playerTurnLogView = new TurnLogView(playerOneName + " Latest Moves");
         this.opponentTurnLogView = new TurnLogView(playerTwoName + " Latest Moves");
+        this.cardDeckRearViews = new ImageView[4];
+        this.cardDeckCountLabel = new Label();
 
         this.playerDoorView = new ImageView();
         this.opponentDoorView = new ImageView();
@@ -215,6 +219,11 @@ public class GameView {
         uiLayer.getChildren().add(menuPanel);
         StackPane.setAlignment(menuPanel, Pos.TOP_LEFT);
         StackPane.setMargin(menuPanel, new Insets(12, 0, 0, 175));
+
+        HBox cardDeckIndicator = createCardDeckIndicator();
+        uiLayer.getChildren().add(cardDeckIndicator);
+        StackPane.setAlignment(cardDeckIndicator, Pos.BOTTOM_LEFT);
+        StackPane.setMargin(cardDeckIndicator, new Insets(0, 0, 26, 150));
     }
 
     private void setupResponsiveGameScale() {
@@ -236,11 +245,12 @@ public class GameView {
     private StackPane createTopPanel() {
 
         currentPlayerLabel.setStyle("""
-                -fx-font-size: 22px;
+                -fx-font-size: %spx;
                 -fx-font-weight: bold;
                 -fx-text-fill: white;
-                """);
-        currentPlayerLabel.setEffect(new DropShadow(4, Color.BLACK));
+                """.formatted(ThemeManager.isRetro() ? 16 : 22)
+                + ThemeManager.getThemeFontInlineStyle() + getRetroNeonTextStyle());
+        currentPlayerLabel.setEffect(getTextEffect(4));
         HBox content = new HBox(currentPlayerLabel);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(6, 22, 0, 22));
@@ -334,6 +344,7 @@ public class GameView {
 
         playerTurnLogView.updateEvents(game.getPlayerEventLog());
         opponentTurnLogView.updateEvents(game.getOpponentEventLog());
+        updateCardDeckIndicator();
 
         currentPlayerLabel.setText(
                 "Current Turn: " + getCurrentPlayerName() + " - " + game.getCurrent().getName());
@@ -418,7 +429,7 @@ public class GameView {
             Label MonsterTypeLabel, Label PowerUpInfoLabel, Label PassiveTraitLabel) {
 
         VBox content = new VBox(4);
-        content.setPadding(new Insets(54, 0, 28, 0));
+        content.setPadding(new Insets(ThemeManager.isRetro() ? 60 : 54, 0, 28, 0));
 
         content.getChildren().addAll(
                 headerLabel,
@@ -472,6 +483,65 @@ public class GameView {
         playerSideContainer.setStyle("-fx-background-color: transparent;");
 
         return playerSideContainer;
+    }
+
+    private HBox createCardDeckIndicator() {
+        StackPane cardStack = createCardRearStack();
+
+        cardDeckCountLabel.setPrefWidth(86);
+        cardDeckCountLabel.setAlignment(Pos.CENTER_LEFT);
+        cardDeckCountLabel.setTextAlignment(TextAlignment.LEFT);
+        cardDeckCountLabel.setStyle("""
+                -fx-font-size: %spx;
+                -fx-font-weight: 900;
+                -fx-text-fill: white;
+                -fx-padding: 2;
+                """.formatted(ThemeManager.isRetro() ? 10 : 20)
+                + ThemeManager.getThemeFontInlineStyle() + getRetroNeonTextStyle());
+        cardDeckCountLabel.setEffect(getTextEffect(4));
+
+        HBox indicator = new HBox(8, cardStack, cardDeckCountLabel);
+        indicator.setPrefSize(172, 84);
+        indicator.setMinSize(172, 84);
+        indicator.setMaxSize(172, 84);
+        indicator.setAlignment(Pos.CENTER);
+
+        updateCardDeckIndicator();
+        return indicator;
+    }
+
+    private void updateCardDeckIndicator() {
+        for (ImageView cardRearView : cardDeckRearViews) {
+            if (cardRearView != null) {
+                cardRearView.setImage(loadImage("/game/assets/cards/PulledCardsRear.png"));
+            }
+        }
+        int cardsLeft = Board.getCards() == null ? 0 : Board.getCards().size();
+        cardDeckCountLabel.setText(String.valueOf(cardsLeft));
+    }
+
+    private StackPane createCardRearStack() {
+        StackPane stack = new StackPane();
+        stack.setPrefSize(78, 78);
+        stack.setMinSize(78, 78);
+        stack.setMaxSize(78, 78);
+
+        for (int i = 0; i < cardDeckRearViews.length; i++) {
+            ImageView cardRearView = new ImageView();
+            cardRearView.setFitWidth(54);
+            cardRearView.setFitHeight(72);
+            cardRearView.setPreserveRatio(true);
+            cardRearView.setSmooth(true);
+            cardRearView.setRotate(-8 + i * 5);
+            cardRearView.setTranslateX(i * 6);
+            cardRearView.setTranslateY(-i * 2);
+            cardRearView.setEffect(new DropShadow(4, Color.BLACK));
+            cardDeckRearViews[i] = cardRearView;
+            stack.getChildren().add(cardRearView);
+        }
+
+        updateCardDeckIndicator();
+        return stack;
     }
 
     private HBox createRightSideContainer() {
@@ -535,12 +605,13 @@ public class GameView {
         label.setWrapText(true);
         label.setTextAlignment(TextAlignment.CENTER);
         label.setStyle("""
-                -fx-font-size: 14px;
+                -fx-font-size: %spx;
                 -fx-font-weight: 900;
                 -fx-text-fill: white;
                 -fx-padding: 0 4 0 4;
-                """);
-        label.setEffect(new DropShadow(4, Color.BLACK));
+                """.formatted(ThemeManager.isRetro() ? 10 : 14)
+                + ThemeManager.getThemeFontInlineStyle() + getRetroNeonTextStyle());
+        label.setEffect(getTextEffect(4));
 
         return label;
     }
@@ -556,13 +627,14 @@ public class GameView {
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
         label.setStyle("""
-                -fx-font-size: 9px;
+                -fx-font-size: %spx;
                 -fx-font-weight: 800;
                 -fx-text-fill: white;
                 -fx-padding: 0 2 0 2;
-                -fx-line-spacing: -1px;
-                """);
-        label.setEffect(new DropShadow(4, Color.BLACK));
+                -fx-line-spacing: %spx;
+                """.formatted(ThemeManager.isRetro() ? 7 : 9, ThemeManager.isRetro() ? 4 : -1)
+                + ThemeManager.getThemeFontInlineStyle() + getRetroNeonTextStyle());
+        label.setEffect(getTextEffect(4));
 
         return label;
     }
@@ -574,8 +646,12 @@ public class GameView {
             Label powerUpLabel) {
 
         typeLabel.setText("Type: " + getMonsterType(monster));
-        passiveLabel.setText("Traits: " + getMonsterPassiveTrait(monster));
-        powerUpLabel.setText("Power-Up: " + getPlayerPowerUpInfo(monster));
+        passiveLabel.setText(ThemeManager.isRetro()
+                ? "Traits:\n" + getMonsterPassiveTrait(monster)
+                : "Traits: " + getMonsterPassiveTrait(monster));
+        powerUpLabel.setText(ThemeManager.isRetro()
+                ? "Power-Up:\n" + getPlayerPowerUpInfo(monster)
+                : "Power-Up: " + getPlayerPowerUpInfo(monster));
     }
 
     private HBox createStationedMonsterBox() {
@@ -616,11 +692,12 @@ public class GameView {
         Label label = new Label(String.valueOf(energy));
         label.setAlignment(Pos.CENTER);
         label.setStyle("""
-                -fx-font-size: 9px;
+                -fx-font-size: %spx;
                 -fx-font-weight: 900;
                 -fx-text-fill: white;
-                """);
-        label.setEffect(new DropShadow(3, Color.BLACK));
+                """.formatted(ThemeManager.isRetro() ? 7 : 9)
+                + ThemeManager.getThemeFontInlineStyle() + getRetroNeonTextStyle());
+        label.setEffect(getTextEffect(3));
 
         return label;
     }
@@ -650,10 +727,13 @@ public class GameView {
 
         label.setText(change > 0 ? "+" + change : String.valueOf(change));
         label.setStyle(change > 0
-                ? "-fx-font-size: 8px; -fx-font-weight: 900; -fx-text-fill: "
-                        + (ThemeManager.isAncientEgyptian() ? "#76d85d" : "#35e66b") + ";"
-                : "-fx-font-size: 8px; -fx-font-weight: 900; -fx-text-fill: #ff3b3b;");
-        label.setEffect(new DropShadow(2, Color.BLACK));
+                ? "-fx-font-size: " + (ThemeManager.isRetro() ? "7px" : "8px")
+                        + "; -fx-font-weight: 900; -fx-text-fill: "
+                        + getGainColor() + ";" + ThemeManager.getThemeFontInlineStyle() + getRetroNeonTextStyle()
+                : "-fx-font-size: " + (ThemeManager.isRetro() ? "7px" : "8px")
+                        + "; -fx-font-weight: 900; -fx-text-fill: "
+                        + getLossColor() + ";" + ThemeManager.getThemeFontInlineStyle() + getRetroNeonTextStyle());
+        label.setEffect(getTextEffect(2));
 
         return label;
     }
@@ -665,14 +745,52 @@ public class GameView {
         label.setWrapText(true);
         label.setTextAlignment(TextAlignment.CENTER);
         label.setStyle("""
-                -fx-font-size: 13px;
+                -fx-font-size: %spx;
                 -fx-font-weight: 900;
                 -fx-text-fill: white;
                 -fx-padding: 4 6 4 6;
-                """);
-        label.setEffect(new DropShadow(4, Color.BLACK));
+                """.formatted(ThemeManager.isRetro() ? 9 : 13)
+                + ThemeManager.getThemeFontInlineStyle() + getRetroNeonTextStyle());
+        label.setEffect(getTextEffect(4));
 
         return label;
+    }
+
+    private String getRetroNeonTextStyle() {
+        if (!ThemeManager.isRetro()) {
+            return "";
+        }
+
+        return """
+                -fx-effect: dropshadow(three-pass-box, rgba(0, 229, 255, 0.95), 8, 0, 0, 1);
+                """;
+    }
+
+    private DropShadow getTextEffect(double defaultRadius) {
+        if (!ThemeManager.isRetro()) {
+            return new DropShadow(defaultRadius, Color.BLACK);
+        }
+
+        DropShadow cyanGlow = new DropShadow(10, Color.web("#00e5ff"));
+        cyanGlow.setSpread(0.25);
+
+        DropShadow pinkGlow = new DropShadow(7, Color.web("#ff4fd8"));
+        pinkGlow.setSpread(0.18);
+        pinkGlow.setInput(cyanGlow);
+
+        return pinkGlow;
+    }
+
+    private String getGainColor() {
+        if (ThemeManager.isRetro()) {
+            return "#39ff9f";
+        }
+
+        return ThemeManager.isAncientEgyptian() ? "#76d85d" : "#35e66b";
+    }
+
+    private String getLossColor() {
+        return ThemeManager.isRetro() ? "#ff4fd8" : "#ff3b3b";
     }
 
     private void setupDoor(ImageView doorView) {
@@ -755,17 +873,29 @@ public class GameView {
 
     private String getPlayerPowerUpInfo(Monster monster) {
         if (monster instanceof Dasher) {
+            if (ThemeManager.isRetro()) {
+                return "Gain 3x speed\nfor 3 turns";
+            }
             return "Gain 3x movement speed" + "\n" + " for the next 3 turns";
         }
 
         if (monster instanceof MultiTasker) {
+            if (ThemeManager.isRetro()) {
+                return "Move normal speed\nfor 2 turns";
+            }
             return "Move at normal speed for" + "\n" + " the next 2 turns";
         }
 
         if (monster instanceof Dynamo) {
+            if (ThemeManager.isRetro()) {
+                return "Freeze opponent\nfor next turn";
+            }
             return "Freezes the opponent, making " + "\n" + " them skip their entire next turn";
         }
         if (monster instanceof Schemer) {
+            if (ThemeManager.isRetro()) {
+                return "Steal energy from\nall other monsters\nignores shield";
+            }
             return "Steals energy from ALL " + "\n"
                     + " other monsters present (scarers - laughers)" + "\n" + " Not affected by the shield.";
         }
@@ -774,18 +904,30 @@ public class GameView {
 
     private String getMonsterPassiveTrait(Monster monster) {
         if (monster instanceof Dasher) {
+            if (ThemeManager.isRetro()) {
+                return "2x dice movement";
+            }
             return "Base dice movement is" + "\n" + " doubled (2x speed)";
         }
 
         if (monster instanceof MultiTasker) {
+            if (ThemeManager.isRetro()) {
+                return "Half dice movement\nenergy changes +200";
+            }
             return "Half speed (1/2 dice movement) & All" + "\n" +
                     " energy changes receive +200 bonus";
 
         }
         if (monster instanceof Dynamo) {
+            if (ThemeManager.isRetro()) {
+                return "Energy changes\nare doubled";
+            }
             return "All Energy Changes" + "\n" + " are doubled ";
         }
         if (monster instanceof Schemer) {
+            if (ThemeManager.isRetro()) {
+                return "Energy changes\nget +10 bonus";
+            }
             return "All Energy Changes" + "\n" + " get +10 bonus";
         }
         return null;

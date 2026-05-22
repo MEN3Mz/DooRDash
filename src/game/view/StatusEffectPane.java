@@ -23,8 +23,6 @@ public class StatusEffectPane extends HBox {
     private final ColorAdjust desaturated = new ColorAdjust();
     private final double INACTIVE_OPACITY = 0.09;
     private final double ACTIVE_OPACITY = 1.0;
-    private final DropShadow retroIconGlow = new DropShadow(14, Color.web("#00e5ff"));
-    private final DropShadow retroTextGlow = new DropShadow(8, Color.web("#ff4fd8"));
 
     public StatusEffectPane() {
         getStylesheets().add(ThemeManager.loadStylesheet("/game/assets/css/monster-info-pane.css"));
@@ -98,23 +96,77 @@ public class StatusEffectPane extends HBox {
     }
 
     private void applyStyle(ImageView iv, Label counter, boolean isActive, int turns) {
+        VBox stack = iv.getParent() instanceof VBox ? (VBox) iv.getParent() : null;
+
         if (isActive) {
-            iv.setEffect(ThemeManager.isRetro() ? retroIconGlow : null);
+            iv.setFitWidth(ThemeManager.isRetro() ? 34 : 28);
+            iv.setEffect(ThemeManager.isRetro() ? createRetroIconGlow() : null);
             iv.setOpacity(ACTIVE_OPACITY);
             counter.setText(String.valueOf(Math.max(1, turns)));
             counter.setStyle(ThemeManager.isRetro()
-                    ? "-fx-text-fill: #fff06a; -fx-font-size: 10px; -fx-font-weight: 900;"
+                    ? "-fx-background-color: linear-gradient(to bottom, #ff4fd8, #7c2cff);"
+                            + " -fx-background-radius: 8;"
+                            + " -fx-border-color: #00e5ff;"
+                            + " -fx-border-radius: 8;"
+                            + " -fx-border-width: 1;"
+                            + " -fx-padding: 0 5 0 5;"
+                            + " -fx-text-fill: #fff06a;"
+                            + " -fx-font-size: 8px;"
+                            + " -fx-font-weight: 900;"
                     : "");
-            counter.setEffect(ThemeManager.isRetro() ? retroTextGlow : new DropShadow(2, Color.BLACK));
+            counter.setEffect(ThemeManager.isRetro() ? createRetroTextGlow() : new DropShadow(2, Color.BLACK));
             counter.setOpacity(ACTIVE_OPACITY);
+            applyStackHighlight(stack, true);
         } else {
+            iv.setFitWidth(28);
             iv.setEffect(desaturated);
             iv.setOpacity(INACTIVE_OPACITY);
             counter.setText("0");
             counter.setStyle("");
             counter.setEffect(new DropShadow(2, Color.BLACK));
             counter.setOpacity(0.95);
+            applyStackHighlight(stack, false);
         }
+    }
+
+    private DropShadow createRetroIconGlow() {
+        DropShadow cyanGlow = new DropShadow(20, Color.web("#00e5ff"));
+        cyanGlow.setSpread(0.42);
+
+        DropShadow pinkGlow = new DropShadow(13, Color.web("#ff4fd8"));
+        pinkGlow.setSpread(0.28);
+        pinkGlow.setInput(cyanGlow);
+
+        return pinkGlow;
+    }
+
+    private DropShadow createRetroTextGlow() {
+        DropShadow cyanGlow = new DropShadow(10, Color.web("#00e5ff"));
+        cyanGlow.setSpread(0.3);
+
+        DropShadow pinkGlow = new DropShadow(8, Color.web("#ff4fd8"));
+        pinkGlow.setSpread(0.25);
+        pinkGlow.setInput(cyanGlow);
+
+        return pinkGlow;
+    }
+
+    private void applyStackHighlight(VBox stack, boolean active) {
+        if (stack == null || !ThemeManager.isRetro()) {
+            if (stack != null) {
+                stack.setStyle("");
+            }
+            return;
+        }
+
+        stack.setStyle(active
+                ? "-fx-background-color: rgba(255, 79, 216, 0.18);"
+                        + " -fx-background-radius: 10;"
+                        + " -fx-border-color: rgba(0, 229, 255, 0.86);"
+                        + " -fx-border-radius: 10;"
+                        + " -fx-border-width: 1;"
+                        + " -fx-padding: 1 2 1 2;"
+                : "");
     }
 
     private VBox createIconStack(ImageView icon, Label counter) {
