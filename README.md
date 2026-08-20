@@ -2,6 +2,8 @@
 
 This is a JavaFX board game project for CSEN401. The game uses Java source files, CSV data files, image assets, sound assets, and JavaFX media support.
 
+<video src="./preview.mp4" controls></video>
+
 ## Project Location
 
 Example project path:
