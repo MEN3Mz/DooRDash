@@ -2,7 +2,11 @@
 
 This is our CSEN401 course project. It is a JavaFX board game based on _Monsters, Inc._ Players move around the board, use cards, deal with monsters, and try to reach the end.
 
-https://github.com/user-attachments/assets/89d6ad04-77be-497e-8b2d-d5adca7bfafc
+## Screenshots
+
+| ![Screenshot 1](screenshots/screenshot1.png) | ![Screenshot 2](screenshots/screenshot2.png) |
+| -------------------------------------------- | -------------------------------------------- |
+| ![Screenshot 3](screenshots/screenshot3.png) | ![Screenshot 4](screenshots/screenshot4.png) |
 
 ## Requirements
 
